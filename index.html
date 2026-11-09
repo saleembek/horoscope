@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Horoscope Tracker</title>
+<style>
+:root{
+  --bg:#f6f4fb; --card:#ffffff; --ink:#1d1a2b; --muted:#6b6680; --line:#e4e0ef;
+  --accent:#6b4fd8; --accent-ink:#ffffff; --good:#1f8a5b; --hard:#c2410c; --soft:#efeafd; --mid:#d9d4e8;
+  --fire:#e4572e; --earth:#5b8c3a; --air:#d4a017; --water:#2f7fc1;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f0d17; --card:#1a1726; --ink:#ece9f6; --muted:#a29cb8; --line:#2c2840;
+    --accent:#9d85ff; --accent-ink:#14111f; --good:#4cc38a; --hard:#f08a4b; --soft:#241f38; --mid:#3a3452;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f0d17; --card:#1a1726; --ink:#ece9f6; --muted:#a29cb8; --line:#2c2840;
+  --accent:#9d85ff; --accent-ink:#14111f; --good:#4cc38a; --hard:#f08a4b; --soft:#241f38; --mid:#3a3452;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px calc(32px + env(safe-area-inset-bottom))}
+h1{font-size:1.6rem;margin:8px 0 2px}
+h2{font-size:1.1rem;margin:0 0 10px}
+h3{font-size:.95rem;margin:14px 0 6px;color:var(--muted);font-weight:600}
+.sub{color:var(--muted);margin:0 0 16px;font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 14px}
+label{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 4px}
+input,select{width:100%;font:inherit;font-size:16px;padding:11px 12px;border-radius:10px;
+  border:1px solid var(--line);background:var(--bg);color:var(--ink);-webkit-appearance:none;appearance:none}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 16px;width:100%;
+  background:var(--accent);color:var(--accent-ink);margin-top:14px;cursor:pointer}
+.hint{font-size:.8rem;color:var(--muted);margin-top:6px}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 14px;position:sticky;top:8px;z-index:5}
+.tabs button{margin:0;padding:9px 2px;background:transparent;color:var(--muted);font-size:.82rem}
+.tabs button.on{background:var(--accent);color:var(--accent-ink)}
+.big3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.b3{background:var(--soft);border-radius:12px;padding:10px;text-align:center}
+.b3 .k{font-size:.75rem;color:var(--muted)}
+.b3 .g{font-size:1.8rem;line-height:1.2}
+.b3 .v{font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.gl{font-size:1.15rem;width:1.6em}
+.r{color:var(--hard);font-size:.75rem;font-weight:700}
+.pill{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--ink);margin:2px 4px 2px 0}
+.asp{border-left:4px solid var(--line);padding:8px 10px;margin:8px 0;border-radius:6px;background:var(--soft)}
+.asp.easy{border-color:var(--good)} .asp.hard{border-color:var(--hard)} .asp.conj{border-color:var(--accent)}
+.asp b{display:block}
+.asp small{color:var(--muted)}
+.bars div{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:.9rem}
+.bars span.n{width:56px;color:var(--muted);flex:none}
+.bars i{display:block;height:10px;border-radius:5px}
+.hidden{display:none !important}
+.moon{font-size:2.6rem;line-height:1}
+.flex{display:flex;gap:12px;align-items:center}
+.small{font-size:.85rem;color:var(--muted)}
+.foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
+.nav{display:flex;gap:8px;align-items:center;padding:10px}
+.nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
+.nav input,.nav .lbl{flex:1;text-align:center;font-weight:600}
+.ghost{background:var(--soft);color:var(--ink);margin:0 0 14px}
+.chips{display:flex;gap:6px;margin:-4px 0 14px}
+.chips button{margin:0;padding:8px 4px;font-size:.85rem;background:var(--soft);color:var(--ink)}
+.chips button.on{background:var(--accent);color:var(--accent-ink)}
+/* glance */
+.ga{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center}
+.ga .lab{font-weight:600}
+.dots{display:flex;gap:4px}
+.dots i{width:16px;height:16px;border-radius:50%;background:var(--mid)}
+.dots.s4 i.f,.dots.s5 i.f{background:var(--good)}
+.dots.s3 i.f{background:var(--air)}
+.dots.s1 i.f,.dots.s2 i.f{background:var(--hard)}
+.ga .why{grid-column:2;font-size:.8rem;color:var(--muted);margin:-2px 0 6px}
+.hours{display:grid;grid-template-columns:repeat(18,1fr);gap:2px;margin:12px 0 2px}
+.hours i{height:26px;border-radius:4px;background:var(--mid)}
+.hours i.g{background:var(--good)} .hours i.h{background:var(--hard)}
+.hours i.now{outline:2px solid var(--ink);outline-offset:1px}
+.hlab{display:grid;grid-template-columns:repeat(6,1fr);font-size:.7rem;color:var(--muted)}
+/* events */
+.ev{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.ev:last-child{border-bottom:0}
+.ev .d{width:52px;flex:none;text-align:center;line-height:1.15}
+.ev .d b{display:block;font-size:1.15rem}
+.ev .d span{font-size:.7rem;color:var(--muted);text-transform:uppercase}
+.ev .t b{display:block;font-size:.93rem}
+.ev .t div{font-size:.85rem;color:var(--muted)}
+.ev.easy .d b{color:var(--good)} .ev.hard .d b{color:var(--hard)} .ev.big .d b{color:var(--accent)}
+.mbars{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;align-items:end;height:90px;margin-top:8px}
+.mbars div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:.65rem;color:var(--muted)}
+.mbars i{display:block;width:100%;border-radius:4px 4px 0 0;background:var(--accent);margin-bottom:3px}
+.mbars i.top{background:var(--good)} .mbars i.low{background:var(--hard)}
+.lead{font-size:1rem;margin:0}
+.daylist{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.daylist span{padding:4px 10px;border-radius:99px;font-size:.85rem;font-weight:600}
+.daylist.good span{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.daylist.bad span{background:color-mix(in srgb,var(--hard) 18%,transparent);color:var(--hard)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>✦ Horoscope Tracker</h1>
+  <p class="sub">Your birth chart and the sky for any day, month or year, in plain English.</p>
+
+  <div class="card" id="formCard">
+    <h2>Your birth details</h2>
+    <label for="name">Name (optional)</label>
+    <input id="name" placeholder="Your name">
+    <div class="row">
+      <div><label for="bdate">Birth date</label><input id="bdate" type="date" value="1990-01-01"></div>
+      <div><label for="btime">Birth time</label><input id="btime" type="time" value="12:00"></div>
+    </div>
+    <label for="city">Birth city</label>
+    <select id="city"></select>
+    <div class="row3">
+      <div><label for="lat">Latitude</label><input id="lat" inputmode="decimal" value="33.89"></div>
+      <div><label for="lon">Longitude</label><input id="lon" inputmode="decimal" value="35.50"></div>
+      <div><label for="tz">UTC offset</label><input id="tz" inputmode="decimal" value="2"></div>
+    </div>
+    <p class="hint">UTC offset at the moment you were born. Add +1 if daylight saving time was on (example: New York summer = −4, winter = −5). Without an exact time, the Rising sign and Moon can be off.</p>
+    <button id="go">Show my chart</button>
+  </div>
+
+  <div id="out" class="hidden">
+    <div class="tabs">
+      <button data-t="today" class="on">Day</button>
+      <button data-t="month">Month</button>
+      <button data-t="year">Year</button>
+      <button data-t="chart">Chart</button>
+      <button data-t="learn">Learn</button>
+    </div>
+
+    <!-- DAY -->
+    <section id="t-today">
+      <div class="card nav">
+        <button id="prevDay" aria-label="Previous day">‹</button>
+        <input id="viewDate" type="date" aria-label="Pick a day">
+        <button id="nextDay" aria-label="Next day">›</button>
+      </div>
+      <button id="todayBtn" class="ghost hidden">↺ Back to today</button>
+      <div class="card">
+        <div class="flex">
+          <div class="moon" id="moonIcon">☾</div>
+          <div><b id="todayTitle"></b><div class="small" id="moonText"></div></div>
+        </div>
+        <p id="dailyNote" style="margin:12px 0 0"></p>
+      </div>
+      <div class="card">
+        <h2>Day at a glance</h2>
+        <div class="ga" id="glance"></div>
+        <h3>Best hours</h3>
+        <div class="hours" id="hours"></div>
+        <div class="hlab"><span>6am</span><span>9am</span><span>12pm</span><span>3pm</span><span>6pm</span><span>9pm</span></div>
+        <p id="hoursText" class="small" style="margin:8px 0 0"></p>
+      </div>
+      <div class="card">
+        <h2>Next 30 days</h2>
+        <div id="next30"></div>
+      </div>
+      <div class="card">
+        <h2>Today's sky vs. your chart</h2>
+        <p class="small" style="margin-top:-6px">How the planets line up with your birth planets (transits).</p>
+        <div id="transits"></div>
+      </div>
+      <div class="card">
+        <h2>Planets on this day</h2>
+        <table id="nowTable"></table>
+      </div>
+    </section>
+
+    <!-- MONTH -->
+    <section id="t-month" class="hidden">
+      <div class="card nav">
+        <button id="prevMonth" aria-label="Previous month">‹</button>
+        <div class="lbl" id="monthLbl"></div>
+        <button id="nextMonth" aria-label="Next month">›</button>
+      </div>
+      <div class="card"><h2>Month forecast</h2><p class="lead" id="monthSummary"></p></div>
+      <div class="card"><h2>Life areas this month</h2><div class="ga" id="monthAreas"></div></div>
+      <div class="card">
+        <h2>Best &amp; careful days</h2>
+        <h3 style="margin-top:0">Best days</h3><div class="daylist good" id="bestDays"></div>
+        <h3>Careful days</h3><div class="daylist bad" id="badDays"></div>
+      </div>
+      <div class="card"><h2>Big influences all month</h2><div id="monthSlow"></div></div>
+      <div class="card"><h2>Key dates</h2><div id="monthEvents"></div></div>
+    </section>
+
+    <!-- YEAR -->
+    <section id="t-year" class="hidden">
+      <div class="card nav">
+        <button id="prevYear" aria-label="Previous year">‹</button>
+        <div class="lbl" id="yearLbl"></div>
+        <button id="nextYear" aria-label="Next year">›</button>
+      </div>
+      <div class="chips" id="yearChips"></div>
+      <div class="card"><h2 id="yearHead">Year forecast</h2><p class="lead" id="yearSummary"></p></div>
+      <div class="card"><h2>Your theme of the year</h2><div id="yearTheme"></div></div>
+      <div class="card">
+        <h2>Month by month</h2>
+        <p class="small" style="margin:-6px 0 0">Average daily score. Green bars are the strongest months and orange bars are the hardest.</p>
+        <div class="mbars" id="yearBars"></div>
+      </div>
+      <div class="card"><h2>Major transits</h2><p class="small" style="margin-top:-6px">Slow planets touching your chart. These shape the whole year.</p><div id="yearMajor"></div></div>
+      <div class="card"><h2>Eclipses &amp; retrogrades</h2><div id="yearEcl"></div></div>
+    </section>
+
+    <!-- CHART -->
+    <section id="t-chart" class="hidden">
+      <div class="card">
+        <h2 id="chartTitle">Your Big Three</h2>
+        <div class="big3" id="big3"></div>
+        <p id="big3Text" style="margin:12px 0 0"></p>
+      </div>
+      <div class="card" style="text-align:center">
+        <svg id="wheel" viewBox="0 0 340 340" width="100%" style="max-width:420px"></svg>
+      </div>
+      <div class="card">
+        <h2>Planet placements</h2>
+        <table id="natalTable"></table>
+      </div>
+      <div class="card">
+        <h2>Element &amp; mode balance</h2>
+        <div class="bars" id="bars"></div>
+        <p id="balanceText" class="small"></p>
+      </div>
+    </section>
+
+    <!-- LEARN -->
+    <section id="t-learn" class="hidden">
+      <div class="card">
+        <h2>How to read this</h2>
+        <p><b>Sun</b> is your core self. <b>Moon</b> is your emotions and what makes you feel safe. <b>Rising (Ascendant)</b> is the sign that was rising on the eastern horizon when you were born. It shapes your first impression and outward style.</p>
+        <p><b>Houses</b> are the 12 areas of life (money, home, work, love and so on). This page uses <i>whole-sign houses</i>: your Rising sign is your 1st house, the next sign is your 2nd, and so on.</p>
+        <p><b>Transits</b> are today's planets making angles to your birth planets:</p>
+        <p><span class="pill">☌ Conjunction 0°</span> merging, emphasis<br>
+           <span class="pill">⚹ Sextile 60°</span> opportunity<br>
+           <span class="pill">□ Square 90°</span> tension, push to act<br>
+           <span class="pill">△ Trine 120°</span> easy flow<br>
+           <span class="pill">☍ Opposition 180°</span> balance, other people</p>
+        <p><b>℞ Retrograde</b> means a planet looks like it's moving backward from Earth. Read it as a time to review and redo, not to launch.</p>
+        <p><b>Theme of the year</b> uses <i>annual profections</i>, an old technique. Each birthday moves your focus one house forward, and the planet that rules that house becomes your "year planet."</p>
+        <p><b>Eclipses</b> are extra-strong New and Full Moons that happen near the Moon's nodes. They often mark turning points in the house where they fall.</p>
+      </div>
+      <div class="card">
+        <h2>How the scores work</h2>
+        <p class="small">Each day the page checks every planet against every point in your chart. Easy angles add points and hard angles take points away. Venus and Jupiter count as helpful, and Mars and Saturn as challenging. Each life area only counts the planets and houses that rule it (for example, Money = Venus, Jupiter, and your 2nd and 8th houses). The result is scaled from 1 to 5. "Best hours" follows the Moon, which moves about 1° every 2 hours, as it lines up with your chart.</p>
+      </div>
+      <div class="card">
+        <h2>Under the hood (IT notes)</h2>
+        <p class="small">Everything runs on your phone. Nothing is sent anywhere, and your details are saved only in this browser.</p>
+        <ul class="small">
+          <li>Birth time is converted to UTC, then to a <b>Julian Day</b> number, the continuous day count astronomers use.</li>
+          <li>Sun &amp; Moon use low-precision formulas from Jean Meeus's <i>Astronomical Algorithms</i> (Sun within ~0.01°, Moon within ~1°, so Moon phase times are accurate to about ±2 hours).</li>
+          <li>The planets use NASA JPL Keplerian orbital elements. The code solves Kepler's equation, then subtracts Earth's position to get the view from Earth.</li>
+          <li>Event dates come from scanning the sky one day at a time. New and Full Moon times are then narrowed down by bisection.</li>
+          <li>The zodiac is tropical (Western astrology), with signs every 30° starting at 0° Aries.</li>
+        </ul>
+      </div>
+    </section>
+
+    <button id="edit" style="background:var(--soft);color:var(--ink)">Edit birth details</button>
+  </div>
+
+  <p class="foot">For reflection and fun. The astronomy is real; how you read it is up to you.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const V = "︎"; // text presentation (avoid iOS emoji glyphs)
+const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+const SG = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"].map(s=>s+V);
+const RULER = ["Mars","Venus","Mercury","Moon","Sun","Mercury","Venus","Mars","Jupiter","Saturn","Saturn","Jupiter"];
+const ELEM = ["fire","earth","air","water"];
+const MODE = ["Cardinal","Fixed","Mutable"];
+const HOUSE_TXT = ["you, your body and image","money and what you value","communication, learning and short trips","home and family","fun, romance, creativity and kids","daily work, routine and health","partners, clients and contracts","shared money, debts and deep change","travel, study and big beliefs","career and reputation","friends, networks and goals","rest, endings and behind-the-scenes work"];
+const SIGN_KW = {
+  Aries:"bold, direct, a starter", Taurus:"steady, sensual, loyal", Gemini:"curious, quick, talkative",
+  Cancer:"caring, protective, intuitive", Leo:"warm, proud, creative", Virgo:"precise, helpful, analytical",
+  Libra:"fair, social, harmony-seeking", Scorpio:"intense, private, transformative", Sagittarius:"free, honest, adventurous",
+  Capricorn:"ambitious, disciplined, practical", Aquarius:"original, independent, future-minded", Pisces:"dreamy, compassionate, artistic"
+};
+const MOON_SIGN_DAY = {
+  Aries:"Energy is fast. Start the task you've been putting off.",
+  Taurus:"Slow down and enjoy it. Good for money, food and comfort.",
+  Gemini:"Talk, text, learn. Good for emails and quick fixes.",
+  Cancer:"Home and family feel important. Look after yourself.",
+  Leo:"Be seen. Share your work and have some fun.",
+  Virgo:"Organize, clean up, debug. Small details pay off.",
+  Libra:"Teamwork and balance. Patch up or plan things with others.",
+  Scorpio:"Go deep. Research, focus, and keep secrets.",
+  Sagittarius:"Think big. Travel, study, or try something new.",
+  Capricorn:"Get serious about goals. Plan and build structure.",
+  Aquarius:"Try new tech and new ideas. Connect with your network.",
+  Pisces:"Intuition is high. Rest, create, and keep boundaries."
+};
+const PL = [
+  {k:"Sun",g:"☉",m:"identity, vitality"},
+  {k:"Moon",g:"☽",m:"emotions, needs"},
+  {k:"Mercury",g:"☿",m:"thinking, communication"},
+  {k:"Venus",g:"♀",m:"love, money, taste"},
+  {k:"Mars",g:"♂",m:"drive, action"},
+  {k:"Jupiter",g:"♃",m:"growth, luck"},
+  {k:"Saturn",g:"♄",m:"discipline, limits"},
+  {k:"Uranus",g:"♅",m:"change, surprise"},
+  {k:"Neptune",g:"♆",m:"dreams, intuition"}
+];
+PL.forEach(p=>p.g+=V);
+const GLYPH = Object.fromEntries(PL.map(p=>[p.k,p.g]));
+
+// ---------- Astronomy ----------
+const D2R=Math.PI/180, R2D=180/Math.PI, DAY=86400000;
+const norm=a=>((a%360)+360)%360;
+const sin=d=>Math.sin(d*D2R), cos=d=>Math.cos(d*D2R), tan=d=>Math.tan(d*D2R);
+const jdFromUTCms = ms => ms/DAY + 2440587.5;
+const msFromJd = jd => (jd-2440587.5)*DAY;
+const sep=(a,b)=>{let d=Math.abs(norm(a)-norm(b)); return d>180?360-d:d;};
+
+function sunLon(jd){
+  const d=jd-2451545.0, L=280.460+0.9856474*d, g=357.528+0.9856003*d;
+  return norm(L+1.915*sin(g)+0.020*sin(2*g));
+}
+function moonLon(jd){
+  const d=jd-2451545.0;
+  const L=218.316+13.176396*d, M=134.963+13.064993*d, F=93.272+13.229350*d,
+        D=297.850+12.190749*d, Ms=357.529+0.98560028*d;
+  return norm(L+6.289*sin(M)+1.274*sin(2*D-M)+0.658*sin(2*D)+0.214*sin(2*M)
+              -0.186*sin(Ms)-0.114*sin(2*F)+0.059*sin(2*D-2*M)+0.057*sin(2*D-Ms-M)
+              +0.053*sin(2*D+M)+0.046*sin(2*D-Ms)-0.041*sin(Ms-M));
+}
+const nodeLon = jd => norm(125.04452-1934.136261*(jd-2451545)/36525);
+// JPL approximate elements (J2000): a, e, I, L, varpi, Omega + per-century rates
+const EL = {
+  Mercury:[0.38709927,0.20563593,7.00497902,252.25032350,77.45779628,48.33076593, 0.00000037,0.00001906,-0.00594749,149472.67411175,0.16047689,-0.12534081],
+  Venus:[0.72333566,0.00677672,3.39467605,181.97909950,131.60246718,76.67984255, 0.00000390,-0.00004107,-0.00078890,58517.81538729,0.00268329,-0.27769418],
+  Earth:[1.00000261,0.01671123,-0.00001531,100.46457166,102.93768193,0.0, 0.00000562,-0.00004392,-0.01294668,35999.37244981,0.32327364,0.0],
+  Mars:[1.52371034,0.09339410,1.84969142,-4.55343205,-23.94362959,49.55953891, 0.00001847,0.00007882,-0.00813131,19140.30268499,0.44441088,-0.29257343],
+  Jupiter:[5.20288700,0.04838624,1.30439695,34.39644051,14.72847983,100.47390909, -0.00011607,-0.00013253,-0.00183714,3034.74612775,0.21252668,0.20469106],
+  Saturn:[9.53667594,0.05386179,2.48599187,49.95424423,92.59887831,113.66242448, -0.00125060,-0.00050991,0.00193609,1222.49362201,-0.41897216,-0.28867794],
+  Uranus:[19.18916464,0.04725744,0.77263783,313.23810451,170.95427630,74.01692503, -0.00196176,-0.00004397,-0.00242939,428.48202785,0.40805281,0.04240589],
+  Neptune:[30.06992276,0.00859048,1.77004347,-55.12002969,44.96476227,131.78422574, 0.00026291,0.00005105,0.00035372,218.45945325,-0.32241464,-0.00508664]
+};
+function helio(name,T){
+  const e0=EL[name], v=i=>e0[i]+e0[i+6]*T;
+  const a=v(0), e=v(1), I=v(2), L=v(3), wb=v(4), Om=v(5);
+  const w=wb-Om; let M=norm(L-wb); if(M>180) M-=360;
+  let E=M+R2D*e*sin(M);
+  for(let i=0;i<10;i++){ const dM=M-(E-R2D*e*sin(E)); E+=dM/(1-e*cos(E)); }
+  const xp=a*(cos(E)-e), yp=a*Math.sqrt(1-e*e)*sin(E);
+  return {
+    x:(cos(w)*cos(Om)-sin(w)*sin(Om)*cos(I))*xp+(-sin(w)*cos(Om)-cos(w)*sin(Om)*cos(I))*yp,
+    y:(cos(w)*sin(Om)+sin(w)*cos(Om)*cos(I))*xp+(-sin(w)*sin(Om)+cos(w)*cos(Om)*cos(I))*yp
+  };
+}
+function planetLon(name,jd){
+  const T=(jd-2451545)/36525, p=helio(name,T), E=helio("Earth",T);
+  return norm(Math.atan2(p.y-E.y,p.x-E.x)*R2D+1.3970*T); // precess J2000 -> of date
+}
+function lonOf(k,jd){ return k==="Sun"?sunLon(jd):k==="Moon"?moonLon(jd):planetLon(k,jd); }
+function positions(jd){
+  return PL.map(p=>{
+    const lon=lonOf(p.k,jd);
+    let retro=false;
+    if(p.k!=="Sun"&&p.k!=="Moon"){ let dl=lonOf(p.k,jd+1)-lon; if(dl>180)dl-=360; if(dl<-180)dl+=360; retro=dl<0; }
+    return {...p,lon,retro};
+  });
+}
+function angles(jd,lat,lonE){
+  const d=jd-2451545.0, eps=23.4393-0.0000004*d;
+  const ramc=norm(280.46061837+360.98564736629*d+lonE);
+  const asc=norm(Math.atan2(cos(ramc),-(sin(ramc)*cos(eps)+tan(lat)*sin(eps)))*R2D);
+  const mc=norm(Math.atan2(sin(ramc),cos(ramc)*cos(eps))*R2D);
+  return {asc,mc};
+}
+const signIdx=l=>Math.floor(norm(l)/30);
+const fmtDeg=l=>{const s=signIdx(l), d=norm(l)-s*30; const deg=Math.floor(d), min=Math.floor((d-deg)*60); return `${deg}°${String(min).padStart(2,"0")}′ ${SIGNS[s]}`;};
+const ord=n=>n+(n===1?"st":n===2?"nd":n===3?"rd":"th");
+
+// ---------- Aspects & meanings ----------
+const ASP=[
+  {n:"Conjunction",a:0,o:8,g:"☌",t:"conj",m:"turns up the volume on"},
+  {n:"Sextile",a:60,o:4,g:"⚹",t:"easy",m:"opens a door for"},
+  {n:"Square",a:90,o:6,g:"□",t:"hard",m:"puts pressure on"},
+  {n:"Trine",a:120,o:6,g:"△",t:"easy",m:"supports"},
+  {n:"Opposition",a:180,o:8,g:"☍",t:"hard",m:"asks for balance with"}
+];
+function aspectOf(l1,l2,maxOrb){
+  const d=sep(l1,l2);
+  for(const a of ASP){ const o=Math.abs(d-a.a); if(o<=Math.min(a.o,maxOrb)) return {a,orb:o}; }
+  return null;
+}
+const TONE={Sun:"attention and energy",Moon:"feelings and moods",Mercury:"talks, paperwork and ideas",Venus:"pleasure, love and money",Mars:"drive, heat and possible conflict",Jupiter:"growth and opportunity",Saturn:"tests, hard work and lasting results",Uranus:"surprises and sudden change",Neptune:"inspiration, and also some confusion"};
+const ADV={conj:"A new chapter starts here.",easy:"Use it: say yes to chances.",hard:"Go slow, and fix what's weak."};
+const interp=(t,a,n)=>`${t} brings ${TONE[t]} to your ${n.k} (${n.m}). ${ADV[a.t]}`;
+const ACTION={Sun:"Focus moves to",Mercury:"Thinking and talks turn to",Venus:"Love and money flow toward",Mars:"Energy and drive push into",Jupiter:"About a year of growth in",Saturn:"2–3 years of hard work that pays off in",Uranus:"Years of change and freedom in",Neptune:"A long dreamy, inspired phase in"};
+const NATURE={Sun:.5,Moon:.5,Mercury:.3,Venus:1,Mars:-1,Jupiter:1,Saturn:-1,Uranus:-.5,Neptune:-.3,Ascendant:.5,Midheaven:.5};
+const WT={Sun:.8,Moon:.7,Mercury:.6,Venus:.8,Mars:1,Jupiter:1.2,Saturn:1.3,Uranus:1.1,Neptune:.9};
+const SCORE_ORB={Sun:4,Moon:6,Mercury:3,Venus:3,Mars:3,Jupiter:2.5,Saturn:2.5,Uranus:2,Neptune:2};
+function aspVal(t,a){
+  if(a.t==="conj") return NATURE[t];
+  if(a.t==="hard") return NATURE[t]>=1?-.4:-1;
+  return NATURE[t]<=-1?.6:1;
+}
+
+// ---------- Chart state ----------
+let F=null, NAT=null, viewMs=null, monthSel=null, yearSel=null;
+const house=lon=>(signIdx(lon)-NAT.ascSign+12)%12+1;
+const ruler=h=>RULER[(NAT.ascSign+h-1)%12];
+
+function buildNatal(f){
+  const [Y,Mo,D]=f.date.split("-").map(Number), [h,mi]=f.time.split(":").map(Number);
+  const jd=jdFromUTCms(Date.UTC(Y,Mo-1,D,h,mi)-f.tz*3600000);
+  const planets=positions(jd), {asc,mc}=angles(jd,f.lat,f.lon);
+  const pts=planets.concat([
+    {k:"Ascendant",g:"AC",m:"image, body, first impressions",lon:asc},
+    {k:"Midheaven",g:"MC",m:"career, reputation",lon:mc}
+  ]);
+  return {jd,planets,asc,mc,pts,ascSign:signIdx(asc),by:Y,bm:Mo-1,bd:D};
+}
+
+// ---------- Scores ----------
+function areaSets(){
+  return {
+    Work:{ic:"💼",nat:["Sun","Saturn","Mercury","Midheaven","Mars",ruler(6),ruler(10)],tr:["Saturn","Mercury","Mars","Sun","Jupiter"],houses:[6,10]},
+    Money:{ic:"💰",nat:["Venus","Jupiter",ruler(2),ruler(8)],tr:["Venus","Jupiter"],houses:[2,8]},
+    Love:{ic:"❤️",nat:["Venus","Moon","Mars",ruler(7),ruler(5)],tr:["Venus","Mars","Moon"],houses:[5,7]},
+    Health:{ic:"🌿",nat:["Sun","Moon","Mars","Ascendant",ruler(1)],tr:["Mars","Sun","Moon","Saturn"],houses:[1,6]}
+  };
+}
+function scoresAt(jd,tr){
+  tr=tr||positions(jd);
+  const S=areaSets(), tot={}, why={};
+  for(const k in S){tot[k]=0;why[k]=[];}
+  tr.forEach(t=>NAT.pts.forEach(n=>{
+    const x=aspectOf(t.lon,n.lon,SCORE_ORB[t.k]); if(!x) return;
+    const v=aspVal(t.k,x.a)*WT[t.k]*(1-.6*x.orb/SCORE_ORB[t.k]);
+    for(const k in S){
+      const f=S[k].nat.includes(n.k)?1:S[k].tr.includes(t.k)?.4:0;
+      if(f){tot[k]+=v*f; why[k].push({t,n,a:x.a,v:v*f});}
+    }
+  }));
+  const mh=house(tr[1].lon);
+  for(const k in S) if(S[k].houses.includes(mh)) tot[k]+=.4;
+  tr.forEach(t=>{ if(!t.retro) return;
+    if(t.k==="Mercury"){tot.Work-=.4;}
+    if(t.k==="Venus"){tot.Love-=.3;tot.Money-=.3;} });
+  const sc={}; let all=0;
+  for(const k in tot){ sc[k]=Math.max(1,Math.min(5,Math.round(3+tot[k]*.7))); all+=tot[k]; }
+  return {sc,tot,why,all:all/4};
+}
+const VERDICT=["","Tough. Keep it simple.","Mixed. Be careful.","Normal and steady.","Good. Move forward.","Excellent. Go for it."];
+function dotsHtml(s){ let h=`<div class="dots s${s}" aria-label="${s} of 5">`; for(let i=1;i<=5;i++) h+=`<i class="${i<=s?"f":""}"></i>`; return h+"</div>"; }
+
+// ---------- Best hours (Moon timing) ----------
+function hourly(y,m,d,sky){
+  const out=[];
+  for(let h=6;h<=23;h++){
+    const jd=jdFromUTCms(new Date(y,m,d,h,30).getTime()), ml=moonLon(jd);
+    let v=0, best=null;
+    const add=(n,val,label)=>{ v+=val; if(!best||Math.abs(val)>Math.abs(best.val)) best={val,label}; };
+    NAT.pts.forEach(n=>{ const x=aspectOf(ml,n.lon,4); if(!x) return;
+      let val=x.a.t==="conj"?NATURE[n.k]:(x.a.t==="easy"?1:-1);
+      if(x.a.t==="easy"&&["Venus","Jupiter","Sun"].includes(n.k)) val*=1.3;
+      if(x.a.t==="hard"&&["Mars","Saturn"].includes(n.k)) val*=1.3;
+      add(n,val,`Moon ${x.a.n.toLowerCase()} your ${n.k}`); });
+    sky.forEach(p=>{ if(p.k==="Moon") return; const x=aspectOf(ml,p.lon,4); if(!x) return;
+      const val=.6*(x.a.t==="conj"?NATURE[p.k]:aspVal(p.k,x.a));
+      add(p,val,`Moon ${x.a.n.toLowerCase()} ${p.k} in the sky`); });
+    out.push({h,v,best});
+  }
+  return out;
+}
+const fmtH=h=>`${h%12||12}${h<12?"am":"pm"}`;
+function window_(hrs,pred){ let best=null,cur=null;
+  hrs.forEach((x,i)=>{ if(pred(x)){ if(!cur) cur={s:i,e:i}; else cur.e=i; if(!best||cur.e-cur.s>best.e-best.s) best={...cur}; } else cur=null; });
+  return best; }
+
+// ---------- Event scanning ----------
+function daysFrom(y,m,d,n){ // n days + one padding day on each side
+  const arr=[];
+  for(let i=-1;i<=n;i++){ const day=new Date(y,m,d+i,12), jd=jdFromUTCms(day.getTime()); arr.push({day,jd,pos:positions(jd)}); }
+  return arr;
+}
+function refinePhase(j0,j1,target){
+  const f=j=>{let x=norm(moonLon(j)-sunLon(j))-target; if(x>180)x-=360; if(x<-180)x+=360; return x;};
+  for(let i=0;i<30;i++){ const jm=(j0+j1)/2; if(f(j0)*f(jm)<=0) j1=jm; else j0=jm; }
+  return (j0+j1)/2;
+}
+function scanEvents(arr,opts){
+  opts=opts||{};
+  const ev=[], start=arr[1].day.getTime()-DAY/2, end=arr[arr.length-1].day.getTime()-DAY/2;
+  const inR=ms=>ms>=start&&ms<end;
+  for(let i=1;i<arr.length;i++){
+    const A=arr[i-1], B=arr[i];
+    const eA=norm(A.pos[1].lon-A.pos[0].lon), eB=norm(B.pos[1].lon-B.pos[0].lon);
+    [[0,eA>270&&eB<90],[180,eA<180&&eB>=180]].forEach(([tg,hit])=>{
+      if(!hit) return;
+      const jd=refinePhase(A.jd,B.jd,tg), ms=msFromJd(jd); if(!inR(ms)) return;
+      const ml=moonLon(jd), nd=nodeLon(jd), dn=Math.min(sep(ml,nd),sep(ml,nd+180));
+      const ecl=tg===0?dn<15.4:dn<11.8, h=house(ml), full=tg===180;
+      ev.push({ms,kind:"big",ic:full?"🌕":"🌑",ecl,
+        title:`${ecl?(full?"Lunar eclipse":"Solar eclipse"):(full?"Full Moon":"New Moon")} in ${SIGNS[signIdx(ml)]}`,
+        text:`Your ${ord(h)} house: ${HOUSE_TXT[h-1]}. ${full?"Results show up and things come to a head. Finish and let go.":"A good time to set an intention or start something."}${ecl?" This is an eclipse, so it's stronger than usual and can be a turning point.":""}`,
+        time:true});
+    });
+    if(i>=arr.length-1) continue;
+    B.pos.forEach((p,j)=>{
+      if(p.k==="Moon") return; const q=A.pos[j], ms=B.day.getTime();
+      if(opts.slowOnly&&!["Jupiter","Saturn","Uranus","Neptune"].includes(p.k)&&!opts.stations) return;
+      if(signIdx(p.lon)!==signIdx(q.lon)&&(!opts.slowOnly||["Jupiter","Saturn","Uranus","Neptune"].includes(p.k))){
+        const h=house(p.lon);
+        ev.push({ms,kind:"",ic:p.g,p:p.k,type:"ingress",title:`${p.k} enters ${SIGNS[signIdx(p.lon)]}`,text:`${ACTION[p.k]} your ${ord(h)} house: ${HOUSE_TXT[h-1]}.`});
+      }
+      if(p.k!=="Sun"&&p.retro!==q.retro&&(!opts.slowOnly||["Mercury","Venus","Mars"].includes(p.k)||opts.stations==="all")){
+        ev.push({ms,kind:p.retro?"hard":"easy",ic:p.g,p:p.k,type:"station",retro:p.retro,title:`${p.k} turns ${p.retro?"retrograde ℞":"direct"}`,
+          text:p.retro?`Slow down on ${p.m}. Review, redo and back things up.`:`Green light again for ${p.m}.`});
+      }
+    });
+  }
+  if(!opts.slowOnly){
+    const FAST=["Sun","Mercury","Venus"], TP=["Sun","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune"];
+    TP.forEach(tk=>{ const j=PL.findIndex(p=>p.k===tk);
+      NAT.pts.forEach(n=>{
+        if(["Uranus","Neptune"].includes(n.k)) return;
+        if(FAST.includes(tk)&&!["Sun","Moon","Venus","Ascendant","Midheaven"].includes(n.k)) return;
+        ASP.forEach(a=>{
+          if(FAST.includes(tk)&&a.t==="easy"&&a.a===60) return;
+          const orb=arr.map(x=>Math.abs(sep(x.pos[j].lon,n.lon)-a.a));
+          for(let i=1;i<arr.length-1;i++){
+            if(orb[i]<=orb[i-1]&&orb[i]<orb[i+1]&&orb[i]<1){
+              ev.push({ms:arr[i].day.getTime(),kind:a.t==="conj"?"big":a.t,ic:GLYPH[tk],title:`${tk} ${a.g} ${a.n.toLowerCase()} your ${n.k}`,text:interp(tk,a,n)});
+            }
+          }
+        });
+      });
+    });
+  }
+  return ev.sort((a,b)=>a.ms-b.ms);
+}
+function evHtml(e){
+  const d=new Date(e.ms);
+  const sub=e.time?` · ~${d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}`:"";
+  return `<div class="ev ${e.kind}"><div class="d"><span>${d.toLocaleDateString(undefined,{month:"short"})}</span><b>${d.getDate()}</b><span>${d.toLocaleDateString(undefined,{weekday:"short"})}</span></div>
+    <div class="t"><b>${e.ic} ${e.title}</b><div>${e.text}${sub}</div></div></div>`;
+}
+
+// ---------- UI basics ----------
+const $=id=>document.getElementById(id);
+const CITIES=[
+  ["Custom…",null,null,null],["Beirut",33.89,35.50,2],["Damascus",33.51,36.29,3],["Amman",31.95,35.93,3],
+  ["Cairo",30.04,31.24,2],["Riyadh",24.71,46.68,3],["Dubai",25.20,55.27,4],["Istanbul",41.01,28.98,3],
+  ["London",51.51,-0.13,0],["Paris",48.86,2.35,1],["New York",40.71,-74.01,-5],["Chicago",41.88,-87.63,-6],
+  ["Houston",29.76,-95.37,-6],["Los Angeles",34.05,-118.24,-8],["Toronto",43.65,-79.38,-5],
+  ["Sydney",-33.87,151.21,10],["Mumbai",19.08,72.88,5.5]
+];
+CITIES.forEach((c,i)=>{const o=document.createElement("option");o.value=i;o.textContent=c[0]+(c[1]!=null?` (today UTC${c[3]>=0?"+":""}${c[3]})`:"");$("city").appendChild(o);});
+$("city").value=1;
+$("city").onchange=()=>{const c=CITIES[$("city").value]; if(c[1]!=null){$("lat").value=c[1];$("lon").value=c[2];$("tz").value=c[3];}};
+
+const KEY="horoscope-tracker-v1";
+function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){return null;}}
+
+let tab="today";
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  tab=b.dataset.t;
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));
+  ["today","month","year","chart","learn"].forEach(t=>$("t-"+t).classList.toggle("hidden",t!==tab));
+  if(tab==="month") renderMonth();
+  if(tab==="year") renderYear();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+$("edit").onclick=()=>{$("formCard").classList.remove("hidden");$("out").classList.add("hidden");window.scrollTo({top:0});};
+
+function readForm(){
+  return {name:$("name").value.trim(),date:$("bdate").value,time:$("btime").value||"12:00",
+    lat:parseFloat($("lat").value),lon:parseFloat($("lon").value),tz:parseFloat($("tz").value),city:$("city").value};
+}
+function fillForm(o){$("name").value=o.name||"";$("bdate").value=o.date;$("btime").value=o.time;$("lat").value=o.lat;$("lon").value=o.lon;$("tz").value=o.tz;$("city").value=o.city||0;}
+
+$("go").onclick=()=>{
+  const f=readForm();
+  if(!f.date||[f.lat,f.lon,f.tz].some(isNaN)){alert("Please fill in date, latitude, longitude and UTC offset.");return;}
+  save(f); start(f);
+};
+
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+function setView(ms){ viewMs=(ms!=null&&ymd(new Date(ms))===ymd(new Date()))?null:ms; renderDay(); }
+$("prevDay").onclick=()=>setView((viewMs??Date.now())-DAY);
+$("nextDay").onclick=()=>setView((viewMs??Date.now())+DAY);
+$("todayBtn").onclick=()=>setView(null);
+$("viewDate").onchange=e=>{ if(!e.target.value) return; const [y,m,d]=e.target.value.split("-").map(Number); setView(new Date(y,m-1,d,12).getTime()); };
+$("prevMonth").onclick=()=>{monthSel=new Date(monthSel.getFullYear(),monthSel.getMonth()-1,1);renderMonth();};
+$("nextMonth").onclick=()=>{monthSel=new Date(monthSel.getFullYear(),monthSel.getMonth()+1,1);renderMonth();};
+$("prevYear").onclick=()=>{yearSel--;renderYear();};
+$("nextYear").onclick=()=>{yearSel++;renderYear();};
+
+function start(f){
+  F=f; NAT=buildNatal(f);
+  const n=new Date(); monthSel=new Date(n.getFullYear(),n.getMonth(),1); yearSel=n.getFullYear();
+  renderChart(); renderDay();
+  if(tab==="month") renderMonth();
+  if(tab==="year") renderYear();
+  $("formCard").classList.add("hidden"); $("out").classList.remove("hidden");
+  window.scrollTo({top:0});
+}
+
+// ---------- Chart tab ----------
+const row=p=>`<tr><td class="gl">${p.g}</td><td><b>${p.k}</b>${p.retro?' <span class="r">℞</span>':""}<div class="small">${p.m}</div></td><td>${SG[signIdx(p.lon)]} ${fmtDeg(p.lon)}<div class="small">${ord(house(p.lon))} house</div></td></tr>`;
+function renderChart(){
+  const sun=NAT.planets[0], moon=NAT.planets[1];
+  const S=SIGNS[signIdx(sun.lon)], M=SIGNS[signIdx(moon.lon)], A=SIGNS[NAT.ascSign];
+  $("chartTitle").textContent=(F.name?F.name.split(" ")[0]+"'s":"Your")+" Big Three";
+  $("big3").innerHTML=[["Sun",sun.lon],["Moon",moon.lon],["Rising",NAT.asc]].map(([k,l])=>
+    `<div class="b3"><div class="k">${k}</div><div class="g">${SG[signIdx(l)]}</div><div class="v">${SIGNS[signIdx(l)]}</div></div>`).join("");
+  $("big3Text").innerHTML=`At your core you're <b>${SIGN_KW[S]}</b> (Sun in ${S}). Emotionally you need things that feel <b>${SIGN_KW[M]}</b> (Moon in ${M}). People first see you as <b>${SIGN_KW[A]}</b> (${A} Rising).`;
+  $("natalTable").innerHTML=NAT.pts.map(row).join("");
+
+  const el=[0,0,0,0], md=[0,0,0];
+  NAT.planets.slice(0,7).concat([{lon:NAT.asc}]).forEach(p=>{const s=signIdx(p.lon); el[s%4]++; md[s%3]++;});
+  const max=Math.max(...el,...md);
+  const bar=(n,v,c)=>`<div><span class="n">${n}</span><i style="width:${(v/max)*70}%;background:${c}"></i><span>${v}</span></div>`;
+  $("bars").innerHTML=ELEM.map((e,i)=>bar(e[0].toUpperCase()+e.slice(1),el[i],`var(--${e})`)).join("")+
+    MODE.map((m,i)=>bar(m,md[i],"var(--accent)")).join("");
+  const domE=ELEM[el.indexOf(Math.max(...el))], domM=MODE[md.indexOf(Math.max(...md))];
+  const ED={fire:"passion and action",earth:"practical results",air:"ideas and people",water:"feelings and intuition"};
+  const MD={Cardinal:"starting things",Fixed:"sticking with things",Mutable:"adapting to change"};
+  $("balanceText").textContent=`Mostly ${domE} (${ED[domE]}) and ${domM} (${MD[domM]}). Based on 7 planets plus the Ascendant.`;
+  drawWheel();
+}
+
+// ---------- Day tab ----------
+function renderDay(){
+  const viewNow=viewMs??Date.now(), vd=new Date(viewNow), jd=jdFromUTCms(viewNow), now=positions(jd);
+  $("viewDate").value=ymd(vd);
+  $("todayBtn").classList.toggle("hidden",viewMs==null);
+  $("todayTitle").textContent=(viewMs==null?"Today · ":"")+vd.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:viewMs==null?undefined:"numeric"});
+
+  const nm=now[1], elong=norm(nm.lon-now[0].lon);
+  const phases=[["🌑","New Moon","Set intentions."],["🌒","Waxing Crescent","Take first steps."],["🌓","First Quarter","Push through obstacles."],["🌔","Waxing Gibbous","Refine and adjust."],["🌕","Full Moon","Results show. Celebrate or release."],["🌖","Waning Gibbous","Share what you learned."],["🌗","Last Quarter","Clear out what's not working."],["🌘","Waning Crescent","Rest and reflect."]];
+  const ph=phases[Math.floor(norm(elong+22.5)/45)%8], illum=Math.round((1-cos(elong))/2*100), ms2=SIGNS[signIdx(nm.lon)], mh=house(nm.lon);
+  $("moonIcon").textContent=ph[0];
+  $("moonText").textContent=`${ph[1]} in ${ms2} · ${illum}% lit · your ${ord(mh)} house`;
+
+  // glance
+  const noon=jdFromUTCms(new Date(vd.getFullYear(),vd.getMonth(),vd.getDate(),12).getTime());
+  const S=areaSets(), r=scoresAt(noon);
+  $("glance").innerHTML=Object.keys(S).map(k=>{
+    const w=r.why[k].sort((a,b)=>Math.abs(b.v)-Math.abs(a.v))[0];
+    const reason=w?`${w.t.k} ${w.a.n.toLowerCase()} your ${w.n.k}`:"No strong aspects";
+    return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(r.sc[k])}<div class="why">${VERDICT[r.sc[k]]} ${reason}.</div>`;
+  }).join("");
+
+  const asp=topAspects(now);
+  const retros=now.filter(p=>p.retro).map(p=>p.k);
+  const bestArea=Object.keys(r.sc).sort((a,b)=>r.tot[b]-r.tot[a])[0];
+  let note=`<b>Moon in ${ms2}:</b> ${MOON_SIGN_DAY[ms2]} ${ph[2]}`;
+  note+=`<br><br><b>Strongest area:</b> ${bestArea}.`;
+  if(asp[0]){const a=asp[0]; note+=` <b>Main theme:</b> ${a.t.k} ${a.a.m} your ${a.n.k} (${a.n.m}).`;}
+  if(retros.length) note+=`<br><br><b>Retrograde:</b> ${retros.join(", ")}. Review before you commit${retros.includes("Mercury")?". Double-check tech, emails and contracts":""}.`;
+  $("dailyNote").innerHTML=note;
+
+  // hours
+  const hrs=hourly(vd.getFullYear(),vd.getMonth(),vd.getDate(),now);
+  const curH=viewMs==null?new Date().getHours():-1;
+  $("hours").innerHTML=hrs.map(x=>`<i class="${x.v>.3?"g":x.v<-.3?"h":""}${x.h===curH?" now":""}" title="${fmtH(x.h)}"></i>`).join("");
+  const maxV=Math.max(...hrs.map(x=>x.v)), minV=Math.min(...hrs.map(x=>x.v));
+  const good=maxV>.3?window_(hrs,x=>x.v>=maxV-.25):null, bad=minV<-.3?window_(hrs,x=>x.v<=minV+.25):null;
+  let ht="";
+  if(good){const b=hrs[good.s].best; ht+=`<b style="color:var(--good)">Best:</b> ${fmtH(hrs[good.s].h)}–${fmtH(hrs[good.e].h+1)}${b?` (${b.label})`:""}. Start important things, send messages, ask for what you want.<br>`;}
+  if(bad){const b=hrs[bad.s].best; ht+=`<b style="color:var(--hard)">Careful:</b> ${fmtH(hrs[bad.s].h)}–${fmtH(hrs[bad.e].h+1)}${b?` (${b.label})`:""}. Avoid arguments and big decisions.`;}
+  $("hoursText").innerHTML=ht||"A steady day with no strong highs or lows.";
+
+  // next 30 days
+  const ev=scanEvents(daysFrom(vd.getFullYear(),vd.getMonth(),vd.getDate(),30));
+  $("next30").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">Nothing major in the next 30 days.</p>`;
+
+  $("transits").innerHTML=asp.length?asp.map(x=>`<div class="asp ${x.a.t}"><b>${x.t.g} ${x.t.k} ${x.a.g} ${x.a.n.toLowerCase()} your ${x.n.g} ${x.n.k}</b>
+     ${interp(x.t.k,x.a,x.n)}<br><small>Orb ${x.orb.toFixed(1)}° · tighter = stronger</small></div>`).join("")
+     :`<p class="small">No major transits are close today. A quiet day.</p>`;
+  $("nowTable").innerHTML=now.map(row).join("");
+}
+function topAspects(now){
+  const out=[];
+  now.forEach(t=>NAT.pts.forEach(n=>{ const x=aspectOf(t.lon,n.lon,8); if(x) out.push({t,n,a:x.a,orb:x.orb}); }));
+  const w={Sun:3,Moon:1,Mercury:2,Venus:2,Mars:2,Jupiter:4,Saturn:5,Uranus:5,Neptune:5};
+  return out.sort((x,y)=>(x.orb-y.orb)-(w[x.t.k]-w[y.t.k])*0.3).slice(0,8);
+}
+
+// ---------- Month tab ----------
+const SLOW=["Jupiter","Saturn","Uranus","Neptune"];
+function slowContacts(arr,orbLim){
+  const map=new Map();
+  arr.forEach((x,i)=>{
+    x.pos.forEach(t=>{ if(!SLOW.includes(t.k)) return;
+      NAT.pts.forEach(n=>{ if(["Uranus","Neptune"].includes(n.k)&&t.k!=="Jupiter"&&t.k!=="Saturn") return;
+        const y=aspectOf(t.lon,n.lon,orbLim); if(!y) return;
+        const key=t.k+y.a.n+n.k; let o=map.get(key);
+        if(!o){o={t:t.k,a:y.a,n,min:99,days:[]};map.set(key,o);}
+        o.days.push(x.day.getTime()); if(y.orb<o.min){o.min=y.orb;o.peak=x.day.getTime();}
+      });
+    });
+  });
+  return [...map.values()];
+}
+function renderMonth(){
+  if(!NAT) return;
+  const y=monthSel.getFullYear(), m=monthSel.getMonth(), nd=new Date(y,m+1,0).getDate();
+  $("monthLbl").textContent=monthSel.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  const arr=daysFrom(y,m,1,nd), days=arr.slice(1,nd+1);
+  const scores=days.map(x=>({day:x.day,...scoresAt(x.jd,x.pos)}));
+  // areas
+  const S=areaSets();
+  $("monthAreas").innerHTML=Object.keys(S).map(k=>{
+    const avg=scores.reduce((s,x)=>s+x.sc[k],0)/scores.length, s=Math.max(1,Math.min(5,Math.round(avg)));
+    const top=scores.slice().sort((a,b)=>b.tot[k]-a.tot[k]).slice(0,2).map(x=>x.day.getDate()).sort((a,b)=>a-b);
+    return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(s)}<div class="why">${VERDICT[s]} Peak days: ${top.join(" & ")}.</div>`;
+  }).join("");
+  // best/bad days
+  const rank=scores.slice().sort((a,b)=>b.all-a.all);
+  const dl=list=>list.sort((a,b)=>a.day-b.day).map(x=>`<span>${x.day.toLocaleDateString(undefined,{weekday:"short",day:"numeric"})}</span>`).join("");
+  $("bestDays").innerHTML=dl(rank.slice(0,4)); $("badDays").innerHTML=dl(rank.slice(-3));
+  // slow
+  const slow=slowContacts(days,2.5).sort((a,b)=>a.min-b.min);
+  $("monthSlow").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} your ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>Strongest around ${new Date(s.peak).toLocaleDateString(undefined,{month:"short",day:"numeric"})}</small></div>`).join("")
+    :`<p class="small">No slow-planet contacts this month. Day-to-day energy matters more.</p>`;
+  // events
+  const ev=scanEvents(arr);
+  $("monthEvents").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">No key dates.</p>`;
+  // summary
+  const s0=signIdx(days[0].pos[0].lon), s1=signIdx(days[nd-1].pos[0].lon);
+  const moons=ev.filter(e=>e.ic==="🌑"||e.ic==="🌕");
+  const bestA=Object.keys(S).sort((a,b)=>scores.reduce((s,x)=>s+x.tot[b],0)-scores.reduce((s,x)=>s+x.tot[a],0));
+  let sum=`The Sun moves from ${SIGNS[s0]} into ${SIGNS[s1]}, which puts the spotlight on your ${ord(house(days[0].pos[0].lon))} house (${HOUSE_TXT[house(days[0].pos[0].lon)-1]})`;
+  if(s1!==s0) sum+=` and then your ${ord(house(days[nd-1].pos[0].lon))} house (${HOUSE_TXT[house(days[nd-1].pos[0].lon)-1]})`;
+  sum+=`. <b>Strongest area: ${bestA[0]}.</b> Weakest: ${bestA[3]}.`;
+  if(slow[0]) sum+=` The big story is <b>${slow[0].t} ${slow[0].a.n.toLowerCase()} your ${slow[0].n.k}</b>: ${TONE[slow[0].t]}.`;
+  const st=ev.filter(e=>e.type==="station");
+  if(st.length) sum+=` Watch for ${st.map(e=>e.title.replace(" ℞","")).join(", ")}.`;
+  if(moons.some(e=>e.ecl)) sum+=` <b>Eclipse month</b>, so expect a turning point.`;
+  sum+=` Best days: ${rank.slice(0,3).sort((a,b)=>a.day-b.day).map(x=>x.day.getDate()).join(", ")}.`;
+  $("monthSummary").innerHTML=sum;
+}
+
+// ---------- Year tab ----------
+function renderYear(){
+  if(!NAT) return;
+  const Y=yearSel, cy=new Date().getFullYear();
+  $("yearLbl").textContent=Y;
+  $("yearHead").textContent=Y<cy?`Looking back at ${Y}`:Y===cy?`Your year ${Y}`:`Looking ahead to ${Y}`;
+  $("yearChips").innerHTML=[cy-1,cy,cy+1].map(v=>`<button class="${v===Y?"on":""}" data-y="${v}">${v===cy-1?"Last year":v===cy?"This year":"Next year"}</button>`).join("");
+  $("yearChips").querySelectorAll("button").forEach(b=>b.onclick=()=>{yearSel=+b.dataset.y;renderYear();});
+
+  const nd=(new Date(Y+1,0,1)-new Date(Y,0,1))/DAY;
+  const arr=daysFrom(Y,0,1,nd), days=arr.slice(1,nd+1);
+  // month bars
+  const mAvg=Array.from({length:12},()=>({s:0,n:0}));
+  days.forEach(x=>{const r=scoresAt(x.jd,x.pos); const o=mAvg[x.day.getMonth()]; o.s+=r.all; o.n++;});
+  const vals=mAvg.map(o=>o.s/o.n), mn=Math.min(...vals), mx=Math.max(...vals);
+  const order=vals.map((v,i)=>i).sort((a,b)=>vals[b]-vals[a]);
+  const mName=i=>new Date(Y,i,1).toLocaleDateString(undefined,{month:"short"});
+  $("yearBars").innerHTML=vals.map((v,i)=>`<div><i class="${order.slice(0,3).includes(i)?"top":order.slice(-2).includes(i)?"low":""}" style="height:${15+70*(v-mn)/((mx-mn)||1)}%"></i>${mName(i)[0]}</div>`).join("");
+  // profection
+  const age=Y-NAT.by, h=age%12+1, sign=(NAT.ascSign+age)%12, lord=RULER[sign];
+  const prevH=(age-1+12)%12+1;
+  const lordNat=NAT.planets.find(p=>p.k===lord);
+  $("yearTheme").innerHTML=`<p style="margin:0"><b>From your birthday (${new Date(Y,NAT.bm,NAT.bd).toLocaleDateString(undefined,{month:"short",day:"numeric"})}), you turn ${age}.</b> That turns on your <b>${ord(h)} house: ${HOUSE_TXT[h-1]}</b>. Your <b>year planet is ${GLYPH[lord]} ${lord}</b> (${PL.find(p=>p.k===lord).m}), and its moves this year affect you most.</p>
+    <p class="small" style="margin:8px 0 0">Before your birthday, you're still in last year's theme: ${ord(prevH)} house, ${HOUSE_TXT[prevH-1]}. In your birth chart, ${lord} sits in your ${ord(house(lordNat.lon))} house (${HOUSE_TXT[house(lordNat.lon)-1]}), so that area gets pulled in too.</p>`;
+  // major transits with ranges
+  const slow=slowContacts(days,1.5).map(s=>{
+    const rng=[]; s.days.forEach(t=>{const l=rng[rng.length-1]; if(l&&t-l[1]<=2*DAY) l[1]=t; else rng.push([t,t]);});
+    return {...s,rng};
+  }).sort((a,b)=>a.days[0]-b.days[0]);
+  const fd=t=>new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  $("yearMajor").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} your ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>${s.rng.map(r=>r[0]===r[1]?fd(r[0]):`${fd(r[0])} – ${fd(r[1])}`).join(" · ")} · peak ${fd(s.peak)}</small></div>`).join("")
+    :`<p class="small">No exact slow-planet contacts this year. A steadier year.</p>`;
+  // eclipses, slow ingresses, retrogrades
+  const ev=scanEvents(arr,{slowOnly:true,stations:true});
+  const ecl=ev.filter(e=>e.ecl), ingr=ev.filter(e=>e.type==="ingress");
+  const retro={Mercury:[],Venus:[],Mars:[]};
+  ["Mercury","Venus","Mars"].forEach(k=>{
+    let open=days[0].pos.find(p=>p.k===k).retro?days[0].day.getTime():null;
+    ev.filter(e=>e.type==="station"&&e.p===k).forEach(e=>{ if(e.retro) open=e.ms; else { retro[k].push([open,e.ms]); open=null; } });
+    if(open!=null) retro[k].push([open,null]);
+  });
+  let eh="";
+  if(ecl.length) eh+=`<h3 style="margin-top:0">Eclipses: turning points</h3>`+ecl.map(evHtml).join("");
+  if(ingr.length) eh+=`<h3>Slow planets change sign</h3>`+ingr.map(evHtml).join("");
+  eh+=`<h3>Retrograde periods (slow down and review)</h3>`;
+  eh+=Object.entries(retro).map(([k,r])=>`<p style="margin:4px 0"><b>${GLYPH[k]} ${k} ℞</b> <span class="small">${r.length?r.map(([a,b])=>`${a==null||a===days[0].day.getTime()?"until":fd(a)+" –"} ${b?fd(b):"into next year"}`.replace("until until","until")).join(" · "):"none this year"}</span></p>`).join("");
+  $("yearEcl").innerHTML=eh;
+  // summary
+  const jup=days.map(x=>house(x.pos[5].lon)), sat=days.map(x=>house(x.pos[6].lon));
+  const uniq=a=>[...new Set(a)];
+  const top3=order.slice(0,3).sort((a,b)=>a-b).map(i=>new Date(Y,i,1).toLocaleDateString(undefined,{month:"long"}));
+  const low2=order.slice(-2).sort((a,b)=>a-b).map(i=>new Date(Y,i,1).toLocaleDateString(undefined,{month:"long"}));
+  let sum=`<b>Luck zone:</b> Jupiter moves through your ${uniq(jup).map(ord).join(" then ")} house (${uniq(jup).map(h=>HOUSE_TXT[h-1]).join("; then ")}). This is where life opens doors.<br><br>`;
+  sum+=`<b>Work-hard zone:</b> Saturn is in your ${uniq(sat).map(ord).join(" then ")} house (${uniq(sat).map(h=>HOUSE_TXT[h-1]).join("; then ")}). Build slowly here, because effort lasts.<br><br>`;
+  const big=slow.slice().sort((a,b)=>({Uranus:0,Neptune:1,Saturn:2,Jupiter:3}[a.t]-{Uranus:0,Neptune:1,Saturn:2,Jupiter:3}[b.t])||a.min-b.min)[0];
+  if(big) sum+=`<b>Biggest story:</b> ${big.t} ${big.a.n.toLowerCase()} your ${big.n.k}, meaning ${TONE[big.t]} around ${big.n.m}.<br><br>`;
+  sum+=`<b>Strongest months:</b> ${top3.join(", ")}. <b>Hardest:</b> ${low2.join(", ")}.`;
+  if(ecl.length) sum+=` ${ecl.length} eclipses mark turning points.`;
+  $("yearSummary").innerHTML=sum;
+}
+
+// ---------- Wheel ----------
+function drawWheel(){
+  const natal=NAT.planets, asc=NAT.asc;
+  const cx=170,cy=170,R=160,r1=130,r2=104;
+  const css=getComputedStyle(document.documentElement), c=n=>css.getPropertyValue(n).trim();
+  const pt=(lon,rad)=>{const a=(180+(lon-asc))*D2R; return [cx+rad*Math.cos(a), cy-rad*Math.sin(a)];};
+  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${c('--soft')}" stroke="${c('--line')}"/>
+         <circle cx="${cx}" cy="${cy}" r="${r1}" fill="${c('--card')}" stroke="${c('--line')}"/>
+         <circle cx="${cx}" cy="${cy}" r="40" fill="none" stroke="${c('--line')}"/>`;
+  for(let i=0;i<12;i++){
+    const [x1,y1]=pt(i*30,r1),[x2,y2]=pt(i*30,R),[tx,ty]=pt(i*30+15,(R+r1)/2);
+    s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c('--line')}"/>
+        <text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="central" font-size="15" fill="${c('--'+ELEM[i%4])}">${SG[i]}</text>`;
+  }
+  const [ax1,ay1]=pt(asc,40),[ax2,ay2]=pt(asc,R);
+  s+=`<line x1="${ax1}" y1="${ay1}" x2="${ax2}" y2="${ay2}" stroke="${c('--accent')}" stroke-width="2"/>
+      <text x="${ax2+4}" y="${ay2-6}" font-size="10" fill="${c('--accent')}">AC</text>`;
+  const ps=natal.map(p=>({...p,d:p.lon})).sort((a,b)=>a.lon-b.lon);
+  for(let k=0;k<3;k++) for(let i=1;i<ps.length;i++){ if(ps[i].d-ps[i-1].d<9) ps[i].d=ps[i-1].d+9; }
+  ps.forEach(p=>{
+    const [x,y]=pt(p.d,r2),[mx,my]=pt(p.lon,r1-2),[lx,ly]=pt(p.lon,r1-10);
+    s+=`<line x1="${mx}" y1="${my}" x2="${lx}" y2="${ly}" stroke="${c('--muted')}"/>
+        <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="16" fill="${c('--ink')}">${p.g}</text>`;
+  });
+  $("wheel").innerHTML=s;
+}
+
+window.HT={scoresAt:jd=>scoresAt(jd),jdFromUTCms};
+const saved=load();
+if(saved){fillForm(saved);start(saved);}
+})();
+</script>
+</body>
+</html>
