@@ -112,6 +112,18 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .stay .mb i{display:block;height:100%;background:var(--accent)}
 .stay .mb i.b{background:var(--hard)}
 .stay b.l{color:var(--hard)}
+.wgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;text-align:left}
+.wgrid svg{grid-column:1/-1;order:-1;margin:0 auto}
+.leg h3{margin:4px 0 6px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+.leg .it{display:flex;gap:7px;align-items:flex-start;padding:5px 6px;border-radius:8px;font-size:.74rem;line-height:1.3;cursor:pointer}
+.leg .it:nth-child(even){background:var(--soft)}
+.leg .it.sel{outline:2px solid var(--accent)}
+.leg .b{flex:none;min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;background:var(--accent);color:var(--accent-ink)}
+.leg .pg{flex:none;width:20px;text-align:center;font-size:1rem;line-height:1.1}
+.leg .tx b{display:block;font-size:.78rem;color:var(--ink)}
+.leg .tx span{color:var(--muted)}
+.leg .tx i{font-style:normal;color:var(--accent);font-weight:600}
+@media (min-width:700px){.leg .it{font-size:.8rem}}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -271,9 +283,13 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
       </div>
       <div class="card" style="text-align:center">
         <h2 style="text-align:left">Your birth chart wheel</h2>
-        <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. In <b>Planets now</b>, each planet shows its direction and its <b>time left</b> in that house (d = days, mo = months, y = years), and a table below shows the <b>total stay</b> next to the time left. <b>Tap any house</b> to see what it means for you.</p>
+        <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. In <b>Planets now</b>, each planet shows its direction and its <b>time left</b> in that house (d = days, mo = months, y = years), and a table below shows the <b>total stay</b> next to the time left. <b>Tap any house</b> on the wheel or in the lists below to see what it means for you.</p>
         <div class="chips" id="wheelMode"><button class="on" data-m="birth">My birth chart</button><button data-m="now">Planets now</button></div>
-        <svg id="wheel" viewBox="0 0 400 400" width="100%" style="max-width:480px;touch-action:manipulation" role="img" aria-label="Birth chart wheel"></svg>
+        <div class="wgrid">
+          <svg id="wheel" viewBox="0 0 400 400" width="100%" style="max-width:480px;touch-action:manipulation" role="img" aria-label="Birth chart wheel"></svg>
+          <div class="leg"><h3>Houses</h3><div id="legH"></div></div>
+          <div class="leg"><h3 id="legPT">Planets</h3><div id="legP"></div></div>
+        </div>
         <div id="stayBox" class="hidden"></div>
         <div id="houseInfo" class="hinfo"></div>
       </div>
@@ -966,6 +982,7 @@ function showHouse(h){
   selHouse=h;
   $("houseInfo").innerHTML=h?houseHtml(h,true):"";
   document.querySelectorAll("#wheel path[data-h]").forEach(e=>e.setAttribute("fill-opacity",+e.dataset.h===h?".22":"0"));
+  document.querySelectorAll("#legH .it").forEach(e=>e.classList.toggle("sel",+e.dataset.lh===h));
 }
 
 // ---------- Planet moves (current sky) ----------
@@ -1025,6 +1042,16 @@ document.querySelectorAll("#wheelMode button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#wheelMode button").forEach(x=>x.classList.toggle("on",x===b));
   drawWheel();
 });
+const HSHORT=["you, body, looks, first impressions","income, savings, possessions, values","talking, messages, learning, siblings, short trips","home, family, parents, roots","romance, fun, kids, hobbies, creativity","daily job, health, routines, coworkers","marriage, partners, clients, contracts","shared money, debts, taxes, intimacy, big changes","travel, study, beliefs, law, abroad","career, status, reputation, boss","friends, networks, groups, hopes","rest, secrets, spirituality, hidden things"];
+const PSHORT={Sun:"you, ego, energy, purpose",Moon:"feelings, needs, mom, home",Mercury:"mind, talking, tech, learning",Venus:"love, money, beauty, taste",Mars:"drive, action, anger, courage",Jupiter:"luck, growth, wisdom",Saturn:"duty, limits, hard work, time",Uranus:"change, freedom, surprises",Neptune:"dreams, intuition, spirituality",Ascendant:"first impression, style",Midheaven:"career goal, reputation"};
+function renderLegend(planets){
+  $("legH").innerHTML=Array.from({length:12},(_,i)=>{const h=i+1, si=(NAT.ascSign+i)%12;
+    return `<div class="it${selHouse===h?" sel":""}" data-lh="${h}"><div class="b">${h}</div><div class="tx"><b>${HOUSES[i].n} <i>${SG[si]}</i></b><span>${HSHORT[i]}</span></div></div>`;}).join("");
+  const pts=wheelMode==="now"?planets:NAT.pts;
+  $("legPT").textContent=wheelMode==="now"?"Planets now":"Planets";
+  $("legP").innerHTML=pts.map(p=>`<div class="it" data-lh="${house(p.lon)}"><div class="pg">${p.g.length>3?p.g:`<span style="font-size:.62rem;font-weight:700">${p.g}</span>`}</div><div class="tx"><b>${p.k}${p.retro?" ℞":""} <i>${ord(house(p.lon))}</i></b><span>${PSHORT[p.k]}</span></div></div>`).join("");
+  document.querySelectorAll(".leg .it").forEach(e=>e.onclick=()=>{const h=+e.dataset.lh; showHouse(selHouse===h?null:h); $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});});
+}
 function wheelPlanets(){ return wheelMode==="now"?positions(jdFromUTCms(Date.now())):NAT.planets; }
 
 // ---------- Wheel ----------
@@ -1070,6 +1097,7 @@ function drawWheel(){
         <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro&&wheelMode!=="now"?" ℞":""}${wheelMode==="now"?(p.retro?" ←":" →"):""}</text>${left[p.k]?`<text x="${nx}" y="${ny+10}" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="700" fill="${pc}" pointer-events="none">${left[p.k]} left</text>`:""}`;
   });
   $("wheel").innerHTML=s;
+  renderLegend(wheelPlanets());
   $("wheel").onclick=e=>{const t=e.target.closest("[data-h]"); if(t){const h=+t.dataset.h; showHouse(selHouse===h?null:h); if(selHouse) $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});}};
   showHouse(selHouse);
 }
