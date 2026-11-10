@@ -81,6 +81,18 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .hinfo .hl{border:1px solid var(--accent);border-radius:12px;padding:12px}
 .note{font-size:.82rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 0 2px 10px;margin:6px 0 0 44px}
 #wheel path[data-h]{cursor:pointer}
+.mv{padding:11px 0;border-bottom:1px solid var(--line)}
+.mv:last-child{border-bottom:0}
+.mv .top{display:flex;align-items:center;gap:10px}
+.mv .g{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:var(--soft)}
+.mv .nm{font-weight:700}
+.mv .sub{font-size:.85rem;color:var(--muted)}
+.mv .dir{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:99px;margin-left:4px;vertical-align:1px}
+.mv .dir.f{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.mv .dir.b{background:color-mix(in srgb,var(--hard) 18%,transparent);color:var(--hard)}
+.mv .nx{margin:6px 0 0 44px;font-size:.88rem}
+.mv .nx b{color:var(--accent)}
+.mv .tn{margin:3px 0 0 44px;font-size:.82rem;color:var(--muted)}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -241,8 +253,14 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
       <div class="card" style="text-align:center">
         <h2 style="text-align:left">Your birth chart wheel</h2>
         <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. <b>Tap any house</b> to see what it means for you.</p>
+        <div class="chips" id="wheelMode"><button class="on" data-m="birth">My birth chart</button><button data-m="now">Planets now</button></div>
         <svg id="wheel" viewBox="0 0 400 400" width="100%" style="max-width:480px;touch-action:manipulation" role="img" aria-label="Birth chart wheel"></svg>
         <div id="houseInfo" class="hinfo"></div>
+      </div>
+      <div class="card">
+        <h2>Where each planet goes next</h2>
+        <p class="small" style="margin-top:-6px">Where today's planets sit in <b>your</b> chart, which way they're moving, and when they leave for the next sign and house. <span style="color:var(--good)">→ forward</span> moves to the next sign. <span style="color:var(--hard)">← backward (℞)</span> can slip back into the previous one.</p>
+        <div id="moveList"></div>
       </div>
       <div class="card">
         <h2>Your 12 houses</h2>
@@ -612,7 +630,7 @@ function speechText(){
       [...document.querySelectorAll("#monthAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
       "Best days: "+txt("bestDays").replace(/\n/g,", "),"Careful days: "+txt("badDays").replace(/\n/g,", ")];
   else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),"Your theme of the year.",txt("yearTheme")];
-  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),"Your planets.",txt("planetList"),"Your 12 houses.",txt("houseList")];
+  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),"Where each planet goes next.",txt("moveList").replace(/←/g,"").replace(/→/g,""),"Your planets.",txt("planetList"),"Your 12 houses.",txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
   return t.join("\n").replace(/℞/g," retrograde ").replace(/·/g,", ").replace(/–/g," to ")
     .replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/\b(\d+)°(\d+)′/g,"$1 degrees $2").replace(/°/g," degrees");
@@ -681,7 +699,7 @@ function renderChart(){
   $("big3").innerHTML=[["Sun",sun.lon],["Moon",moon.lon],["Rising",NAT.asc]].map(([k,l])=>
     `<div class="b3"><div class="k">${k}</div><div class="g">${SG[signIdx(l)]}</div><div class="v">${SIGNS[signIdx(l)]}</div></div>`).join("");
   $("big3Text").innerHTML=`At your core you're <b>${SIGN_KW[S]}</b> (Sun in ${S}). Emotionally you need things that feel <b>${SIGN_KW[M]}</b> (Moon in ${M}). People first see you as <b>${SIGN_KW[A]}</b> (${A} Rising).`;
-  renderHouses();
+  renderHouses(); renderMoves();
 
   const el=[0,0,0,0], md=[0,0,0];
   NAT.planets.slice(0,7).concat([{lon:NAT.asc}]).forEach(p=>{const s=signIdx(p.lon); el[s%4]++; md[s%3]++;});
@@ -930,6 +948,53 @@ function showHouse(h){
   document.querySelectorAll("#wheel path[data-h]").forEach(e=>e.setAttribute("fill-opacity",+e.dataset.h===h?".22":"0"));
 }
 
+// ---------- Planet moves (current sky) ----------
+let wheelMode="birth";
+function retroAt(k,jd){ if(k==="Sun"||k==="Moon") return false; let dl=lonOf(k,jd+1)-lonOf(k,jd); if(dl>180)dl-=360; if(dl<-180)dl+=360; return dl<0; }
+const MAXD={Moon:3,Sun:40,Mercury:150,Venus:300,Mars:400,Jupiter:500,Saturn:1500,Uranus:3500,Neptune:6000};
+function nextMoves(ms){
+  const jd0=jdFromUTCms(ms);
+  return PL.map(p=>{
+    const lon=lonOf(p.k,jd0), s0=signIdx(lon), r0=retroAt(p.k,jd0), step=p.k==="Moon"?1/48:1;
+    let ing=null, station=null;
+    for(let t=step;t<=MAXD[p.k];t+=step){
+      const jd=jd0+t;
+      if(!station&&p.k!=="Sun"&&p.k!=="Moon"&&retroAt(p.k,jd)!==r0) station=jd;
+      const s=signIdx(lonOf(p.k,jd)); if(s!==s0){ ing={jd,sign:s,fwd:(s-s0+12)%12===1}; break; }
+    }
+    if(!station&&p.k!=="Sun"&&p.k!=="Moon") for(let t=1;t<=420;t++){ if(retroAt(p.k,jd0+t)!==r0){station=jd0+t;break;} }
+    return {...p,lon,retro:r0,ing,station};
+  });
+}
+function untilTxt(jd,now){
+  const d=(jd-now);
+  if(d<1){const h=Math.round(d*24); return h<=1?"within the hour":`in ${h} hours`;}
+  if(d<45) return `in ${Math.round(d)} day${Math.round(d)===1?"":"s"}`;
+  const mo=Math.round(d/30.44); if(mo<24) return `in ${mo} months`;
+  const y=Math.floor(mo/12), m=mo%12; return `in ${y} years${m?` ${m} months`:""}`;
+}
+function renderMoves(){
+  const now=Date.now(), jdn=jdFromUTCms(now), mv=nextMoves(now);
+  const fd=(jd,withTime)=>{const d=new Date(msFromJd(jd)); return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined})+(withTime?", ~"+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}):"");};
+  $("moveList").innerHTML=mv.map(p=>{
+    const si=signIdx(p.lon), h=house(p.lon);
+    let s=`<div class="mv"><div class="top"><div class="g">${p.g}</div><div><div class="nm">${p.k} <span class="dir ${p.retro?"b":"f"}">${p.retro?"← backward ℞":"→ forward"}</span></div>
+      <div class="sub">Now in ${SG[si]} ${SIGNS[si]} ${fmtDeg(p.lon).split(" ")[0]} · your ${ord(h)} house (${HOUSES[h-1].n})</div></div></div>`;
+    if(p.ing){ const nh=house(p.ing.sign*30+1);
+      s+=`<div class="nx">${p.ing.fwd?"→":"←"} Leaves ${SIGNS[si]} <b>${fd(p.ing.jd,p.k==="Moon")}</b> (${untilTxt(p.ing.jd,jdn)}) and moves ${p.ing.fwd?"forward":"back"} into <b>${SG[p.ing.sign]} ${SIGNS[p.ing.sign]}</b>, your ${ord(nh)} house: ${HOUSES[nh-1].k}.</div>`;
+    } else s+=`<div class="nx">Stays in ${SIGNS[si]} for a long time.</div>`;
+    if(p.station) s+=`<div class="tn">${p.retro?"Turns forward again":"Turns backward (retrograde)"} on ${fd(p.station)} (${untilTxt(p.station,jdn)}).</div>`;
+    else if(p.k==="Sun"||p.k==="Moon") s+=`<div class="tn">The ${p.k} always moves forward.</div>`;
+    return s+"</div>";
+  }).join("");
+}
+document.querySelectorAll("#wheelMode button").forEach(b=>b.onclick=()=>{
+  wheelMode=b.dataset.m;
+  document.querySelectorAll("#wheelMode button").forEach(x=>x.classList.toggle("on",x===b));
+  drawWheel();
+});
+function wheelPlanets(){ return wheelMode==="now"?positions(jdFromUTCms(Date.now())):NAT.planets; }
+
 // ---------- Wheel ----------
 function drawWheel(){
   const asc=NAT.asc, cx=200, cy=200, R=197, rS=150, rC=46;
@@ -954,16 +1019,16 @@ function drawWheel(){
     s+=`<line x1="${a}" y1="${b}" x2="${e}" y2="${f}" stroke="${c('--accent')}" stroke-width="2" stroke-dasharray="4 3" pointer-events="none"/>
         <text x="${tx}" y="${ty-8}" text-anchor="middle" font-size="9" font-weight="700" fill="${c('--accent')}" pointer-events="none">${l}</text>`;});
   // planets: stack crowded ones on inner levels so they stay in their own sign
-  const LV=[130,101,73], placed=[];
-  NAT.planets.slice().sort((a,b)=>a.lon-b.lon).forEach(p=>{
+  const LV=[130,101,73], placed=[], pc=wheelMode==="now"?c('--hard'):c('--ink');
+  wheelPlanets().slice().sort((a,b)=>a.lon-b.lon).forEach(p=>{
     let lv=0; while(lv<2&&placed.some(q=>q.lv===lv&&sep(q.lon,p.lon)<14)) lv++;
     placed.push({...p,lv});
   });
   placed.forEach(p=>{
     const r=LV[p.lv], [x,y0]=pt(p.lon,r), y=y0-4, nx=x, ny=y+14, [m1,m2]=pt(p.lon,rS), [m3,m4]=pt(p.lon,rS-6);
-    s+=`<line x1="${m1}" y1="${m2}" x2="${m3}" y2="${m4}" stroke="${c('--ink')}" stroke-width="1.5" pointer-events="none"/>
-        <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="17" fill="${c('--ink')}" pointer-events="none">${p.g}</text>
-        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro?" ℞":""}</text>`;
+    s+=`<line x1="${m1}" y1="${m2}" x2="${m3}" y2="${m4}" stroke="${pc}" stroke-width="1.5" pointer-events="none"/>
+        <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="17" fill="${pc}" pointer-events="none">${p.g}</text>
+        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro?" ℞":""}${wheelMode==="now"?(p.retro?" ←":" →"):""}</text>`;
   });
   $("wheel").innerHTML=s;
   $("wheel").onclick=e=>{const t=e.target.closest("[data-h]"); if(t){const h=+t.dataset.h; showHouse(selHouse===h?null:h); if(selHouse) $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});}};
