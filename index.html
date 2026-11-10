@@ -103,6 +103,15 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .mvsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 6px}
 .mvsum div{background:var(--soft);border-radius:10px;padding:8px;text-align:center;font-size:.75rem;color:var(--muted)}
 .mvsum b{display:block;font-size:1.05rem;color:var(--ink)}
+.stay{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:12px;text-align:left}
+.stay th{font-size:.7rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line)}
+.stay td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:middle}
+.stay td.n{white-space:nowrap}
+.stay td:nth-child(2){width:22%}
+.stay .mb{height:6px;border-radius:3px;background:var(--mid);overflow:hidden;margin-top:4px}
+.stay .mb i{display:block;height:100%;background:var(--accent)}
+.stay .mb i.b{background:var(--hard)}
+.stay b.l{color:var(--hard)}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -262,9 +271,10 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
       </div>
       <div class="card" style="text-align:center">
         <h2 style="text-align:left">Your birth chart wheel</h2>
-        <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. In <b>Planets now</b>, each planet shows its direction and how long it has left in that house (d = days, mo = months, y = years). <b>Tap any house</b> to see what it means for you.</p>
+        <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. In <b>Planets now</b>, each planet shows its direction and its <b>time left</b> in that house (d = days, mo = months, y = years), and a table below shows the <b>total stay</b> next to the time left. <b>Tap any house</b> to see what it means for you.</p>
         <div class="chips" id="wheelMode"><button class="on" data-m="birth">My birth chart</button><button data-m="now">Planets now</button></div>
         <svg id="wheel" viewBox="0 0 400 400" width="100%" style="max-width:480px;touch-action:manipulation" role="img" aria-label="Birth chart wheel"></svg>
+        <div id="stayBox" class="hidden"></div>
         <div id="houseInfo" class="hinfo"></div>
       </div>
       <div class="card">
@@ -1041,8 +1051,14 @@ function drawWheel(){
     s+=`<line x1="${a}" y1="${b}" x2="${e}" y2="${f}" stroke="${c('--accent')}" stroke-width="2" stroke-dasharray="4 3" pointer-events="none"/>
         <text x="${tx}" y="${ty-5}" text-anchor="middle" font-size="9" font-weight="700" fill="${c('--accent')}" pointer-events="none">${l}</text>`;});
   // planets: stack crowded ones on inner levels so they stay in their own sign
-  const left={}; if(wheelMode==="now"){const mv=nextMoves(Date.now()); mv.forEach(m=>{ if(!m.ing) return; const d=m.ing.jd-m.now; left[m.k]=d<1?Math.max(1,Math.round(d*24))+"h":d<45?Math.round(d)+"d":d<730?Math.round(d/30.44)+"mo":(d/365.25).toFixed(1).replace(/\.0$/,"")+"y"; });}
-  const LV=wheelMode==="now"?[134,96,66]:[130,101,73], placed=[], pc=wheelMode==="now"?c('--hard'):c('--ink');
+  const left={}; $("stayBox").classList.toggle("hidden",wheelMode!=="now");
+  if(wheelMode==="now"){const mv=nextMoves(Date.now());
+    $("stayBox").innerHTML=`<table class="stay"><thead><tr><th>Planet</th><th>House</th><th>Total stay</th><th>Time left</th></tr></thead><tbody>`+
+      mv.filter(m=>m.ing&&m.ent).sort((a,b)=>(a.ing.jd-a.now)-(b.ing.jd-b.now)).map(m=>{const tot=m.ing.jd-m.ent, pct=Math.max(3,Math.min(100,Math.round((m.now-m.ent)/tot*100))), h=house(m.lon);
+        return `<tr><td class="n">${m.g} ${m.k} ${m.retro?'<span class="r">←</span>':'<span style="color:var(--good)">→</span>'}</td><td>${ord(h)}<div class="mb"><i class="${m.retro?"b":""}" style="width:${pct}%"></i></div></td><td class="n">${durTxt(tot)}</td><td class="n"><b class="l">${durTxt(m.ing.jd-m.now)}</b></td></tr>`;}).join("")+
+      `</tbody></table><p class="small" style="text-align:left;margin:6px 0 0"><b>Total stay</b> = the planet's whole visit to that house, from the day it entered to the day it leaves. <b>Time left</b> = how much of that visit remains from today. The bar shows how far through it is.</p>`;
+    mv.forEach(m=>{ if(!m.ing) return; const d=m.ing.jd-m.now; left[m.k]=d<1?Math.max(1,Math.round(d*24))+"h":d<45?Math.round(d)+"d":d<730?Math.round(d/30.44)+"mo":(d/365.25).toFixed(1).replace(/\.0$/,"")+"y"; });}
+  const LV=wheelMode==="now"?[136,98,62]:[130,101,73], placed=[], pc=wheelMode==="now"?c('--hard'):c('--ink');
   wheelPlanets().slice().sort((a,b)=>a.lon-b.lon).forEach(p=>{
     let lv=0; while(lv<2&&placed.some(q=>q.lv===lv&&sep(q.lon,p.lon)<14)) lv++;
     placed.push({...p,lv});
@@ -1051,7 +1067,7 @@ function drawWheel(){
     const r=LV[p.lv], [x,y0]=pt(p.lon,r), y=y0-4, nx=x, ny=y+14, [m1,m2]=pt(p.lon,rS), [m3,m4]=pt(p.lon,rS-6);
     s+=`<line x1="${m1}" y1="${m2}" x2="${m3}" y2="${m4}" stroke="${pc}" stroke-width="1.5" pointer-events="none"/>
         <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="17" fill="${pc}" pointer-events="none">${p.g}</text>
-        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro&&wheelMode!=="now"?" ℞":""}${left[p.k]?`<tspan font-weight="700" fill="${pc}"> ${p.retro?"←":"→"}${left[p.k]}</tspan>`:""}</text>`;
+        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro&&wheelMode!=="now"?" ℞":""}${wheelMode==="now"?(p.retro?" ←":" →"):""}</text>${left[p.k]?`<text x="${nx}" y="${ny+10}" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="700" fill="${pc}" pointer-events="none">${left[p.k]} left</text>`:""}`;
   });
   $("wheel").innerHTML=s;
   $("wheel").onclick=e=>{const t=e.target.closest("[data-h]"); if(t){const h=+t.dataset.h; showHouse(selHouse===h?null:h); if(selHouse) $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});}};
