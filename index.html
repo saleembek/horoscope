@@ -63,6 +63,10 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .moon{font-size:2.6rem;line-height:1}
 .flex{display:flex;gap:12px;align-items:center}
 .small{font-size:.85rem;color:var(--muted)}
+.listen{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:20;width:auto;margin:0;
+  padding:14px 20px;border-radius:99px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:1rem}
+.listen.on{background:var(--hard)}
+.wrap{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -273,6 +277,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
   <p class="foot">For reflection and fun. The astronomy is real; how you read it is up to you.</p>
 </div>
 
+<button id="listen" class="listen hidden" aria-label="Read this page aloud">🔊 Listen</button>
 <script>
 (function(){
 "use strict";
@@ -479,7 +484,7 @@ function hourly(y,m,d,sky){
   }
   return out;
 }
-const fmtH=h=>`${h%12||12}${h<12?"am":"pm"}`;
+const fmtH=h=>{h%=24; return h===0?"midnight":`${h%12||12}${h<12?"am":"pm"}`;};
 function window_(hrs,pred){ let best=null,cur=null;
   hrs.forEach((x,i)=>{ if(pred(x)){ if(!cur) cur={s:i,e:i}; else cur.e=i; if(!best||cur.e-cur.s>best.e-best.s) best={...cur}; } else cur=null; });
   return best; }
@@ -549,7 +554,7 @@ function scanEvents(arr,opts){
 function evHtml(e){
   const d=new Date(e.ms);
   const sub=e.time?` · ~${d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}`:"";
-  return `<div class="ev ${e.kind}"><div class="d"><span>${d.toLocaleDateString(undefined,{month:"short"})}</span><b>${d.getDate()}</b><span>${d.toLocaleDateString(undefined,{weekday:"short"})}</span></div>
+  return `<div class="ev ${e.kind}" data-ms="${e.ms}"><div class="d"><span>${d.toLocaleDateString(undefined,{month:"short"})}</span><b>${d.getDate()}</b><span>${d.toLocaleDateString(undefined,{weekday:"short"})}</span></div>
     <div class="t"><b>${e.ic} ${e.title}</b><div>${e.text}${sub}</div></div></div>`;
 }
 
@@ -570,8 +575,38 @@ const KEY="horoscope-tracker-v1";
 function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){return null;}}
 
+// ---------- Read aloud ----------
+const TTS=window.speechSynthesis;
+const txt=id=>{const e=$(id); return e?e.innerText:"";};
+function speechText(){
+  const ev=sel=>[...document.querySelectorAll(sel)].slice(0,5).map(e=>{
+    const d=new Date(+e.dataset.ms||0); return (e.dataset.ms?d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+". ":"")+e.querySelector(".t").innerText;}).join(". ");
+  let t;
+  if(tab==="today") t=[txt("todayTitle"),txt("moonText"),txt("dailyNote"),"Day at a glance.",
+      [...document.querySelectorAll("#glance .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
+      "Best hours. "+txt("hoursText"),"Coming up. "+ev("#next30 .ev")];
+  else if(tab==="month") t=[txt("monthLbl")+" forecast.",txt("monthSummary"),
+      [...document.querySelectorAll("#monthAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
+      "Best days: "+txt("bestDays").replace(/\n/g,", "),"Careful days: "+txt("badDays").replace(/\n/g,", ")];
+  else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),"Your theme of the year.",txt("yearTheme")];
+  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),txt("balanceText")];
+  else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
+  return t.join("\n").replace(/℞/g," retrograde ").replace(/·/g,", ").replace(/–/g," to ")
+    .replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/\b(\d+)°(\d+)′/g,"$1 degrees $2").replace(/°/g," degrees");
+}
+function stopTalk(){ if(TTS) TTS.cancel(); $("listen").classList.remove("on"); $("listen").textContent="🔊 Listen"; }
+$("listen").onclick=()=>{
+  if(!TTS){alert("Read aloud isn't supported in this browser.");return;}
+  if(TTS.speaking||$("listen").classList.contains("on")){stopTalk();return;}
+  const parts=speechText().split(/(?<=[.!?])\s+|\n+/).map(s=>s.trim()).filter(Boolean);
+  const voice=TTS.getVoices().find(v=>/^en/i.test(v.lang)&&/Samantha|Daniel|Premium|Enhanced|Google/i.test(v.name))||TTS.getVoices().find(v=>/^en/i.test(v.lang));
+  $("listen").classList.add("on"); $("listen").textContent="⏹ Stop";
+  parts.forEach((p,i)=>{ const u=new SpeechSynthesisUtterance(p); if(voice)u.voice=voice; u.rate=1; if(i===parts.length-1) u.onend=stopTalk; TTS.speak(u); });
+};
+
 let tab="today";
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  stopTalk();
   tab=b.dataset.t;
   document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));
   ["today","month","year","chart","learn"].forEach(t=>$("t-"+t).classList.toggle("hidden",t!==tab));
@@ -579,7 +614,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
   if(tab==="year") renderYear();
   window.scrollTo({top:0,behavior:"smooth"});
 });
-$("edit").onclick=()=>{$("formCard").classList.remove("hidden");$("out").classList.add("hidden");window.scrollTo({top:0});};
+$("edit").onclick=()=>{stopTalk();$("listen").classList.add("hidden");$("formCard").classList.remove("hidden");$("out").classList.add("hidden");window.scrollTo({top:0});};
 
 function readForm(){
   return {name:$("name").value.trim(),date:$("bdate").value,time:$("btime").value||"12:00",
@@ -594,7 +629,7 @@ $("go").onclick=()=>{
 };
 
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-function setView(ms){ viewMs=(ms!=null&&ymd(new Date(ms))===ymd(new Date()))?null:ms; renderDay(); }
+function setView(ms){ stopTalk(); viewMs=(ms!=null&&ymd(new Date(ms))===ymd(new Date()))?null:ms; renderDay(); }
 $("prevDay").onclick=()=>setView((viewMs??Date.now())-DAY);
 $("nextDay").onclick=()=>setView((viewMs??Date.now())+DAY);
 $("todayBtn").onclick=()=>setView(null);
@@ -610,7 +645,7 @@ function start(f){
   renderChart(); renderDay();
   if(tab==="month") renderMonth();
   if(tab==="year") renderYear();
-  $("formCard").classList.add("hidden"); $("out").classList.remove("hidden");
+  $("formCard").classList.add("hidden"); $("out").classList.remove("hidden"); $("listen").classList.remove("hidden");
   window.scrollTo({top:0});
 }
 
