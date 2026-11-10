@@ -67,6 +67,20 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
   padding:14px 20px;border-radius:99px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:1rem}
 .listen.on{background:var(--hard)}
 .wrap{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+.hl{padding:12px 0;border-bottom:1px solid var(--line)}
+.hl:last-child{border-bottom:0}
+.hl .top{display:flex;align-items:center;gap:10px}
+.hl .num{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;background:var(--soft);color:var(--accent)}
+.hl .nm{font-weight:700}
+.hl .sg{font-size:.85rem;color:var(--muted)}
+.hl .kw{font-size:.85rem;margin:6px 0 0 44px}
+.hl .rd{font-size:.88rem;margin:4px 0 0 44px;color:var(--muted)}
+.hl .pp{margin:6px 0 0 44px;font-size:.88rem;padding:6px 10px;border-radius:8px;background:var(--soft)}
+.hinfo{text-align:left;margin-top:10px}
+.hinfo:empty{display:none}
+.hinfo .hl{border:1px solid var(--accent);border-radius:12px;padding:12px}
+.note{font-size:.82rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 0 2px 10px;margin:6px 0 0 44px}
+#wheel path[data-h]{cursor:pointer}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -225,11 +239,20 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
         <p id="big3Text" style="margin:12px 0 0"></p>
       </div>
       <div class="card" style="text-align:center">
-        <svg id="wheel" viewBox="0 0 340 340" width="100%" style="max-width:420px"></svg>
+        <h2 style="text-align:left">Your birth chart wheel</h2>
+        <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. <b>Tap any house</b> to see what it means for you.</p>
+        <svg id="wheel" viewBox="0 0 400 400" width="100%" style="max-width:480px;touch-action:manipulation" role="img" aria-label="Birth chart wheel"></svg>
+        <div id="houseInfo" class="hinfo"></div>
       </div>
       <div class="card">
-        <h2>Planet placements</h2>
-        <table id="natalTable"></table>
+        <h2>Your 12 houses</h2>
+        <p class="small" style="margin-top:-6px">Each house is one area of life. The <b>sign</b> on it shows <i>how</i> you handle that area. The <b>planets</b> in it show where your energy goes.</p>
+        <div id="houseList"></div>
+      </div>
+      <div class="card">
+        <h2>Your planets</h2>
+        <p class="small" style="margin-top:-6px">Each planet is one part of you. Its <b>sign</b> shows <i>how</i> it acts and its <b>house</b> shows <i>where</i> in life.</p>
+        <div id="planetList"></div>
       </div>
       <div class="card">
         <h2>Element &amp; mode balance</h2>
@@ -589,7 +612,7 @@ function speechText(){
       [...document.querySelectorAll("#monthAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
       "Best days: "+txt("bestDays").replace(/\n/g,", "),"Careful days: "+txt("badDays").replace(/\n/g,", ")];
   else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),"Your theme of the year.",txt("yearTheme")];
-  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),txt("balanceText")];
+  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),"Your planets.",txt("planetList"),"Your 12 houses.",txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
   return t.join("\n").replace(/℞/g," retrograde ").replace(/·/g,", ").replace(/–/g," to ")
     .replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/\b(\d+)°(\d+)′/g,"$1 degrees $2").replace(/°/g," degrees");
@@ -658,7 +681,7 @@ function renderChart(){
   $("big3").innerHTML=[["Sun",sun.lon],["Moon",moon.lon],["Rising",NAT.asc]].map(([k,l])=>
     `<div class="b3"><div class="k">${k}</div><div class="g">${SG[signIdx(l)]}</div><div class="v">${SIGNS[signIdx(l)]}</div></div>`).join("");
   $("big3Text").innerHTML=`At your core you're <b>${SIGN_KW[S]}</b> (Sun in ${S}). Emotionally you need things that feel <b>${SIGN_KW[M]}</b> (Moon in ${M}). People first see you as <b>${SIGN_KW[A]}</b> (${A} Rising).`;
-  $("natalTable").innerHTML=NAT.pts.map(row).join("");
+  renderHouses();
 
   const el=[0,0,0,0], md=[0,0,0];
   NAT.planets.slice(0,7).concat([{lon:NAT.asc}]).forEach(p=>{const s=signIdx(p.lon); el[s%4]++; md[s%3]++;});
@@ -847,31 +870,104 @@ function renderYear(){
   $("yearSummary").innerHTML=sum;
 }
 
+// ---------- Houses & planet meanings ----------
+const HOUSES=[
+ {n:"Self",k:"identity, body, looks, first impressions",d:"How you come across, how you start things, and your physical self."},
+ {n:"Money",k:"income, possessions, self-worth, values",d:"How you earn and spend, and what you feel is truly valuable."},
+ {n:"Communication",k:"talking, writing, learning, siblings, neighbors, short trips",d:"How you think, learn and get your message across."},
+ {n:"Home & family",k:"home, family, roots, parents, private life",d:"Your base: where you feel safe, and your family ties."},
+ {n:"Joy & romance",k:"romance, fun, children, hobbies, creativity",d:"What makes you happy, how you flirt, play and create."},
+ {n:"Work & health",k:"daily job, routines, health, coworkers, service",d:"Your day-to-day work, your habits, and how you look after your body."},
+ {n:"Partners",k:"marriage, partners, clients, contracts, open rivals",d:"One-to-one relationships, in love and in business."},
+ {n:"Transformation",k:"shared money, debts, taxes, inheritance, intimacy, crisis",d:"Deep change, other people's money, and what you keep hidden."},
+ {n:"Beliefs & travel",k:"higher education, long travel, religion, law, publishing",d:"Your worldview, and how you grow through study and travel."},
+ {n:"Career",k:"career, status, reputation, bosses, public life",d:"Your public role, your ambitions and what you're known for."},
+ {n:"Friends & goals",k:"friends, networks, groups, hopes, technology",d:"Your circle, your network and your long-term dreams."},
+ {n:"Inner world",k:"rest, retreat, secrets, spirituality, endings",d:"Your private inner life, the subconscious, and recharging alone."}
+];
+const PFULL={
+ Sun:"Your core self: identity, ego, vitality and life purpose. It also stands for father figures.",
+ Moon:"Your emotions, instincts and needs: what makes you feel safe. It also stands for your mother and your home life.",
+ Mercury:"Your mind: how you think, speak, write, learn and solve problems. This is your 'IT brain.'",
+ Venus:"Love, beauty, pleasure, taste and money: what you value and what you attract.",
+ Mars:"Drive, courage, anger and action: how you go after what you want.",
+ Jupiter:"Luck, growth, wisdom and optimism: where life is generous with you.",
+ Saturn:"Discipline, responsibility, fears and limits: where you work hard and earn lasting success.",
+ Uranus:"Change, freedom, originality and technology: where you break the rules. It moves slowly, so it describes a whole generation.",
+ Neptune:"Dreams, imagination, intuition and spirituality, and sometimes confusion. It also describes a whole generation.",
+ Ascendant:"Your Rising sign: your outer style, your body and the first impression you make.",
+ Midheaven:"The top of your chart: career direction, public image and reputation."
+};
+const PVERB={Sun:"you shine and find purpose through",Moon:"you need emotional security through",Mercury:"your mind focuses on",Venus:"you find love, pleasure and money through",Mars:"you put your energy and fight into",Jupiter:"luck and growth come through",Saturn:"hard lessons, and later lasting success, come through",Uranus:"sudden changes and originality show up in",Neptune:"dreams and intuition (and sometimes confusion) show up in"};
+let selHouse=null;
+function houseHtml(h,big){
+  const si=(NAT.ascSign+h-1)%12, H=HOUSES[h-1], rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl);
+  const inside=NAT.planets.filter(p=>house(p.lon)===h);
+  const tags=[]; if(h===1) tags.push("Ascendant"); if(house(NAT.mc)===h) tags.push("Midheaven");
+  let s=`<div class="hl"><div class="top"><div class="num">${h}</div><div><div class="nm">${ord(h)} house · ${H.n}</div>
+    <div class="sg">${SG[si]} ${SIGNS[si]} · ruled by ${GLYPH[rl]} ${rl} (in your ${ord(house(rp.lon))})${tags.length?" · "+tags.join(", "):""}</div></div></div>
+    <div class="kw"><b>Represents:</b> ${H.k}. ${big?H.d:""}</div>
+    <div class="rd">With ${SIGNS[si]} here, you handle this area in a <b>${SIGN_KW[SIGNS[si]]}</b> way.</div>`;
+  inside.forEach(p=>{ s+=`<div class="pp"><b>${p.g} ${p.k}${p.retro?" ℞":""} here:</b> ${PVERB[p.k]} ${H.k}.</div>`; });
+  if(big&&!inside.length) s+=`<div class="rd">No planets here. Look at its ruler, ${rl}, in your ${ord(house(rp.lon))} house (${HOUSES[house(rp.lon)-1].n.toLowerCase()}), to see how this area plays out.</div>`;
+  return s+"</div>";
+}
+function renderHouses(){
+  $("houseList").innerHTML=Array.from({length:12},(_,i)=>houseHtml(i+1,false)).join("");
+  $("planetList").innerHTML=NAT.pts.map(p=>{
+    const si=signIdx(p.lon), h=house(p.lon), deg=fmtDeg(p.lon).split(" ")[0];
+    const ang=p.k==="Ascendant"||p.k==="Midheaven";
+    return `<div class="hl"><div class="top"><div class="num" style="font-size:${ang?".7rem":"1.1rem"}">${p.g}</div><div><div class="nm">${p.k}${p.retro?' <span class="r">℞ retrograde</span>':""}</div>
+      <div class="sg">${SG[si]} ${SIGNS[si]} ${deg} · ${ord(h)} house (${HOUSES[h-1].n})</div></div></div>
+      <div class="note">${PFULL[p.k]}</div>
+      <div class="rd"><b>In ${SIGNS[si]}:</b> it acts in a ${SIGN_KW[SIGNS[si]]} way.${ang?"":` <b>In your ${ord(h)} house:</b> ${PVERB[p.k]} ${HOUSES[h-1].k}.`}${p.retro?" Being retrograde at birth, its energy turns inward: you reflect first, then act.":""}</div></div>`;
+  }).join("");
+  showHouse(selHouse);
+}
+function showHouse(h){
+  selHouse=h;
+  $("houseInfo").innerHTML=h?houseHtml(h,true):"";
+  document.querySelectorAll("#wheel path[data-h]").forEach(e=>e.setAttribute("fill-opacity",+e.dataset.h===h?".22":"0"));
+}
+
 // ---------- Wheel ----------
 function drawWheel(){
-  const natal=NAT.planets, asc=NAT.asc;
-  const cx=170,cy=170,R=160,r1=130,r2=104;
+  const asc=NAT.asc, cx=200, cy=200, R=197, rS=150, rC=46;
   const css=getComputedStyle(document.documentElement), c=n=>css.getPropertyValue(n).trim();
-  const pt=(lon,rad)=>{const a=(180+(lon-asc))*D2R; return [cx+rad*Math.cos(a), cy-rad*Math.sin(a)];};
-  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${c('--soft')}" stroke="${c('--line')}"/>
-         <circle cx="${cx}" cy="${cy}" r="${r1}" fill="${c('--card')}" stroke="${c('--line')}"/>
-         <circle cx="${cx}" cy="${cy}" r="40" fill="none" stroke="${c('--line')}"/>`;
+  const pt=(lon,r)=>{const a=(180+(lon-asc))*D2R; return [+(cx+r*Math.cos(a)).toFixed(1), +(cy-r*Math.sin(a)).toFixed(1)];};
+  const sector=(l0,l1,r0,r1)=>{const [a,b]=pt(l0,r1),[e,f]=pt(l1,r1),[g,h]=pt(l1,r0),[i,j]=pt(l0,r0);
+    return `M${a},${b} A${r1},${r1} 0 0 0 ${e},${f} L${g},${h} A${r0},${r0} 0 0 1 ${i},${j} Z`;};
+  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${c('--card')}" stroke="${c('--line')}"/>`;
   for(let i=0;i<12;i++){
-    const [x1,y1]=pt(i*30,r1),[x2,y2]=pt(i*30,R),[tx,ty]=pt(i*30+15,(R+r1)/2);
-    s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c('--line')}"/>
-        <text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="central" font-size="15" fill="${c('--'+ELEM[i%4])}">${SG[i]}</text>`;
+    const h=(i-NAT.ascSign+12)%12+1, col=c('--'+ELEM[i%4]);
+    s+=`<path d="${sector(i*30,i*30+30,rS,R)}" fill="${col}" fill-opacity=".13" stroke="${c('--line')}"/>`;
+    s+=`<path data-h="${h}" d="${sector(i*30,i*30+30,rC,rS)}" fill="${c('--accent')}" fill-opacity="0" stroke="${c('--line')}"><title>${ord(h)} house: ${HOUSES[h-1].n}</title></path>`;
+    const [gx,gy]=pt(i*30+15,(R+rS)/2);
+    s+=`<text x="${gx}" y="${gy-7}" text-anchor="middle" dominant-baseline="central" font-size="15" fill="${col}" pointer-events="none">${SG[i]}</text>
+        <text x="${gx}" y="${gy+10}" text-anchor="middle" dominant-baseline="central" font-size="8.5" font-weight="600" fill="${c('--ink')}" pointer-events="none">${SIGNS[i]}</text>`;
   }
-  const [ax1,ay1]=pt(asc,40),[ax2,ay2]=pt(asc,R);
-  s+=`<line x1="${ax1}" y1="${ay1}" x2="${ax2}" y2="${ay2}" stroke="${c('--accent')}" stroke-width="2"/>
-      <text x="${ax2+4}" y="${ay2-6}" font-size="10" fill="${c('--accent')}">AC</text>`;
-  const ps=natal.map(p=>({...p,d:p.lon})).sort((a,b)=>a.lon-b.lon);
-  for(let k=0;k<3;k++) for(let i=1;i<ps.length;i++){ if(ps[i].d-ps[i-1].d<9) ps[i].d=ps[i-1].d+9; }
-  ps.forEach(p=>{
-    const [x,y]=pt(p.d,r2),[mx,my]=pt(p.lon,r1-2),[lx,ly]=pt(p.lon,r1-10);
-    s+=`<line x1="${mx}" y1="${my}" x2="${lx}" y2="${ly}" stroke="${c('--muted')}"/>
-        <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="16" fill="${c('--ink')}">${p.g}</text>`;
+  s+=`<circle cx="${cx}" cy="${cy}" r="${rC}" fill="${c('--soft')}" stroke="${c('--line')}" pointer-events="none"/>`;
+  for(let i=0;i<12;i++){const [hx,hy]=pt(i*30+15,33); const h=(i-NAT.ascSign+12)%12+1;
+    s+=`<text x="${hx}" y="${hy}" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="700" fill="${c('--accent')}" pointer-events="none">${h}</text>`;}
+  // angles
+  [["ASC",asc],["MC",NAT.mc]].forEach(([l,lon])=>{const [a,b]=pt(lon,rC),[e,f]=pt(lon,rS),[tx,ty]=pt(lon,rS-9);
+    s+=`<line x1="${a}" y1="${b}" x2="${e}" y2="${f}" stroke="${c('--accent')}" stroke-width="2" stroke-dasharray="4 3" pointer-events="none"/>
+        <text x="${tx}" y="${ty-8}" text-anchor="middle" font-size="9" font-weight="700" fill="${c('--accent')}" pointer-events="none">${l}</text>`;});
+  // planets: stack crowded ones on inner levels so they stay in their own sign
+  const LV=[130,101,73], placed=[];
+  NAT.planets.slice().sort((a,b)=>a.lon-b.lon).forEach(p=>{
+    let lv=0; while(lv<2&&placed.some(q=>q.lv===lv&&sep(q.lon,p.lon)<14)) lv++;
+    placed.push({...p,lv});
+  });
+  placed.forEach(p=>{
+    const r=LV[p.lv], [x,y0]=pt(p.lon,r), y=y0-4, nx=x, ny=y+14, [m1,m2]=pt(p.lon,rS), [m3,m4]=pt(p.lon,rS-6);
+    s+=`<line x1="${m1}" y1="${m2}" x2="${m3}" y2="${m4}" stroke="${c('--ink')}" stroke-width="1.5" pointer-events="none"/>
+        <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="17" fill="${c('--ink')}" pointer-events="none">${p.g}</text>
+        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro?" ℞":""}</text>`;
   });
   $("wheel").innerHTML=s;
+  $("wheel").onclick=e=>{const t=e.target.closest("[data-h]"); if(t){const h=+t.dataset.h; showHouse(selHouse===h?null:h); if(selHouse) $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});}};
+  showHouse(selHouse);
 }
 
 window.HT={scoresAt:jd=>scoresAt(jd),jdFromUTCms};
