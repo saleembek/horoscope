@@ -81,18 +81,28 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .hinfo .hl{border:1px solid var(--accent);border-radius:12px;padding:12px}
 .note{font-size:.82rem;color:var(--muted);border-left:3px solid var(--accent);padding:2px 0 2px 10px;margin:6px 0 0 44px}
 #wheel path[data-h]{cursor:pointer}
-.mv{padding:11px 0;border-bottom:1px solid var(--line)}
-.mv:last-child{border-bottom:0}
+.mv{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;background:var(--bg)}
 .mv .top{display:flex;align-items:center;gap:10px}
-.mv .g{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:var(--soft)}
-.mv .nm{font-weight:700}
+.mv .g{flex:none;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;background:var(--soft)}
+.mv .nm{font-weight:700;font-size:1rem}
 .mv .sub{font-size:.85rem;color:var(--muted)}
-.mv .dir{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:99px;margin-left:4px;vertical-align:1px}
+.mv .dir{display:inline-block;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:99px;margin-left:4px;vertical-align:2px}
 .mv .dir.f{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
 .mv .dir.b{background:color-mix(in srgb,var(--hard) 18%,transparent);color:var(--hard)}
-.mv .nx{margin:6px 0 0 44px;font-size:.88rem}
+.mv .bar{height:10px;border-radius:5px;background:var(--mid);overflow:hidden;margin:12px 0 6px}
+.mv .bar i{display:block;height:100%;border-radius:5px;background:var(--accent)}
+.mv .bar i.b{background:var(--hard)}
+.mv .dates{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+.mv .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 0}
+.mv .stat{background:var(--soft);border-radius:10px;padding:7px 10px}
+.mv .stat span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.mv .stat b{font-size:.95rem}
+.mv .nx{margin:10px 0 0;font-size:.88rem;padding-top:10px;border-top:1px dashed var(--line)}
 .mv .nx b{color:var(--accent)}
-.mv .tn{margin:3px 0 0 44px;font-size:.82rem;color:var(--muted)}
+.mv .tn{margin:4px 0 0;font-size:.82rem;color:var(--muted)}
+.mvsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 6px}
+.mvsum div{background:var(--soft);border-radius:10px;padding:8px;text-align:center;font-size:.75rem;color:var(--muted)}
+.mvsum b{display:block;font-size:1.05rem;color:var(--ink)}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -252,14 +262,14 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
       </div>
       <div class="card" style="text-align:center">
         <h2 style="text-align:left">Your birth chart wheel</h2>
-        <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. <b>Tap any house</b> to see what it means for you.</p>
+        <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. In <b>Planets now</b>, each planet shows its direction and how long it has left in that house (d = days, mo = months, y = years). <b>Tap any house</b> to see what it means for you.</p>
         <div class="chips" id="wheelMode"><button class="on" data-m="birth">My birth chart</button><button data-m="now">Planets now</button></div>
         <svg id="wheel" viewBox="0 0 400 400" width="100%" style="max-width:480px;touch-action:manipulation" role="img" aria-label="Birth chart wheel"></svg>
         <div id="houseInfo" class="hinfo"></div>
       </div>
       <div class="card">
-        <h2>Where each planet goes next</h2>
-        <p class="small" style="margin-top:-6px">Where today's planets sit in <b>your</b> chart, which way they're moving, and when they leave for the next sign and house. <span style="color:var(--good)">→ forward</span> moves to the next sign. <span style="color:var(--hard)">← backward (℞)</span> can slip back into the previous one.</p>
+        <h2>Planet journeys</h2>
+        <p class="small" style="margin-top:-6px">Where today's planets sit in <b>your</b> chart, how long each one stays in that house, how much time is left, and where it goes next. The bar fills as the planet moves through. <span style="color:var(--good)">→ forward</span> moves to the next sign. <span style="color:var(--hard)">← backward (℞)</span> can slip back into the previous one.</p>
         <div id="moveList"></div>
       </div>
       <div class="card">
@@ -630,7 +640,7 @@ function speechText(){
       [...document.querySelectorAll("#monthAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
       "Best days: "+txt("bestDays").replace(/\n/g,", "),"Careful days: "+txt("badDays").replace(/\n/g,", ")];
   else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),"Your theme of the year.",txt("yearTheme")];
-  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),"Where each planet goes next.",txt("moveList").replace(/←/g,"").replace(/→/g,""),"Your planets.",txt("planetList"),"Your 12 houses.",txt("houseList")];
+  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),"Planet journeys.",txt("moveList").replace(/←/g,"").replace(/→/g,""),"Your planets.",txt("planetList"),"Your 12 houses.",txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
   return t.join("\n").replace(/℞/g," retrograde ").replace(/·/g,", ").replace(/–/g," to ")
     .replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/\b(\d+)°(\d+)′/g,"$1 degrees $2").replace(/°/g," degrees");
@@ -956,37 +966,49 @@ function nextMoves(ms){
   const jd0=jdFromUTCms(ms);
   return PL.map(p=>{
     const lon=lonOf(p.k,jd0), s0=signIdx(lon), r0=retroAt(p.k,jd0), step=p.k==="Moon"?1/48:1;
-    let ing=null, station=null;
+    let ing=null, station=null, ent=null;
     for(let t=step;t<=MAXD[p.k];t+=step){
       const jd=jd0+t;
       if(!station&&p.k!=="Sun"&&p.k!=="Moon"&&retroAt(p.k,jd)!==r0) station=jd;
       const s=signIdx(lonOf(p.k,jd)); if(s!==s0){ ing={jd,sign:s,fwd:(s-s0+12)%12===1}; break; }
     }
+    for(let t=step;t<=MAXD[p.k];t+=step){ if(signIdx(lonOf(p.k,jd0-t))!==s0){ ent=jd0-t+step; break; } }
     if(!station&&p.k!=="Sun"&&p.k!=="Moon") for(let t=1;t<=420;t++){ if(retroAt(p.k,jd0+t)!==r0){station=jd0+t;break;} }
-    return {...p,lon,retro:r0,ing,station};
+    return {...p,lon,retro:r0,ing,station,ent,now:jd0};
   });
 }
-function untilTxt(jd,now){
-  const d=(jd-now);
-  if(d<1){const h=Math.round(d*24); return h<=1?"within the hour":`in ${h} hours`;}
-  if(d<45) return `in ${Math.round(d)} day${Math.round(d)===1?"":"s"}`;
-  const mo=Math.round(d/30.44); if(mo<24) return `in ${mo} months`;
-  const y=Math.floor(mo/12), m=mo%12; return `in ${y} years${m?` ${m} months`:""}`;
+function durTxt(d){
+  if(d<1){const h=Math.max(1,Math.round(d*24)); return `${h} hour${h===1?"":"s"}`;}
+  if(d<3){const n=Math.floor(d), h=Math.round((d-n)*24); return `${n} day${n===1?"":"s"}${h?` ${h} hrs`:""}`;}
+  if(d<45){const n=Math.round(d); return `${n} day${n===1?"":"s"}`;}
+  const mo=Math.round(d/30.44); if(mo<24) return `${mo} months`;
+  const y=Math.floor(mo/12), m=mo%12; return `${y} yr${y>1?"s":""}${m?` ${m} mo`:""}`;
 }
+function untilTxt(jd,now){ const d=jd-now; return d<1/24?"within the hour":"in "+durTxt(d); }
 function renderMoves(){
-  const now=Date.now(), jdn=jdFromUTCms(now), mv=nextMoves(now);
-  const fd=(jd,withTime)=>{const d=new Date(msFromJd(jd)); return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined})+(withTime?", ~"+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}):"");};
-  $("moveList").innerHTML=mv.map(p=>{
-    const si=signIdx(p.lon), h=house(p.lon);
-    let s=`<div class="mv"><div class="top"><div class="g">${p.g}</div><div><div class="nm">${p.k} <span class="dir ${p.retro?"b":"f"}">${p.retro?"← backward ℞":"→ forward"}</span></div>
-      <div class="sub">Now in ${SG[si]} ${SIGNS[si]} ${fmtDeg(p.lon).split(" ")[0]} · your ${ord(h)} house (${HOUSES[h-1].n})</div></div></div>`;
-    if(p.ing){ const nh=house(p.ing.sign*30+1);
-      s+=`<div class="nx">${p.ing.fwd?"→":"←"} Leaves ${SIGNS[si]} <b>${fd(p.ing.jd,p.k==="Moon")}</b> (${untilTxt(p.ing.jd,jdn)}) and moves ${p.ing.fwd?"forward":"back"} into <b>${SG[p.ing.sign]} ${SIGNS[p.ing.sign]}</b>, your ${ord(nh)} house: ${HOUSES[nh-1].k}.</div>`;
+  const now=Date.now(), mv=nextMoves(now), jdn=mv[0].now;
+  const fd=(jd,withTime)=>{const d=new Date(msFromJd(jd)); return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined})+(withTime?", "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}):"");};
+  const soon=mv.filter(p=>p.ing).sort((a,b)=>a.ing.jd-b.ing.jd);
+  const longest=mv.filter(p=>p.ing).sort((a,b)=>b.ing.jd-a.ing.jd)[0];
+  const back=mv.filter(p=>p.retro).length;
+  let html=`<div class="mvsum"><div><b>${soon[0].k}</b>next to move<br>${untilTxt(soon[0].ing.jd,jdn)}</div><div><b>${back} of 9</b>moving<br>backward ℞</div><div><b>${longest.k}</b>stays longest<br>${durTxt(longest.ing.jd-jdn)} more</div></div>`;
+  html+=mv.map(p=>{
+    const si=signIdx(p.lon), h=house(p.lon), fast=p.k==="Moon";
+    let s=`<div class="mv"><div class="top"><div class="g">${p.g}</div><div style="flex:1"><div class="nm">${p.k} <span class="dir ${p.retro?"b":"f"}">${p.retro?"← backward ℞":"→ forward"}</span></div>
+      <div class="sub">${SG[si]} ${SIGNS[si]} ${fmtDeg(p.lon).split(" ")[0]} · your ${ord(h)} house · ${HOUSES[h-1].n}</div></div></div>`;
+    if(p.ing&&p.ent){
+      const total=p.ing.jd-p.ent, done=jdn-p.ent, pct=Math.max(2,Math.min(100,Math.round(done/total*100)));
+      s+=`<div class="bar" title="${pct}% of its stay done"><i class="${p.retro?"b":""}" style="width:${pct}%"></i></div>
+        <div class="dates"><span>Entered ${fd(p.ent,fast)}</span><span>${pct}% done</span><span>Leaves ${fd(p.ing.jd,fast)}</span></div>
+        <div class="stats"><div class="stat"><span>Total stay</span><b>${durTxt(total)}</b></div><div class="stat"><span>Time left</span><b>${durTxt(p.ing.jd-jdn)}</b></div></div>`;
+      const nh=house(p.ing.sign*30+1);
+      s+=`<div class="nx">${p.ing.fwd?"→":"←"} <b>Next:</b> moves ${p.ing.fwd?"forward":"back"} into <b>${SG[p.ing.sign]} ${SIGNS[p.ing.sign]}</b>, your ${ord(nh)} house (${HOUSES[nh-1].n.toLowerCase()}: ${HOUSES[nh-1].k}).</div>`;
     } else s+=`<div class="nx">Stays in ${SIGNS[si]} for a long time.</div>`;
-    if(p.station) s+=`<div class="tn">${p.retro?"Turns forward again":"Turns backward (retrograde)"} on ${fd(p.station)} (${untilTxt(p.station,jdn)}).</div>`;
+    if(p.station) s+=`<div class="tn">↻ ${p.retro?"Turns forward again":"Turns backward (retrograde)"} on ${fd(p.station)} (${untilTxt(p.station,jdn)}).</div>`;
     else if(p.k==="Sun"||p.k==="Moon") s+=`<div class="tn">The ${p.k} always moves forward.</div>`;
     return s+"</div>";
   }).join("");
+  $("moveList").innerHTML=html;
 }
 document.querySelectorAll("#wheelMode button").forEach(b=>b.onclick=()=>{
   wheelMode=b.dataset.m;
@@ -1015,11 +1037,12 @@ function drawWheel(){
   for(let i=0;i<12;i++){const [hx,hy]=pt(i*30+15,33); const h=(i-NAT.ascSign+12)%12+1;
     s+=`<text x="${hx}" y="${hy}" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="700" fill="${c('--accent')}" pointer-events="none">${h}</text>`;}
   // angles
-  [["ASC",asc],["MC",NAT.mc]].forEach(([l,lon])=>{const [a,b]=pt(lon,rC),[e,f]=pt(lon,rS),[tx,ty]=pt(lon,rS-9);
+  [["ASC",asc],["MC",NAT.mc]].forEach(([l,lon])=>{const [a,b]=pt(lon,rC),[e,f]=pt(lon,rS),[tx,ty]=pt(lon,rC+16);
     s+=`<line x1="${a}" y1="${b}" x2="${e}" y2="${f}" stroke="${c('--accent')}" stroke-width="2" stroke-dasharray="4 3" pointer-events="none"/>
-        <text x="${tx}" y="${ty-8}" text-anchor="middle" font-size="9" font-weight="700" fill="${c('--accent')}" pointer-events="none">${l}</text>`;});
+        <text x="${tx}" y="${ty-5}" text-anchor="middle" font-size="9" font-weight="700" fill="${c('--accent')}" pointer-events="none">${l}</text>`;});
   // planets: stack crowded ones on inner levels so they stay in their own sign
-  const LV=[130,101,73], placed=[], pc=wheelMode==="now"?c('--hard'):c('--ink');
+  const left={}; if(wheelMode==="now"){const mv=nextMoves(Date.now()); mv.forEach(m=>{ if(!m.ing) return; const d=m.ing.jd-m.now; left[m.k]=d<1?Math.max(1,Math.round(d*24))+"h":d<45?Math.round(d)+"d":d<730?Math.round(d/30.44)+"mo":(d/365.25).toFixed(1).replace(/\.0$/,"")+"y"; });}
+  const LV=wheelMode==="now"?[134,96,66]:[130,101,73], placed=[], pc=wheelMode==="now"?c('--hard'):c('--ink');
   wheelPlanets().slice().sort((a,b)=>a.lon-b.lon).forEach(p=>{
     let lv=0; while(lv<2&&placed.some(q=>q.lv===lv&&sep(q.lon,p.lon)<14)) lv++;
     placed.push({...p,lv});
@@ -1028,7 +1051,7 @@ function drawWheel(){
     const r=LV[p.lv], [x,y0]=pt(p.lon,r), y=y0-4, nx=x, ny=y+14, [m1,m2]=pt(p.lon,rS), [m3,m4]=pt(p.lon,rS-6);
     s+=`<line x1="${m1}" y1="${m2}" x2="${m3}" y2="${m4}" stroke="${pc}" stroke-width="1.5" pointer-events="none"/>
         <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="17" fill="${pc}" pointer-events="none">${p.g}</text>
-        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro?" ℞":""}${wheelMode==="now"?(p.retro?" ←":" →"):""}</text>`;
+        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro&&wheelMode!=="now"?" ℞":""}${left[p.k]?`<tspan font-weight="700" fill="${pc}"> ${p.retro?"←":"→"}${left[p.k]}</tspan>`:""}</text>`;
   });
   $("wheel").innerHTML=s;
   $("wheel").onclick=e=>{const t=e.target.closest("[data-h]"); if(t){const h=+t.dataset.h; showHouse(selHouse===h?null:h); if(selHouse) $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});}};
