@@ -210,6 +210,17 @@ body.noscroll .listen{font-size:0;padding:0;width:52px;height:52px;display:flex;
 body.noscroll .listen::before{content:"🔊";font-size:1.35rem}
 body.noscroll .listen.on::before{content:"⏹"}
 .tapnote{font-size:.78rem;color:var(--accent);margin:-4px 0 8px}
+.ttl{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.langbtn{width:auto;margin:0;padding:8px 16px;border-radius:99px;font-size:1rem;background:var(--soft);color:var(--ink);font-weight:800;flex:none;border:1px solid var(--line)}
+html[dir=rtl] body{font-family:-apple-system,"SF Arabic","Geeza Pro","Noto Naskh Arabic","Segoe UI",Tahoma,sans-serif}
+html[dir=rtl] .nav,html[dir=rtl] .hours,html[dir=rtl] .hlab,html[dir=rtl] .mbars,html[dir=rtl] .mv .bar,html[dir=rtl] .mv .dates,html[dir=rtl] .stay .mb{direction:ltr}
+html[dir=rtl] .wd .go{transform:scaleX(-1)}
+html[dir=rtl] .xs ul,html[dir=rtl] .xs ol,html[dir=rtl] ul.small{padding-left:0;padding-right:20px}
+html[dir=rtl] .note{border-left:0;border-right:3px solid var(--accent);padding:2px 10px 2px 0;margin:6px 44px 0 0}
+html[dir=rtl] .hl .kw,html[dir=rtl] .hl .rd,html[dir=rtl] .hl .pp{margin-left:0;margin-right:44px}
+html[dir=rtl] .asp{border-left:0;border-right:4px solid var(--line)}
+html[dir=rtl] .asp.easy{border-right-color:var(--good)} html[dir=rtl] .asp.hard{border-right-color:var(--hard)} html[dir=rtl] .asp.conj{border-right-color:var(--accent)}
+html[dir=rtl] .xl{text-underline-offset:5px}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -254,46 +265,46 @@ body.noscroll .listen.on::before{content:"⏹"}
 </head>
 <body>
 <div class="wrap">
-  <h1>✦ Horoscope Tracker</h1>
-  <p class="sub">Your birth chart and the sky for any day, month or year, in plain English.</p>
+  <h1 class="ttl"><span data-ar="✦ متتبّع الأبراج">✦ Horoscope Tracker</span><button id="langBtn" class="langbtn" aria-label="التبديل إلى العربية">ع</button></h1>
+  <p class="sub" data-ar="خريطتك الفلكية والسماء لأي يوم أو أسبوع أو شهر أو سنة، بلغة بسيطة.">Your birth chart and the sky for any day, month or year, in plain English.</p>
 
   <div class="card" id="formCard">
-    <h2>Your birth details</h2>
-    <label for="name">Name (optional)</label>
-    <input id="name" placeholder="Your name">
+    <h2 data-ar="بيانات ولادتك">Your birth details</h2>
+    <label for="name" data-ar="الاسم (اختياري)">Name (optional)</label>
+    <input id="name" placeholder="Your name" data-ar-ph="اسمك">
     <div class="row">
-      <div><label for="bdate">Birth date</label><input id="bdate" type="date" value="1990-01-01"></div>
-      <div><label for="btime">Birth time <span style="font-weight:400">(local, in birth city)</span></label><input id="btime" type="time" value="12:00"></div>
+      <div><label for="bdate" data-ar="تاريخ الولادة">Birth date</label><input id="bdate" type="date" value="1990-01-01"></div>
+      <div><label for="btime" data-ar="وقت الولادة <span style='font-weight:400'>(بتوقيت مدينة الولادة)</span>">Birth time <span style="font-weight:400">(local, in birth city)</span></label><input id="btime" type="time" value="12:00"></div>
     </div>
-    <label for="cityQ">Birth city</label>
+    <label for="cityQ" data-ar="مدينة الولادة">Birth city</label>
     <div class="cs">
-      <input id="cityQ" type="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Type any city in the world… e.g. Damascus" aria-autocomplete="list" aria-controls="cityRes">
-      <div id="cityRes" class="cres hidden" role="listbox"></div>
+      <input id="cityQ" type="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Type any city in the world… e.g. Damascus" data-ar-ph="اكتب أي مدينة في العالم بالإنجليزية… مثلاً Damascus" aria-autocomplete="list" aria-controls="cityRes">
+      <div id="cityRes" class="cres hidden notr" role="listbox"></div>
     </div>
-    <p class="hint" id="cityPicked">171,000+ cities. Pick one and the latitude, longitude and UTC offset (including daylight saving on your birth date) fill in automatically.</p>
+    <p class="hint" id="cityPicked" data-ar="أكثر من 171,000 مدينة (اكتب الاسم بالإنجليزية). اختر مدينة فيُملأ خط العرض وخط الطول وفرق التوقيت (مع التوقيت الصيفي يوم ولادتك) تلقائياً.">171,000+ cities. Pick one and the latitude, longitude and UTC offset (including daylight saving on your birth date) fill in automatically.</p>
     <div class="row3">
-      <div><label for="lat">Latitude</label><input id="lat" inputmode="decimal" value="33.89"></div>
-      <div><label for="lon">Longitude</label><input id="lon" inputmode="decimal" value="35.50"></div>
-      <div><label for="tz">UTC offset</label><input id="tz" inputmode="decimal" value="2"></div>
+      <div><label for="lat" data-ar="خط العرض">Latitude</label><input id="lat" inputmode="decimal" value="33.89"></div>
+      <div><label for="lon" data-ar="خط الطول">Longitude</label><input id="lon" inputmode="decimal" value="35.50"></div>
+      <div><label for="tz" data-ar="فرق التوقيت (UTC)">UTC offset</label><input id="tz" inputmode="decimal" value="2"></div>
     </div>
-    <p class="hint">You can also type these yourself. Without an exact birth time, the Rising sign and Moon can be off.</p>
-    <button id="go">Show my chart</button>
+    <p class="hint" data-ar="يمكنك كتابتها بنفسك أيضاً. بدون وقت ولادة دقيق، قد يكون الطالع والقمر غير دقيقين.">You can also type these yourself. Without an exact birth time, the Rising sign and Moon can be off.</p>
+    <button id="go" data-ar="اعرض خريطتي">Show my chart</button>
   </div>
 
   <div id="out" class="hidden">
     <div class="basesw" id="baseSw" role="group" aria-label="Read houses from">
-      <button data-b="asc" class="on">🌅 Rising<small id="bsA"></small></button>
-      <button data-b="sun">☀️ Sun<small id="bsS"></small></button>
-      <button data-b="moon">🌙 Moon<small id="bsM"></small></button>
-      <button data-b="all">✨ Full<small>all 3 mixed</small></button>
+      <button data-b="asc" class="on" data-ar="🌅 الطالع<small id='bsA'></small>">🌅 Rising<small id="bsA"></small></button>
+      <button data-b="sun" data-ar="☀️ الشمس<small id='bsS'></small>">☀️ Sun<small id="bsS"></small></button>
+      <button data-b="moon" data-ar="🌙 القمر<small id='bsM'></small>">🌙 Moon<small id="bsM"></small></button>
+      <button data-b="all" data-ar="✨ شامل<small>الثلاثة معاً</small>">✨ Full<small>all 3 mixed</small></button>
     </div>
     <div class="tabs">
-      <button data-t="today" class="on">Day</button>
-      <button data-t="week">Week</button>
-      <button data-t="month">Month</button>
-      <button data-t="year">Year</button>
-      <button data-t="chart">Chart</button>
-      <button data-t="learn">Learn</button>
+      <button data-t="today" class="on" data-ar="اليوم">Day</button>
+      <button data-t="week" data-ar="الأسبوع">Week</button>
+      <button data-t="month" data-ar="الشهر">Month</button>
+      <button data-t="year" data-ar="السنة">Year</button>
+      <button data-t="chart" data-ar="الخريطة">Chart</button>
+      <button data-t="learn" data-ar="تعلّم">Learn</button>
     </div>
 
     <!-- DAY -->
@@ -303,7 +314,7 @@ body.noscroll .listen.on::before{content:"⏹"}
         <input id="viewDate" type="date" aria-label="Pick a day">
         <button id="nextDay" aria-label="Next day">›</button>
       </div>
-      <button id="todayBtn" class="ghost hidden">↺ Back to today</button>
+      <button id="todayBtn" class="ghost hidden" data-ar="↺ العودة إلى اليوم">↺ Back to today</button>
       <div class="card full hidden" id="fullDay"></div>
       <div class="card">
         <div class="flex">
@@ -313,24 +324,24 @@ body.noscroll .listen.on::before{content:"⏹"}
         <p id="dailyNote" style="margin:12px 0 0"></p>
       </div>
       <div class="card">
-        <h2>Day at a glance</h2>
+        <h2 data-ar="لمحة عن اليوم">Day at a glance</h2>
         <div class="ga" id="glance"></div>
-        <h3>Best hours</h3>
+        <h3 data-ar="أفضل الساعات">Best hours</h3>
         <div class="hours" id="hours"></div>
-        <div class="hlab"><span>6am</span><span>9am</span><span>12pm</span><span>3pm</span><span>6pm</span><span>9pm</span></div>
+        <div class="hlab" data-ar="<span>6ص</span><span>9ص</span><span>12م</span><span>3م</span><span>6م</span><span>9م</span>"><span>6am</span><span>9am</span><span>12pm</span><span>3pm</span><span>6pm</span><span>9pm</span></div>
         <p id="hoursText" class="small" style="margin:8px 0 0"></p>
       </div>
       <div class="card">
-        <h2>Next 30 days</h2>
+        <h2 data-ar="الأيام الثلاثون القادمة">Next 30 days</h2>
         <div id="next30"></div>
       </div>
       <div class="card">
-        <h2>Today's sky vs. your chart</h2>
-        <p class="small" style="margin-top:-6px">How the planets line up with your birth planets (transits).</p>
+        <h2 data-ar="سماء اليوم مقابل خريطتك">Today's sky vs. your chart</h2>
+        <p class="small" style="margin-top:-6px" data-ar="كيف تصطف الكواكب مع كواكب ولادتك (العبور).">How the planets line up with your birth planets (transits).</p>
         <div id="transits"></div>
       </div>
       <div class="card">
-        <h2>Planets on this day</h2>
+        <h2 data-ar="الكواكب في هذا اليوم">Planets on this day</h2>
         <table id="nowTable"></table>
       </div>
     </section>
@@ -343,16 +354,16 @@ body.noscroll .listen.on::before{content:"⏹"}
         <button id="nextWeek" aria-label="Next week">›</button>
       </div>
       <div class="wchips" id="weekChips" role="tablist" aria-label="Pick a week"></div>
-      <button id="thisWeekBtn" class="ghost hidden">↺ Back to the upcoming week</button>
+      <button id="thisWeekBtn" class="ghost hidden" data-ar="↺ العودة إلى الأسبوع القادم">↺ Back to the upcoming week</button>
       <div class="card full hidden" id="fullWeek"></div>
-      <div class="card"><h2>Week forecast</h2><p class="lead" id="weekSummary"></p></div>
+      <div class="card"><h2 data-ar="توقعات الأسبوع">Week forecast</h2><p class="lead" id="weekSummary"></p></div>
       <div class="card">
-        <h2>Day by day</h2>
-        <p class="small" style="margin-top:-6px">Monday to Saturday. Overall score, strongest life area, and where the Moon is in your chart each day. <b>Tap a day</b> to open its full reading.</p>
+        <h2 data-ar="يوماً بيوم">Day by day</h2>
+        <p class="small" style="margin-top:-6px" data-ar="من الاثنين إلى السبت. التقييم العام، أقوى مجال، وأين القمر في خريطتك كل يوم. <b>اضغط على يوم</b> لفتح قراءته الكاملة.">Monday to Saturday. Overall score, strongest life area, and where the Moon is in your chart each day. <b>Tap a day</b> to open its full reading.</p>
         <div id="weekDays"></div>
       </div>
-      <div class="card"><h2>Life areas this week</h2><div class="ga" id="weekAreas"></div></div>
-      <div class="card"><h2>Key dates this week</h2><div id="weekEvents"></div></div>
+      <div class="card"><h2 data-ar="مجالات الحياة هذا الأسبوع">Life areas this week</h2><div class="ga" id="weekAreas"></div></div>
+      <div class="card"><h2 data-ar="تواريخ مهمة هذا الأسبوع">Key dates this week</h2><div id="weekEvents"></div></div>
     </section>
 
     <!-- MONTH -->
@@ -363,15 +374,15 @@ body.noscroll .listen.on::before{content:"⏹"}
         <button id="nextMonth" aria-label="Next month">›</button>
       </div>
 <div class="card full hidden" id="fullMonth"></div>
-      <div class="card"><h2>Month forecast</h2><p class="lead" id="monthSummary"></p></div>
-      <div class="card"><h2>Life areas this month</h2><div class="ga" id="monthAreas"></div></div>
+      <div class="card"><h2 data-ar="توقعات الشهر">Month forecast</h2><p class="lead" id="monthSummary"></p></div>
+      <div class="card"><h2 data-ar="مجالات الحياة هذا الشهر">Life areas this month</h2><div class="ga" id="monthAreas"></div></div>
       <div class="card">
-        <h2>Best &amp; careful days</h2>
-        <h3 style="margin-top:0">Best days</h3><div class="daylist good" id="bestDays"></div>
-        <h3>Careful days</h3><div class="daylist bad" id="badDays"></div>
+        <h2 data-ar="الأيام الأفضل والأيام التي تحتاج حذراً">Best &amp; careful days</h2>
+        <h3 style="margin-top:0" data-ar="أفضل الأيام">Best days</h3><div class="daylist good" id="bestDays"></div>
+        <h3 data-ar="أيام الحذر">Careful days</h3><div class="daylist bad" id="badDays"></div>
       </div>
-      <div class="card"><h2>Big influences all month</h2><div id="monthSlow"></div></div>
-      <div class="card"><h2>Key dates</h2><div id="monthEvents"></div></div>
+      <div class="card"><h2 data-ar="تأثيرات كبيرة طوال الشهر">Big influences all month</h2><div id="monthSlow"></div></div>
+      <div class="card"><h2 data-ar="تواريخ مهمة">Key dates</h2><div id="monthEvents"></div></div>
     </section>
 
     <!-- YEAR -->
@@ -384,14 +395,14 @@ body.noscroll .listen.on::before{content:"⏹"}
       <div class="chips" id="yearChips"></div>
 <div class="card full hidden" id="fullYear"></div>
       <div class="card"><h2 id="yearHead">Year forecast</h2><p class="lead" id="yearSummary"></p></div>
-      <div class="card"><h2>Your theme of the year</h2><div id="yearTheme"></div></div>
+      <div class="card"><h2 data-ar="موضوع سنتك">Your theme of the year</h2><div id="yearTheme"></div></div>
       <div class="card">
-        <h2>Month by month</h2>
-        <p class="small" style="margin:-6px 0 0">Average daily score. Green bars are the strongest months and orange bars are the hardest.</p>
+        <h2 data-ar="شهراً بشهر">Month by month</h2>
+        <p class="small" style="margin:-6px 0 0" data-ar="متوسط التقييم اليومي. الأعمدة الخضراء أقوى الأشهر والبرتقالية أصعبها.">Average daily score. Green bars are the strongest months and orange bars are the hardest.</p>
         <div class="mbars" id="yearBars"></div>
       </div>
-      <div class="card"><h2>Major transits</h2><p class="small" style="margin-top:-6px">Slow planets touching your chart. These shape the whole year.</p><div id="yearMajor"></div></div>
-      <div class="card"><h2>Eclipses &amp; retrogrades</h2><div id="yearEcl"></div></div>
+      <div class="card"><h2 data-ar="العبورات الكبرى">Major transits</h2><p class="small" style="margin-top:-6px" data-ar="كواكب بطيئة تلامس خريطتك. هذه تشكّل السنة كلها.">Slow planets touching your chart. These shape the whole year.</p><div id="yearMajor"></div></div>
+      <div class="card"><h2 data-ar="الكسوف والخسوف والتراجعات">Eclipses &amp; retrogrades</h2><div id="yearEcl"></div></div>
     </section>
 
     <!-- CHART -->
@@ -403,36 +414,36 @@ body.noscroll .listen.on::before{content:"⏹"}
         <p id="big3Text" style="margin:12px 0 0"></p>
       </div>
       <div class="card" style="text-align:center">
-        <h2 style="text-align:left">Your birth chart wheel</h2>
-        <p class="small" style="text-align:left;margin-top:-6px">Outer ring: the 12 signs. Inner numbers: your 12 houses. In <b>Planets now</b>, each planet shows its direction and its <b>time left</b> in that house (d = days, mo = months, y = years), and a table below shows the <b>total stay</b> next to the time left. <b>Tap any house</b> on the wheel or in the lists below to see what it means for you.</p>
-        <div class="chips" id="wheelMode"><button class="on" data-m="birth">My birth chart</button><button data-m="now">Planets now</button></div>
+        <h2 style="text-align:start" data-ar="دائرة خريطة ولادتك">Your birth chart wheel</h2>
+        <p class="small" style="text-align:start;margin-top:-6px" data-ar="الحلقة الخارجية: الأبراج الاثنا عشر. الأرقام الداخلية: بيوتك الاثنا عشر. في <b>الكواكب الآن</b> يظهر لكل كوكب اتجاهه و<b>الوقت المتبقي</b> له في ذلك البيت (ي = يوم، ش = شهر، س = سنة)، ويظهر جدول تحتها فيه <b>مدة الإقامة الكاملة</b> بجانب الوقت المتبقي. <b>اضغط على أي بيت</b> في الدائرة أو في القوائم لترى ماذا يعني لك.">Outer ring: the 12 signs. Inner numbers: your 12 houses. In <b>Planets now</b>, each planet shows its direction and its <b>time left</b> in that house (d = days, mo = months, y = years), and a table below shows the <b>total stay</b> next to the time left. <b>Tap any house</b> on the wheel or in the lists below to see what it means for you.</p>
+        <div class="chips" id="wheelMode"><button class="on" data-m="birth" data-ar="خريطة ولادتي">My birth chart</button><button data-m="now" data-ar="الكواكب الآن">Planets now</button></div>
         <div class="wgrid">
           <svg id="wheel" viewBox="0 0 400 400" width="100%" style="max-width:480px;touch-action:manipulation" role="img" aria-label="Birth chart wheel"></svg>
-          <div class="leg"><h3>Houses</h3><div id="legH"></div></div>
+          <div class="leg"><h3 data-ar="البيوت">Houses</h3><div id="legH"></div></div>
           <div class="leg"><h3 id="legPT">Planets</h3><div id="legP"></div></div>
         </div>
         <div id="stayBox" class="hidden"></div>
         <div id="houseInfo" class="hinfo"></div>
       </div>
       <div class="card">
-        <h2>Planet journeys</h2>
-        <p class="small" style="margin-top:-6px">Where today's planets sit in <b>your</b> chart, how long each one stays in that house, how much time is left, and where it goes next. The bar fills as the planet moves through. <span style="color:var(--good)">→ forward</span> moves to the next sign. <span style="color:var(--hard)">← backward (℞)</span> can slip back into the previous one.</p>
+        <h2 data-ar="رحلات الكواكب">Planet journeys</h2>
+        <p class="small" style="margin-top:-6px" data-ar="أين تقع كواكب اليوم في خريطتك <b>أنت</b>، كم تبقى في كل بيت، وكم بقي من الوقت، وإلى أين تذهب بعده. يمتلئ الشريط كلما تقدّم الكوكب. <span style='color:var(--good)'>← للأمام</span> ينتقل إلى البرج التالي. <span style='color:var(--hard)'>→ للخلف (℞)</span> قد يعود إلى البرج السابق.">Where today's planets sit in <b>your</b> chart, how long each one stays in that house, how much time is left, and where it goes next. The bar fills as the planet moves through. <span style="color:var(--good)">→ forward</span> moves to the next sign. <span style="color:var(--hard)">← backward (℞)</span> can slip back into the previous one.</p>
         <div id="moveList"></div>
       </div>
       <div class="card">
-        <h2>Your 12 houses</h2>
-        <p class="tapnote">👆 Tap any house for its full reading: connect the dots, advice, and what to wear.</p>
-        <p class="small" style="margin-top:-6px">Each house is one area of life. The <b>sign</b> on it shows <i>how</i> you handle that area. The <b>planets</b> in it show where your energy goes.</p>
+        <h2 data-ar="بيوتك الاثنا عشر">Your 12 houses</h2>
+        <p class="tapnote" data-ar="👆 اضغط على أي بيت لقراءته الكاملة: ربط النقاط، النصائح، وماذا تلبس.">👆 Tap any house for its full reading: connect the dots, advice, and what to wear.</p>
+        <p class="small" style="margin-top:-6px" data-ar="كل بيت هو مجال من مجالات الحياة. <b>البرج</b> عليه يُظهر <i>كيف</i> تتعامل مع هذا المجال. و<b>الكواكب</b> فيه تُظهر أين تذهب طاقتك.">Each house is one area of life. The <b>sign</b> on it shows <i>how</i> you handle that area. The <b>planets</b> in it show where your energy goes.</p>
         <div id="houseList"></div>
       </div>
       <div class="card">
-        <h2>Your planets</h2>
-        <p class="tapnote">👆 Tap any planet for its full meaning, aspects, advice and what to wear.</p>
-        <p class="small" style="margin-top:-6px">Each planet is one part of you. Its <b>sign</b> shows <i>how</i> it acts and its <b>house</b> shows <i>where</i> in life.</p>
+        <h2 data-ar="كواكبك">Your planets</h2>
+        <p class="tapnote" data-ar="👆 اضغط على أي كوكب لمعناه الكامل وجوانبه ونصائحه وماذا تلبس.">👆 Tap any planet for its full meaning, aspects, advice and what to wear.</p>
+        <p class="small" style="margin-top:-6px" data-ar="كل كوكب جزء منك. <b>برجه</b> يُظهر <i>كيف</i> يتصرف، و<b>بيته</b> يُظهر <i>أين</i> في حياتك.">Each planet is one part of you. Its <b>sign</b> shows <i>how</i> it acts and its <b>house</b> shows <i>where</i> in life.</p>
         <div id="planetList"></div>
       </div>
       <div class="card">
-        <h2>Element &amp; mode balance</h2>
+        <h2 data-ar="توازن العناصر والأنماط">Element &amp; mode balance</h2>
         <div class="bars" id="bars"></div>
         <p id="balanceText" class="small"></p>
       </div>
@@ -442,41 +453,41 @@ body.noscroll .listen.on::before{content:"⏹"}
     <section id="t-learn" class="hidden">
       <div class="card" id="guide"></div>
       <div class="card">
-        <h2>How to read this</h2>
-        <p><b>Sun</b> is your core self. <b>Moon</b> is your emotions and what makes you feel safe. <b>Rising (Ascendant)</b> is the sign that was rising on the eastern horizon when you were born. It shapes your first impression and outward style.</p>
-        <p><b>Houses</b> are the 12 areas of life (money, home, work, love and so on). This page uses <i>whole-sign houses</i>: one sign is your 1st house, the next sign is your 2nd, and so on. Use the switch at the top to choose which sign is the 1st house:</p>
-        <p><b>🌅 Rising</b> uses your Rising sign. It's the most personal and accurate option, but it needs your exact birth time.<br><b>☀️ Sun</b> uses your Sun sign ("solar houses"). This is how newspaper and app horoscopes for your sign work.<br><b>🌙 Moon</b> uses your Moon sign ("lunar houses"). It shows your emotional side of each event.<br><b>✨ Full</b> blends all three. Scores are the average of the three views, and each tab shows a Full reading card with where the views agree. When 2 or 3 views agree, that message is stronger.</p>
-        <p><b>Transits</b> are today's planets making angles to your birth planets:</p>
-        <p><span class="pill">☌ Conjunction 0°</span> merging, emphasis<br>
+        <h2 data-ar="كيف تقرأ هذا">How to read this</h2>
+        <p data-ar="<b>الشمس</b> ذاتك الجوهرية. <b>القمر</b> مشاعرك وما يجعلك تشعر بالأمان. <b>الطالع</b> هو البرج الذي كان يشرق في الأفق الشرقي لحظة ولادتك، ويشكّل انطباعك الأول وأسلوبك الخارجي."><b>Sun</b> is your core self. <b>Moon</b> is your emotions and what makes you feel safe. <b>Rising (Ascendant)</b> is the sign that was rising on the eastern horizon when you were born. It shapes your first impression and outward style.</p>
+        <p data-ar="<b>البيوت</b> هي مجالات الحياة الاثنا عشر (المال، البيت، العمل، الحب وغيرها). تستخدم هذه الصفحة <i>بيوت البرج الكامل</i>: برج واحد هو بيتك الأول، والبرج التالي هو الثاني، وهكذا. استخدم المفتاح في الأعلى لتختار أي برج يكون البيت الأول:"><b>Houses</b> are the 12 areas of life (money, home, work, love and so on). This page uses <i>whole-sign houses</i>: one sign is your 1st house, the next sign is your 2nd, and so on. Use the switch at the top to choose which sign is the 1st house:</p>
+        <p data-ar="<b>🌅 الطالع</b> يستخدم برجك الطالع. هو الأكثر شخصية ودقة، لكنه يحتاج وقت ولادة دقيقاً.<br><b>☀️ الشمس</b> يستخدم برجك الشمسي («البيوت الشمسية»)، وهكذا تعمل أبراج الصحف والتطبيقات.<br><b>🌙 القمر</b> يستخدم برجك القمري («البيوت القمرية») ويُظهر الجانب العاطفي لكل حدث.<br><b>✨ شامل</b> يمزج الثلاثة. التقييمات متوسط الرؤى الثلاث، وكل تبويب يعرض بطاقة قراءة شاملة توضح أين تتفق الرؤى. حين تتفق رؤيتان أو ثلاث تكون الرسالة أقوى."><b>🌅 Rising</b> uses your Rising sign. It's the most personal and accurate option, but it needs your exact birth time.<br><b>☀️ Sun</b> uses your Sun sign ("solar houses"). This is how newspaper and app horoscopes for your sign work.<br><b>🌙 Moon</b> uses your Moon sign ("lunar houses"). It shows your emotional side of each event.<br><b>✨ Full</b> blends all three. Scores are the average of the three views, and each tab shows a Full reading card with where the views agree. When 2 or 3 views agree, that message is stronger.</p>
+        <p data-ar="<b>العبور</b> هو زوايا كواكب اليوم مع كواكب ولادتك:"><b>Transits</b> are today's planets making angles to your birth planets:</p>
+        <p data-ar="<span class='pill'>☌ اقتران 0°</span> اندماج وتركيز<br><span class='pill'>⚹ تسديس 60°</span> فرصة<br><span class='pill'>□ تربيع 90°</span> توتر يدفعك للتحرك<br><span class='pill'>△ تثليث 120°</span> تدفق سهل<br><span class='pill'>☍ مقابلة 180°</span> توازن، والآخرون"><span class="pill">☌ Conjunction 0°</span> merging, emphasis<br>
            <span class="pill">⚹ Sextile 60°</span> opportunity<br>
            <span class="pill">□ Square 90°</span> tension, push to act<br>
            <span class="pill">△ Trine 120°</span> easy flow<br>
            <span class="pill">☍ Opposition 180°</span> balance, other people</p>
-        <p><b>℞ Retrograde</b> means a planet looks like it's moving backward from Earth. Read it as a time to review and redo, not to launch.</p>
-        <p><b>Theme of the year</b> uses <i>annual profections</i>, an old technique. Each birthday moves your focus one house forward, and the planet that rules that house becomes your "year planet."</p>
-        <p><b>Eclipses</b> are extra-strong New and Full Moons that happen near the Moon's nodes. They often mark turning points in the house where they fall.</p>
+        <p data-ar="<b>℞ التراجع</b> يعني أن الكوكب يبدو كأنه يتحرك للخلف من الأرض. اعتبره وقتاً للمراجعة وإعادة العمل، لا للإطلاق."><b>℞ Retrograde</b> means a planet looks like it's moving backward from Earth. Read it as a time to review and redo, not to launch.</p>
+        <p data-ar="<b>موضوع السنة</b> يستخدم <i>التقدّمات السنوية (البروفكشن)</i>، وهي تقنية قديمة. كل عيد ميلاد ينقل تركيزك بيتاً واحداً للأمام، ويصبح الكوكب الحاكم لذلك البيت «كوكب سنتك»."><b>Theme of the year</b> uses <i>annual profections</i>, an old technique. Each birthday moves your focus one house forward, and the planet that rules that house becomes your "year planet."</p>
+        <p data-ar="<b>الكسوف والخسوف</b> أقمار جديدة وبدور قوية جداً تحدث قرب عقد القمر، وغالباً تمثّل نقاط تحوّل في البيت الذي تقع فيه."><b>Eclipses</b> are extra-strong New and Full Moons that happen near the Moon's nodes. They often mark turning points in the house where they fall.</p>
       </div>
       <div class="card">
-        <h2>How the scores work</h2>
-        <p class="small">Each day the page checks every planet against every point in your chart. Easy angles add points and hard angles take points away. Venus and Jupiter count as helpful, and Mars and Saturn as challenging. Each life area only counts the planets and houses that rule it (for example, Money = Venus, Jupiter, and your 2nd and 8th houses). The result is scaled from 1 to 5. "Best hours" follows the Moon, which moves about 1° every 2 hours, as it lines up with your chart.</p>
+        <h2 data-ar="كيف تُحسب التقييمات">How the scores work</h2>
+        <p class="small" data-ar="كل يوم تفحص الصفحة كل كوكب مقابل كل نقطة في خريطتك. الزوايا السهلة تضيف نقاطاً والصعبة تنقص. الزهرة والمشتري يُحسبان مساعدَين، والمريخ وزحل تحدّياً. كل مجال حياة يحسب فقط الكواكب والبيوت التي تحكمه (مثلاً المال = الزهرة والمشتري وبيتاك الثاني والثامن). تُحوَّل النتيجة إلى مقياس من 1 إلى 5. «أفضل الساعات» تتبع القمر، الذي يتحرك نحو درجة كل ساعتين، وهو يصطف مع خريطتك.">Each day the page checks every planet against every point in your chart. Easy angles add points and hard angles take points away. Venus and Jupiter count as helpful, and Mars and Saturn as challenging. Each life area only counts the planets and houses that rule it (for example, Money = Venus, Jupiter, and your 2nd and 8th houses). The result is scaled from 1 to 5. "Best hours" follows the Moon, which moves about 1° every 2 hours, as it lines up with your chart.</p>
       </div>
       <div class="card">
-        <h2>Under the hood (IT notes)</h2>
-        <p class="small">Everything runs on your phone. Nothing is sent anywhere, and your details are saved only in this browser.</p>
+        <h2 data-ar="خلف الكواليس (ملاحظات تقنية)">Under the hood (IT notes)</h2>
+        <p class="small" data-ar="كل شيء يعمل على هاتفك. لا يُرسل شيء لأي مكان، وبياناتك تُحفظ فقط في هذا المتصفح.">Everything runs on your phone. Nothing is sent anywhere, and your details are saved only in this browser.</p>
         <ul class="small">
-          <li>Birth time is converted to UTC, then to a <b>Julian Day</b> number, the continuous day count astronomers use.</li>
-          <li>Sun &amp; Moon use low-precision formulas from Jean Meeus's <i>Astronomical Algorithms</i> (Sun within ~0.01°, Moon within ~1°, so Moon phase times are accurate to about ±2 hours).</li>
-          <li>The planets use NASA JPL Keplerian orbital elements. The code solves Kepler's equation, then subtracts Earth's position to get the view from Earth.</li>
-          <li>Event dates come from scanning the sky one day at a time. New and Full Moon times are then narrowed down by bisection.</li>
-          <li>The zodiac is tropical (Western astrology), with signs every 30° starting at 0° Aries.</li>
+          <li data-ar="يُحوَّل وقت الولادة إلى UTC ثم إلى رقم <b>اليوم اليولياني</b>، وهو عدّاد الأيام المستمر الذي يستخدمه الفلكيون.">Birth time is converted to UTC, then to a <b>Julian Day</b> number, the continuous day count astronomers use.</li>
+          <li data-ar="الشمس والقمر يستخدمان معادلات من كتاب جان ميوس <i>الخوارزميات الفلكية</i> (الشمس بدقة ~0.01°، القمر ~1°، فأوقات أطوار القمر دقيقة بحدود ±ساعتين).">Sun &amp; Moon use low-precision formulas from Jean Meeus's <i>Astronomical Algorithms</i> (Sun within ~0.01°, Moon within ~1°, so Moon phase times are accurate to about ±2 hours).</li>
+          <li data-ar="الكواكب تستخدم عناصر مدارية كبلرية من NASA JPL. يحل الكود معادلة كبلر ثم يطرح موقع الأرض لنحصل على المنظر من الأرض.">The planets use NASA JPL Keplerian orbital elements. The code solves Kepler's equation, then subtracts Earth's position to get the view from Earth.</li>
+          <li data-ar="تواريخ الأحداث تأتي من مسح السماء يوماً بيوم، ثم تُضبط أوقات القمر الجديد والبدر بطريقة التنصيف.">Event dates come from scanning the sky one day at a time. New and Full Moon times are then narrowed down by bisection.</li>
+          <li data-ar="دائرة الأبراج استوائية (التنجيم الغربي)، والأبراج كل 30° بدءاً من 0° الحمل.">The zodiac is tropical (Western astrology), with signs every 30° starting at 0° Aries.</li>
         </ul>
       </div>
     </section>
 
-    <button id="edit" style="background:var(--soft);color:var(--ink)">Edit birth details</button>
+    <button id="edit" style="background:var(--soft);color:var(--ink)" data-ar="تعديل بيانات الولادة">Edit birth details</button>
   </div>
 
-  <p class="foot">For reflection and fun. The astronomy is real; how you read it is up to you.<br>City data © <a href="https://www.geonames.org" style="color:inherit">GeoNames</a> (CC BY 4.0) via the cities.json package; time zones matched with city-timezones (MIT).</p>
+  <p class="foot" data-ar="للتأمّل والمتعة. علم الفلك حقيقي؛ وكيف تقرؤه يعود إليك.<br>بيانات المدن © <a href='https://www.geonames.org' style='color:inherit'>GeoNames</a> ‏(CC BY 4.0) عبر حزمة cities.json؛ المناطق الزمنية عبر city-timezones ‏(MIT).">For reflection and fun. The astronomy is real; how you read it is up to you.<br>City data © <a href="https://www.geonames.org" style="color:inherit">GeoNames</a> (CC BY 4.0) via the cities.json package; time zones matched with city-timezones (MIT).</p>
 </div>
 
 <div id="sheetBg" class="sbg hidden"></div>
@@ -485,11 +496,17 @@ body.noscroll .listen.on::before{content:"⏹"}
   <div class="shead"><button id="sBack" class="hidden" aria-label="Back">‹</button><div class="ic" id="sIc"></div><div class="tt"><b id="sTitle"></b><span id="sSub"></span></div><button id="sClose" aria-label="Close">✕</button></div>
   <div class="sbody" id="sBody"></div>
 </div>
-<button id="listen" class="listen hidden" aria-label="Read this page aloud">🔊 Listen</button>
+<button id="listen" class="listen hidden notr" aria-label="Read this page aloud">🔊 Listen</button>
 <script>
 (function(){
 "use strict";
 const V = "︎"; // text presentation (avoid iOS emoji glyphs)
+let LANG="en";
+try{ LANG=((location.hash.match(/lang=(ar|en)/)||[])[1])||localStorage.getItem("horoscope-lang")||"en"; }catch(e){ LANG=((location.hash.match(/lang=(ar|en)/)||[])[1])||"en"; }
+const L=(en,ar)=>LANG==="ar"?ar:en;
+const LOC=()=>LANG==="ar"?"ar-u-nu-latn":undefined;
+const ORD_AR=["","الأول","الثاني","الثالث","الرابع","الخامس","السادس","السابع","الثامن","التاسع","العاشر","الحادي عشر","الثاني عشر"];
+const arCount=(n,one,two,few,many)=>n===1?one:n===2?two:(n>=3&&n<=10)?`${n} ${few}`:`${n} ${many}`;
 const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
 const SG = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"].map(s=>s+V);
 const RULER = ["Mars","Venus","Mercury","Moon","Sun","Mercury","Venus","Mars","Jupiter","Saturn","Saturn","Jupiter"];
@@ -597,7 +614,10 @@ function angles(jd,lat,lonE){
 const signIdx=l=>Math.floor(norm(l)/30);
 const fmtDeg=l=>{const s=signIdx(l), d=norm(l)-s*30; const deg=Math.floor(d), min=Math.floor((d-deg)*60); return `${deg}°${String(min).padStart(2,"0")}′ ${SIGNS[s]}`;};
 const art=w=>/^[aeiou]/i.test(String(w).trim())?"an":"a";
-const ord=n=>n+(n===1?"st":n===2?"nd":n===3?"rd":"th");
+const ord=n=>LANG==="ar"?ORD_AR[n]:n+(n===1?"st":n===2?"nd":n===3?"rd":"th");
+const yh=h=>L(`your ${ord(h)} house`,`بيتك ${ord(h)}`);
+const hh=h=>L(`${ord(h)} house`,`البيت ${ord(h)}`);
+const yhs=list=>L(`your ${list.map(ord).join(", ")} houses`,`بيوتك ${list.map(ord).join("، ")}`);
 
 // ---------- Aspects & meanings ----------
 const ASP=[
@@ -614,7 +634,7 @@ function aspectOf(l1,l2,maxOrb){
 }
 const TONE={Sun:"attention and energy",Moon:"feelings and moods",Mercury:"talks, paperwork and ideas",Venus:"pleasure, love and money",Mars:"drive, heat and possible conflict",Jupiter:"growth and opportunity",Saturn:"tests, hard work and lasting results",Uranus:"surprises and sudden change",Neptune:"inspiration, and also some confusion"};
 const ADV={conj:"A new chapter starts here.",easy:"Use it: say yes to chances.",hard:"Go slow, and fix what's weak."};
-const interp=(t,a,n)=>`${t} brings ${TONE[t]} to your ${n.k} (${n.m}). ${ADV[a.t]}`;
+const interp=(t,a,n)=>L(`${t} brings ${TONE[t]} to your ${n.k} (${n.m}). ${ADV[a.t]}`,`${t} يجلب ${TONE[t]} إلى ${n.k} لديك (${n.m}). ${ADV[a.t]}`);
 const ACTION={Sun:"Focus moves to",Mercury:"Thinking and talks turn to",Venus:"Love and money flow toward",Mars:"Energy and drive push into",Jupiter:"About a year of growth in",Saturn:"2–3 years of hard work that pays off in",Uranus:"Years of change and freedom in",Neptune:"A long dreamy, inspired phase in"};
 const NATURE={Sun:.5,Moon:.5,Mercury:.3,Venus:1,Mars:-1,Jupiter:1,Saturn:-1,Uranus:-.5,Neptune:-.3,Ascendant:.5,Midheaven:.5};
 const WT={Sun:.8,Moon:.7,Mercury:.6,Venus:.8,Mars:1,Jupiter:1.2,Saturn:1.3,Uranus:1.1,Neptune:.9};
@@ -639,8 +659,8 @@ function buildNatal(f){
   const jd=jdFromUTCms(Date.UTC(Y,Mo-1,D,h,mi)-f.tz*3600000);
   const planets=positions(jd), {asc,mc}=angles(jd,f.lat,f.lon);
   const pts=planets.concat([
-    {k:"Ascendant",g:"AC",m:"image, body, first impressions",lon:asc},
-    {k:"Midheaven",g:"MC",m:"career, reputation",lon:mc}
+    {k:"Ascendant",g:"AC",m:L("image, body, first impressions","الصورة، الجسد، الانطباع الأول"),lon:asc},
+    {k:"Midheaven",g:"MC",m:L("career, reputation","المهنة، السمعة"),lon:mc}
   ]);
   return {jd,planets,asc,mc,pts,ascSign:signIdx(asc),by:Y,bm:Mo-1,bd:D};
 }
@@ -682,7 +702,7 @@ function scoresOne(jd,tr){
   return {sc,tot,why,all:all/4};
 }
 const VERDICT=["","Tough. Keep it simple.","Mixed. Be careful.","Normal and steady.","Good. Move forward.","Excellent. Go for it."];
-function dotsHtml(s){ let h=`<div class="dots s${s}" aria-label="${s} of 5">`; for(let i=1;i<=5;i++) h+=`<i class="${i<=s?"f":""}"></i>`; return h+"</div>"; }
+function dotsHtml(s){ let h=`<div class="dots s${s}" aria-label="${s} / 5">`; for(let i=1;i<=5;i++) h+=`<i class="${i<=s?"f":""}"></i>`; return h+"</div>"; }
 
 // ---------- Best hours (Moon timing) ----------
 function hourly(y,m,d,sky){
@@ -695,15 +715,15 @@ function hourly(y,m,d,sky){
       let val=x.a.t==="conj"?NATURE[n.k]:(x.a.t==="easy"?1:-1);
       if(x.a.t==="easy"&&["Venus","Jupiter","Sun"].includes(n.k)) val*=1.3;
       if(x.a.t==="hard"&&["Mars","Saturn"].includes(n.k)) val*=1.3;
-      add(n,val,`Moon ${x.a.n.toLowerCase()} your ${n.k}`); });
+      add(n,val,L(`Moon ${x.a.n.toLowerCase()} your ${n.k}`,`القمر ${x.a.n.toLowerCase()} مع ${n.k} لديك`)); });
     sky.forEach(p=>{ if(p.k==="Moon") return; const x=aspectOf(ml,p.lon,4); if(!x) return;
       const val=.6*(x.a.t==="conj"?NATURE[p.k]:aspVal(p.k,x.a));
-      add(p,val,`Moon ${x.a.n.toLowerCase()} ${p.k} in the sky`); });
+      add(p,val,L(`Moon ${x.a.n.toLowerCase()} ${p.k} in the sky`,`القمر ${x.a.n.toLowerCase()} مع ${p.k} في السماء`)); });
     out.push({h,v,best});
   }
   return out;
 }
-const fmtH=h=>{h%=24; return h===0?"midnight":`${h%12||12}${h<12?"am":"pm"}`;};
+const fmtH=h=>{h%=24; return h===0?L("midnight","منتصف الليل"):LANG==="ar"?`${h%12||12}${h<12?"ص":"م"}`:`${h%12||12}${h<12?"am":"pm"}`;};
 function window_(hrs,pred){ let best=null,cur=null;
   hrs.forEach((x,i)=>{ if(pred(x)){ if(!cur) cur={s:i,e:i}; else cur.e=i; if(!best||cur.e-cur.s>best.e-best.s) best={...cur}; } else cur=null; });
   return best; }
@@ -732,8 +752,8 @@ function scanEvents(arr,opts){
       const ml=moonLon(jd), nd=nodeLon(jd), dn=Math.min(sep(ml,nd),sep(ml,nd+180));
       const ecl=tg===0?dn<15.4:dn<11.8, h=house(ml), full=tg===180;
       ev.push({ms,kind:"big",ic:full?"🌕":"🌑",ecl,
-        title:`${ecl?(full?"Lunar eclipse":"Solar eclipse"):(full?"Full Moon":"New Moon")} in ${SIGNS[signIdx(ml)]}`,
-        text:`Your ${ord(h)} house: ${HOUSE_TXT[h-1]}. ${full?"Results show up and things come to a head. Finish and let go.":"A good time to set an intention or start something."}${ecl?" This is an eclipse, so it's stronger than usual and can be a turning point.":""}`,
+        title:L(`${ecl?(full?"Lunar eclipse":"Solar eclipse"):(full?"Full Moon":"New Moon")} in ${SIGNS[signIdx(ml)]}`,`${ecl?(full?"خسوف القمر":"كسوف الشمس"):(full?"البدر":"القمر الجديد")} في ${SIGNS[signIdx(ml)]}`),
+        text:L(`Your ${ord(h)} house: ${HOUSE_TXT[h-1]}. ${full?"Results show up and things come to a head. Finish and let go.":"A good time to set an intention or start something."}${ecl?" This is an eclipse, so it's stronger than usual and can be a turning point.":""}`,`بيتك ${ord(h)}: ${HOUSE_TXT[h-1]}. ${full?"تظهر النتائج وتصل الأمور إلى ذروتها. أنهِ واترك.":"وقت جيد لوضع نية أو بدء شيء جديد."}${ecl?" هذا كسوف/خسوف، فهو أقوى من المعتاد وقد يكون نقطة تحوّل.":""}`),
         time:true});
     });
     if(i>=arr.length-1) continue;
@@ -742,11 +762,11 @@ function scanEvents(arr,opts){
       if(opts.slowOnly&&!["Jupiter","Saturn","Uranus","Neptune"].includes(p.k)&&!opts.stations) return;
       if(signIdx(p.lon)!==signIdx(q.lon)&&(!opts.slowOnly||["Jupiter","Saturn","Uranus","Neptune"].includes(p.k))){
         const h=house(p.lon);
-        ev.push({ms,kind:"",ic:p.g,p:p.k,type:"ingress",title:`${p.k} enters ${SIGNS[signIdx(p.lon)]}`,text:`${ACTION[p.k]} your ${ord(h)} house: ${HOUSE_TXT[h-1]}.`});
+        ev.push({ms,kind:"",ic:p.g,p:p.k,type:"ingress",title:L(`${p.k} enters ${SIGNS[signIdx(p.lon)]}`,`${p.k} يدخل ${SIGNS[signIdx(p.lon)]}`),text:L(`${ACTION[p.k]} your ${ord(h)} house: ${HOUSE_TXT[h-1]}.`,`${ACTION[p.k]} بيتك ${ord(h)}: ${HOUSE_TXT[h-1]}.`)});
       }
       if(p.k!=="Sun"&&p.retro!==q.retro&&(!opts.slowOnly||["Mercury","Venus","Mars"].includes(p.k)||opts.stations==="all")){
-        ev.push({ms,kind:p.retro?"hard":"easy",ic:p.g,p:p.k,type:"station",retro:p.retro,title:`${p.k} turns ${p.retro?"retrograde ℞":"direct"}`,
-          text:p.retro?`Slow down on ${p.m}. Review, redo and back things up.`:`Green light again for ${p.m}.`});
+        ev.push({ms,kind:p.retro?"hard":"easy",ic:p.g,p:p.k,type:"station",retro:p.retro,title:L(`${p.k} turns ${p.retro?"retrograde ℞":"direct"}`,`${p.k} ${p.retro?"يبدأ التراجع ℞":"يعود للسير المباشر"}`),
+          text:p.retro?L(`Slow down on ${p.m}. Review, redo and back things up.`,`تمهّل في ${p.m}. راجع، أعد العمل، واعمل نسخاً احتياطية.`):L(`Green light again for ${p.m}.`,`ضوء أخضر من جديد لمجال ${p.m}.`)});
       }
     });
   }
@@ -761,7 +781,7 @@ function scanEvents(arr,opts){
           const orb=arr.map(x=>Math.abs(sep(x.pos[j].lon,n.lon)-a.a));
           for(let i=1;i<arr.length-1;i++){
             if(orb[i]<=orb[i-1]&&orb[i]<orb[i+1]&&orb[i]<1){
-              ev.push({ms:arr[i].day.getTime(),kind:a.t==="conj"?"big":a.t,ic:GLYPH[tk],title:`${tk} ${a.g} ${a.n.toLowerCase()} your ${n.k}`,text:interp(tk,a,n)});
+              ev.push({ms:arr[i].day.getTime(),kind:a.t==="conj"?"big":a.t,ic:GLYPH[tk],title:L(`${tk} ${a.g} ${a.n.toLowerCase()} your ${n.k}`,`${tk} ${a.g} ${a.n.toLowerCase()} مع ${n.k} لديك`),text:interp(tk,a,n)});
             }
           }
         });
@@ -772,8 +792,8 @@ function scanEvents(arr,opts){
 }
 function evHtml(e){
   const d=new Date(e.ms);
-  const sub=e.time?` · ~${d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}`:"";
-  return `<div class="ev ${e.kind}" data-ms="${e.ms}"><div class="d"><span>${d.toLocaleDateString(undefined,{month:"short"})}</span><b>${d.getDate()}</b><span>${d.toLocaleDateString(undefined,{weekday:"short"})}</span></div>
+  const sub=e.time?` · ~${d.toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"})}`:"";
+  return `<div class="ev ${e.kind}" data-ms="${e.ms}"><div class="d"><span>${d.toLocaleDateString(LOC(),{month:"short"})}</span><b>${d.getDate()}</b><span>${d.toLocaleDateString(LOC(),{weekday:"short"})}</span></div>
     <div class="t"><b>${e.ic} ${e.title}</b><div>${e.text}${sub}</div></div></div>`;
 }
 
@@ -807,7 +827,7 @@ function updateOffset(){
   const o=tzOffsetHours(picked.tz,y,mo,d,h,mi);
   if(o==null) return;
   $("tz").value=o;
-  $("cityPicked").innerHTML=`✓ <b>${picked.label}</b> · ${(+$("lat").value).toFixed(2)}, ${(+$("lon").value).toFixed(2)} · time zone ${picked.tz.replace(/_/g," ")} = <b>${fmtOff(o)}</b> on your birth date. Your birth time <b>${$("btime").value||"12:00"}</b> is read as local time in ${picked.name||"that city"} (daylight saving included).`;
+  $("cityPicked").innerHTML=L(`✓ <b>${picked.label}</b> · ${(+$("lat").value).toFixed(2)}, ${(+$("lon").value).toFixed(2)} · time zone ${picked.tz.replace(/_/g," ")} = <b>${fmtOff(o)}</b> on your birth date. Your birth time <b>${$("btime").value||"12:00"}</b> is read as local time in ${picked.name||"that city"} (daylight saving included).`,`✓ <b>${picked.label}</b> · ${(+$("lat").value).toFixed(2)}, ${(+$("lon").value).toFixed(2)} · المنطقة الزمنية ${picked.tz.replace(/_/g," ")} = <b>${fmtOff(o)}</b> يوم ولادتك. وقت ولادتك <b>${$("btime").value||"12:00"}</b> يُقرأ بالتوقيت المحلي لـ${picked.name||"تلك المدينة"} (مع التوقيت الصيفي).`);
 }
 let cityTimer=null, cityList=[], cityAct=0;
 function showCities(list,msg){
@@ -828,20 +848,20 @@ function searchCities(){
   const raw=$("cityQ").value, q=nrm(raw.split(",")[0]), hintC=nrm(raw.split(",").slice(1).join(","));
   if(q.length<2){showCities([]);return;}
   const k=/[a-z]/.test(q[0])?q[0]:"_";
-  showCities([],"Searching…");
+  showCities([],L("Searching…","جارٍ البحث…"));
   loadPart("tz",ok1=>loadPart(k,ok=>{
     if(nrm($("cityQ").value.split(",")[0])!==q) return;
-    if(!ok||!ok1){showCities([],"Couldn't load the city list. Check your connection, or type latitude, longitude and UTC offset below.");return;}
+    if(!ok||!ok1){showCities([],L("Couldn't load the city list. Check your connection, or type latitude, longitude and UTC offset below.","تعذّر تحميل قائمة المدن. تحقق من الاتصال أو اكتب خط العرض والطول وفرق التوقيت بالأسفل."));return;}
     const rows=cityCache[k], nm=cityNorm[k], out=[];
     for(let i=0;i<rows.length&&out.length<400;i++){ if(nm[i].startsWith(q)){
       const r=rows[i]; if(hintC&&!(nrm(regionName(r[1])).startsWith(hintC)||nrm(r[2]).startsWith(hintC)||r[1].toLowerCase()===hintC)) continue;
       out.push([r,nm[i]===q?0:1]); } }
     out.sort((a,b)=>a[1]-b[1]||b[0][6]-a[0][6]||a[0][0].length-b[0][0].length);
     const list=out.slice(0,15).map(x=>x[0]);
-    list.length?showCities(list):showCities([],"No city found. Check the spelling, or type the nearest big city.");
+    list.length?showCities(list):showCities([],L("No city found. Check the spelling, or type the nearest big city.","لم يتم العثور على مدينة. تحقق من الإملاء (بالإنجليزية) أو اكتب أقرب مدينة كبيرة."));
   }));
 }
-$("cityQ").addEventListener("input",()=>{picked=null; clearTimeout(cityTimer); nrm($("cityQ").value).length>=2?showCities([],"Searching…"):showCities([]); cityTimer=setTimeout(searchCities,150);});
+$("cityQ").addEventListener("input",()=>{picked=null; clearTimeout(cityTimer); nrm($("cityQ").value).length>=2?showCities([],L("Searching…","جارٍ البحث…")):showCities([]); cityTimer=setTimeout(searchCities,150);});
 $("cityQ").addEventListener("keydown",e=>{
   const os=[...document.querySelectorAll("#cityRes .o")]; if(!os.length) return;
   if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault(); cityAct=(cityAct+(e.key==="ArrowDown"?1:-1)+os.length)%os.length; os.forEach((o,i)=>o.classList.toggle("act",i===cityAct)); os[cityAct].scrollIntoView({block:"nearest"});}
@@ -859,35 +879,35 @@ function load(){try{return JSON.parse(localStorage.getItem(KEY)||"null");}catch(
 const TTS=window.speechSynthesis;
 const txt=id=>{const e=$(id); return e?e.innerText:"";};
 function speechText(){
-  if($("sheet")&&$("sheet").classList.contains("open")) return ($("sTitle").innerText+". "+$("sSub").innerText+". "+$("sBody").innerText).replace(/℞/g," retrograde ").replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/°/g," degrees");
+  if($("sheet")&&$("sheet").classList.contains("open")) return ($("sTitle").innerText+". "+$("sSub").innerText+". "+$("sBody").innerText).replace(/℞/g,L(" retrograde "," متراجع ")).replace(/°/g,L(" degrees"," درجة")).replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/°/g," degrees");
   const ev=sel=>[...document.querySelectorAll(sel)].slice(0,5).map(e=>{
-    const d=new Date(+e.dataset.ms||0); return (e.dataset.ms?d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+". ":"")+e.querySelector(".t").innerText;}).join(". ");
+    const d=new Date(+e.dataset.ms||0); return (e.dataset.ms?d.toLocaleDateString(LOC(),{weekday:"long",month:"long",day:"numeric"})+". ":"")+e.querySelector(".t").innerText;}).join(". ");
   let t;
-  if(tab==="today") t=[txt("todayTitle"),txt("moonText"),txt("dailyNote"),"Day at a glance.",
-      [...document.querySelectorAll("#glance .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
-      "Best hours. "+txt("hoursText"),"Coming up. "+ev("#next30 .ev")];
-  else if(tab==="week") t=[txt("weekLbl")+".",txt("weekSummary"),"Day by day.",
-      [...document.querySelectorAll("#weekDays .wd")].map(w=>`${new Date(+w.dataset.ms).toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})}: ${w.querySelectorAll(".dots i.f").length} out of 5. Best for ${w.querySelector(".tag").innerText}. ${w.querySelector(".mn").innerText}. ${w.querySelector(".tip").innerText}`).join(" "),
-      [...document.querySelectorAll("#weekAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" ")];
-  else if(tab==="month") t=[txt("monthLbl")+" forecast.",txt("monthSummary"),
-      [...document.querySelectorAll("#monthAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
-      "Best days: "+txt("bestDays").replace(/\n/g,", "),"Careful days: "+txt("badDays").replace(/\n/g,", ")];
-  else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),"Your theme of the year.",txt("yearTheme")];
-  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),"Planet journeys.",txt("moveList").replace(/←/g,"").replace(/→/g,""),"Your planets.",txt("planetList"),"Your 12 houses.",txt("houseList")];
+  if(tab==="today") t=[txt("todayTitle"),txt("moonText"),txt("dailyNote"),L("Day at a glance.","لمحة عن اليوم."),
+      [...document.querySelectorAll("#glance .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} ${L("out of 5","من 5")}. ${w.innerText}`;}).join(" "),
+      L("Best hours. ","أفضل الساعات. ")+txt("hoursText"),L("Coming up. ","القادم. ")+ev("#next30 .ev")];
+  else if(tab==="week") t=[txt("weekLbl")+".",txt("weekSummary"),L("Day by day.","يوماً بيوم."),
+      [...document.querySelectorAll("#weekDays .wd")].map(w=>`${new Date(+w.dataset.ms).toLocaleDateString(LOC(),{weekday:"long",month:"long",day:"numeric"})}: ${w.querySelectorAll(".dots i.f").length} ${L("out of 5","من 5")}. ${L("Best for","الأفضل لـ")} ${w.querySelector(".tag").innerText}. ${w.querySelector(".mn").innerText}. ${w.querySelector(".tip").innerText}`).join(" "),
+      [...document.querySelectorAll("#weekAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} ${L("out of 5","من 5")}. ${w.innerText}`;}).join(" ")];
+  else if(tab==="month") t=[L(txt("monthLbl")+" forecast.","توقعات "+txt("monthLbl")+"."),txt("monthSummary"),
+      [...document.querySelectorAll("#monthAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} ${L("out of 5","من 5")}. ${w.innerText}`;}).join(" "),
+      L("Best days: ","أفضل الأيام: ")+txt("bestDays").replace(/\n/g,"، "),L("Careful days: ","أيام الحذر: ")+txt("badDays").replace(/\n/g,"، ")];
+  else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),L("Your theme of the year.","موضوع سنتك."),txt("yearTheme")];
+  else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),L("Planet journeys.","رحلات الكواكب."),txt("moveList").replace(/←/g,"").replace(/→/g,""),L("Your planets.","كواكبك."),txt("planetList"),L("Your 12 houses.","بيوتك الاثنا عشر."),txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
   const fullId={today:"fullDay",week:"fullWeek",month:"fullMonth",year:"fullYear",chart:"fullChart"}[tab];
   if(houseBase==="all"&&fullId) t=[txt(fullId)].concat(t);
-  return t.join("\n").replace(/℞/g," retrograde ").replace(/·/g,", ").replace(/–/g," to ")
-    .replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/\b(\d+)°(\d+)′/g,"$1 degrees $2").replace(/°/g," degrees");
+  return t.join("\n").replace(/℞/g,L(" retrograde "," متراجع ")).replace(/·/g,"، ").replace(/–/g,L(" to "," إلى "))
+    .replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/\b(\d+)°(\d+)′/g,L("$1 degrees $2","$1 درجة و$2")).replace(/°/g,L(" degrees"," درجة"));
 }
-function stopTalk(){ if(TTS) TTS.cancel(); $("listen").classList.remove("on"); $("listen").textContent="🔊 Listen"; }
+function stopTalk(){ if(TTS) TTS.cancel(); $("listen").classList.remove("on"); $("listen").textContent=L("🔊 Listen","🔊 استمع"); }
 $("listen").onclick=()=>{
-  if(!TTS){alert("Read aloud isn't supported in this browser.");return;}
+  if(!TTS){alert(L("Read aloud isn't supported in this browser.","القراءة الصوتية غير مدعومة في هذا المتصفح."));return;}
   if(TTS.speaking||$("listen").classList.contains("on")){stopTalk();return;}
-  const parts=speechText().split(/(?<=[.!?])\s+|\n+/).map(s=>s.trim()).filter(Boolean);
-  const voice=TTS.getVoices().find(v=>/^en/i.test(v.lang)&&/Samantha|Daniel|Premium|Enhanced|Google/i.test(v.name))||TTS.getVoices().find(v=>/^en/i.test(v.lang));
-  $("listen").classList.add("on"); $("listen").textContent="⏹ Stop";
-  parts.forEach((p,i)=>{ const u=new SpeechSynthesisUtterance(p); if(voice)u.voice=voice; u.rate=1; if(i===parts.length-1) u.onend=stopTalk; TTS.speak(u); });
+  const parts=speechText().split(/(?<=[.!?؟])\s+|\n+/).map(s=>s.trim()).filter(Boolean);
+  const vs=TTS.getVoices(), voice=LANG==="ar"?(vs.find(v=>/^ar/i.test(v.lang)&&/Premium|Enhanced|Maged|Majed|Tarik|Laila|Google/i.test(v.name))||vs.find(v=>/^ar/i.test(v.lang))):(vs.find(v=>/^en/i.test(v.lang)&&/Samantha|Daniel|Premium|Enhanced|Google/i.test(v.name))||vs.find(v=>/^en/i.test(v.lang)));
+  $("listen").classList.add("on"); $("listen").textContent=L("⏹ Stop","⏹ إيقاف");
+  parts.forEach((p,i)=>{ const u=new SpeechSynthesisUtterance(p); u.lang=L("en-US","ar-SA"); if(voice)u.voice=voice; u.rate=LANG==="ar"?0.95:1; if(i===parts.length-1) u.onend=stopTalk; TTS.speak(u); });
 };
 
 let tab="today";
@@ -911,7 +931,7 @@ function fillForm(o){$("name").value=o.name||"";$("bdate").value=o.date;$("btime
 
 $("go").onclick=()=>{
   const f=readForm();
-  if(!f.date||[f.lat,f.lon,f.tz].some(isNaN)){alert("Please fill in date, latitude, longitude and UTC offset.");return;}
+  if(!f.date||[f.lat,f.lon,f.tz].some(isNaN)){alert(L("Please fill in date, latitude, longitude and UTC offset.","يرجى إدخال التاريخ وخط العرض وخط الطول وفرق التوقيت."));return;}
   save(f); start(f);
 };
 
@@ -927,8 +947,8 @@ $("thisWeekBtn").onclick=()=>{weekSel=upcomingMonday();renderWeek();};
 function renderWeekChips(){
   const base=upcomingMonday(), box=$("weekChips"); let h="";
   for(let i=0;i<12;i++){ const m=new Date(base.getFullYear(),base.getMonth(),base.getDate()+7*i), sa=new Date(m.getFullYear(),m.getMonth(),m.getDate()+5);
-    const lbl=m.getMonth()===sa.getMonth()?`${m.toLocaleDateString(undefined,{month:"short"})} ${m.getDate()}–${sa.getDate()}`:`${m.toLocaleDateString(undefined,{month:"short",day:"numeric"})} – ${sa.toLocaleDateString(undefined,{month:"short",day:"numeric"})}`;
-    h+=`<button class="${ymd(m)===ymd(weekSel)?"on":""}" data-ms="${m.getTime()}"><small>Week ${i+1}</small>${lbl}</button>`; }
+    const lbl=m.getMonth()===sa.getMonth()?`${m.toLocaleDateString(LOC(),{month:"short"})} ${m.getDate()}–${sa.getDate()}`:`${m.toLocaleDateString(LOC(),{month:"short",day:"numeric"})} – ${sa.toLocaleDateString(LOC(),{month:"short",day:"numeric"})}`;
+    h+=`<button class="${ymd(m)===ymd(weekSel)?"on":""}" data-ms="${m.getTime()}"><small>${L("Week","الأسبوع")} ${i+1}</small>${lbl}</button>`; }
   box.innerHTML=h;
   box.querySelectorAll("button").forEach(b=>b.onclick=()=>{weekSel=new Date(+b.dataset.ms); renderWeek();});
   const on=box.querySelector(".on"); if(on) box.scrollLeft=Math.max(0,on.getBoundingClientRect().left-box.getBoundingClientRect().left+box.scrollLeft-(box.clientWidth-on.offsetWidth)/2);
@@ -961,26 +981,28 @@ function start(f){
 }
 
 // ---------- Chart tab ----------
-const row=p=>`<tr data-x="p:${p.k}"><td class="gl">${p.g}</td><td><b>${p.k}</b>${p.retro?' <span class="r">℞</span>':""}<div class="small">${p.m}</div></td><td>${SG[signIdx(p.lon)]} ${fmtDeg(p.lon)}<div class="small">${ord(house(p.lon))} house</div></td></tr>`;
+const row=p=>`<tr data-x="p:${p.k}"><td class="gl">${p.g}</td><td><b>${p.k}</b>${p.retro?' <span class="r">℞</span>':""}<div class="small">${p.m}</div></td><td>${SG[signIdx(p.lon)]} ${fmtDeg(p.lon)}<div class="small">${hh(house(p.lon))}</div></td></tr>`;
 function renderChart(){
   const sun=NAT.planets[0], moon=NAT.planets[1];
   const S=SIGNS[signIdx(sun.lon)], M=SIGNS[signIdx(moon.lon)], A=SIGNS[NAT.ascSign];
-  $("chartTitle").textContent=(F.name?F.name.split(" ")[0]+"'s":"Your")+" Big Three";
+  $("chartTitle").textContent=L((F.name?F.name.split(" ")[0]+"'s":"Your")+" Big Three","الثلاثة الكبار"+(F.name?" لـ"+F.name.split(" ")[0]:" لديك"));
   $("big3").innerHTML=[["Sun",sun.lon],["Moon",moon.lon],["Rising",NAT.asc]].map(([k,l])=>
-    `<div class="b3" data-x="p:${k==="Rising"?"Ascendant":k}"><div class="k">${k}</div><div class="g">${SG[signIdx(l)]}</div><div class="v">${SIGNS[signIdx(l)]}</div></div>`).join("");
-  $("big3Text").innerHTML=`At your core you're <b>${SIGN_KW[S]}</b> (Sun in ${S}). Emotionally you need things that feel <b>${SIGN_KW[M]}</b> (Moon in ${M}). People first see you as <b>${SIGN_KW[A]}</b> (${A} Rising).`;
+    `<div class="b3" data-x="p:${k==="Rising"?"Ascendant":k}"><div class="k">${k==="Rising"?L("Rising","الطالع"):k}</div><div class="g">${SG[signIdx(l)]}</div><div class="v">${SIGNS[signIdx(l)]}</div></div>`).join("");
+  $("big3Text").innerHTML=L(`At your core you're <b>${SIGN_KW[S]}</b> (Sun in ${S}). Emotionally you need things that feel <b>${SIGN_KW[M]}</b> (Moon in ${M}). People first see you as <b>${SIGN_KW[A]}</b> (${A} Rising).`,`في جوهرك أنت <b>${SIGN_KW[S]}</b> (الشمس في ${S}). عاطفياً تحتاج أشياء تشعرك بأنها <b>${SIGN_KW[M]}</b> (القمر في ${M}). والناس يرونك أولاً <b>${SIGN_KW[A]}</b> (طالع ${A}).`);
   renderHouses(); renderMoves();
 
   const el=[0,0,0,0], md=[0,0,0];
   NAT.planets.slice(0,7).concat([{lon:NAT.asc}]).forEach(p=>{const s=signIdx(p.lon); el[s%4]++; md[s%3]++;});
   const max=Math.max(...el,...md);
   const bar=(n,v,c)=>`<div><span class="n">${n}</span><i style="width:${(v/max)*70}%;background:${c}"></i><span>${v}</span></div>`;
-  $("bars").innerHTML=ELEM.map((e,i)=>bar(e[0].toUpperCase()+e.slice(1),el[i],`var(--${e})`)).join("")+
-    MODE.map((m,i)=>bar(m,md[i],"var(--accent)")).join("");
+  const ELN=L(["Fire","Earth","Air","Water"],["نار","تراب","هواء","ماء"]), MDN=L(MODE,["أساسي","ثابت","متحوّل"]);
+  $("bars").innerHTML=ELEM.map((e,i)=>bar(ELN[i],el[i],`var(--${e})`)).join("")+
+    MODE.map((m,i)=>bar(MDN[i],md[i],"var(--accent)")).join("");
   const domE=ELEM[el.indexOf(Math.max(...el))], domM=MODE[md.indexOf(Math.max(...md))];
   const ED={fire:"passion and action",earth:"practical results",air:"ideas and people",water:"feelings and intuition"};
   const MD={Cardinal:"starting things",Fixed:"sticking with things",Mutable:"adapting to change"};
-  $("balanceText").textContent=`Mostly ${domE} (${ED[domE]}) and ${domM} (${MD[domM]}). Based on 7 planets plus the Ascendant.`;
+  const EDA={fire:"الشغف والفعل",earth:"النتائج العملية",air:"الأفكار والناس",water:"المشاعر والحدس"}, MDA={Cardinal:"بدء الأمور",Fixed:"الثبات على الأمور",Mutable:"التكيّف مع التغيير"};
+  $("balanceText").textContent=L(`Mostly ${domE} (${ED[domE]}) and ${domM} (${MD[domM]}). Based on 7 planets plus the Ascendant.`,`غالباً ${ELN[ELEM.indexOf(domE)]} (${EDA[domE]}) و${MDN[MODE.indexOf(domM)]} (${MDA[domM]}). بناءً على 7 كواكب والطالع.`);
   drawWheel();
 }
 
@@ -989,30 +1011,30 @@ function renderDay(){
   const viewNow=viewMs??Date.now(), vd=new Date(viewNow), jd=jdFromUTCms(viewNow), now=positions(jd);
   $("viewDate").value=ymd(vd);
   $("todayBtn").classList.toggle("hidden",viewMs==null);
-  $("todayTitle").textContent=(viewMs==null?"Today · ":"")+vd.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:viewMs==null?undefined:"numeric"});
+  $("todayTitle").textContent=(viewMs==null?L("Today · ","اليوم · "):"")+vd.toLocaleDateString(LOC(),{weekday:"long",month:"long",day:"numeric",year:viewMs==null?undefined:"numeric"});
 
   const nm=now[1], elong=norm(nm.lon-now[0].lon);
-  const phases=[["🌑","New Moon","Set intentions."],["🌒","Waxing Crescent","Take first steps."],["🌓","First Quarter","Push through obstacles."],["🌔","Waxing Gibbous","Refine and adjust."],["🌕","Full Moon","Results show. Celebrate or release."],["🌖","Waning Gibbous","Share what you learned."],["🌗","Last Quarter","Clear out what's not working."],["🌘","Waning Crescent","Rest and reflect."]];
+  const phases=L([["🌑","New Moon","Set intentions."],["🌒","Waxing Crescent","Take first steps."],["🌓","First Quarter","Push through obstacles."],["🌔","Waxing Gibbous","Refine and adjust."],["🌕","Full Moon","Results show. Celebrate or release."],["🌖","Waning Gibbous","Share what you learned."],["🌗","Last Quarter","Clear out what's not working."],["🌘","Waning Crescent","Rest and reflect."]],[["🌑","القمر الجديد","ضع نواياك."],["🌒","هلال متزايد","اتخذ الخطوات الأولى."],["🌓","التربيع الأول","تجاوز العقبات."],["🌔","أحدب متزايد","حسّن وعدّل."],["🌕","البدر","تظهر النتائج. احتفل أو اترك."],["🌖","أحدب متناقص","شارك ما تعلّمته."],["🌗","التربيع الأخير","تخلّص مما لا ينفع."],["🌘","هلال متناقص","استرح وتأمّل."]]);
   const ph=phases[Math.floor(norm(elong+22.5)/45)%8], illum=Math.round((1-cos(elong))/2*100), ms2=SIGNS[signIdx(nm.lon)], mh=house(nm.lon);
   $("moonIcon").textContent=ph[0];
-  $("moonText").textContent=`${ph[1]} in ${ms2} · ${illum}% lit · your ${ord(mh)} house`;
+  $("moonText").textContent=L(`${ph[1]} in ${ms2} · ${illum}% lit · your ${ord(mh)} house`,`${ph[1]} في ${ms2} · مضاء ${illum}% · ${yh(mh)}`);
 
   // glance
   const noon=jdFromUTCms(new Date(vd.getFullYear(),vd.getMonth(),vd.getDate(),12).getTime());
   const S=areaSets(), r=scoresAt(noon);
   $("glance").innerHTML=Object.keys(S).map(k=>{
     const w=r.why[k].sort((a,b)=>Math.abs(b.v)-Math.abs(a.v))[0];
-    const reason=w?`${w.t.k} ${w.a.n.toLowerCase()} your ${w.n.k}`:"No strong aspects";
+    const reason=w?L(`${w.t.k} ${w.a.n.toLowerCase()} your ${w.n.k}`,`${w.t.k} ${w.a.n.toLowerCase()} مع ${w.n.k} لديك`):L("No strong aspects","لا جوانب قوية");
     return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(r.sc[k])}<div class="why">${VERDICT[r.sc[k]]} ${reason}.</div>`;
   }).join("");
 
   const asp=topAspects(now);
   const retros=now.filter(p=>p.retro).map(p=>p.k);
   const bestArea=Object.keys(r.sc).sort((a,b)=>r.tot[b]-r.tot[a])[0];
-  let note=`<b>Moon in ${ms2}:</b> ${MOON_SIGN_DAY[ms2]} ${ph[2]}`;
-  note+=`<br><br><b>Strongest area:</b> ${bestArea}.`;
-  if(asp[0]){const a=asp[0]; note+=` <b>Main theme:</b> ${a.t.k} ${a.a.m} your ${a.n.k} (${a.n.m}).`;}
-  if(retros.length) note+=`<br><br><b>Retrograde:</b> ${retros.join(", ")}. Review before you commit${retros.includes("Mercury")?". Double-check tech, emails and contracts":""}.`;
+  let note=L(`<b>Moon in ${ms2}:</b> ${MOON_SIGN_DAY[ms2]} ${ph[2]}`,`<b>القمر في ${ms2}:</b> ${MOON_SIGN_DAY[ms2]} ${ph[2]}`);
+  note+=L(`<br><br><b>Strongest area:</b> ${bestArea}.`,`<br><br><b>أقوى مجال:</b> ${bestArea}.`);
+  if(asp[0]){const a=asp[0]; note+=L(` <b>Main theme:</b> ${a.t.k} ${a.a.m} your ${a.n.k} (${a.n.m}).`,` <b>الموضوع الرئيسي:</b> ${a.t.k} ${a.a.m} ${a.n.k} لديك (${a.n.m}).`);}
+  if(retros.length) note+=L(`<br><br><b>Retrograde:</b> ${retros.join(", ")}. Review before you commit${retros.includes("Mercury")?". Double-check tech, emails and contracts":""}.`,`<br><br><b>متراجع:</b> ${retros.join("، ")}. راجع قبل أن تلتزم${retros.includes("Mercury")?". تحقّق مرتين من التقنية والإيميلات والعقود":""}.`);
   $("dailyNote").innerHTML=note;
 
   // hours
@@ -1022,17 +1044,17 @@ function renderDay(){
   const maxV=Math.max(...hrs.map(x=>x.v)), minV=Math.min(...hrs.map(x=>x.v));
   const good=maxV>.3?window_(hrs,x=>x.v>=maxV-.25):null, bad=minV<-.3?window_(hrs,x=>x.v<=minV+.25):null;
   let ht="";
-  if(good){const b=hrs[good.s].best; ht+=`<b style="color:var(--good)">Best:</b> ${fmtH(hrs[good.s].h)}–${fmtH(hrs[good.e].h+1)}${b?` (${b.label})`:""}. Start important things, send messages, ask for what you want.<br>`;}
-  if(bad){const b=hrs[bad.s].best; ht+=`<b style="color:var(--hard)">Careful:</b> ${fmtH(hrs[bad.s].h)}–${fmtH(hrs[bad.e].h+1)}${b?` (${b.label})`:""}. Avoid arguments and big decisions.`;}
-  $("hoursText").innerHTML=ht||"A steady day with no strong highs or lows.";
+  if(good){const b=hrs[good.s].best; ht+=`<b style="color:var(--good)">${L("Best:","الأفضل:")}</b> ${fmtH(hrs[good.s].h)}–${fmtH(hrs[good.e].h+1)}${b?` (${b.label})`:""}. ${L("Start important things, send messages, ask for what you want.","ابدأ الأمور المهمة، أرسل رسائلك، واطلب ما تريد.")}<br>`;}
+  if(bad){const b=hrs[bad.s].best; ht+=`<b style="color:var(--hard)">${L("Careful:","انتبه:")}</b> ${fmtH(hrs[bad.s].h)}–${fmtH(hrs[bad.e].h+1)}${b?` (${b.label})`:""}. ${L("Avoid arguments and big decisions.","تجنّب الجدال والقرارات الكبيرة.")}`;}
+  $("hoursText").innerHTML=ht||L("A steady day with no strong highs or lows.","يوم مستقر بلا ارتفاعات أو انخفاضات قوية.");
 
   // next 30 days
   const ev=scanEvents(daysFrom(vd.getFullYear(),vd.getMonth(),vd.getDate(),30));
-  $("next30").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">Nothing major in the next 30 days.</p>`;
+  $("next30").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">${L("Nothing major in the next 30 days.","لا شيء كبير في الأيام الثلاثين القادمة.")}</p>`;
 
-  $("transits").innerHTML=asp.length?asp.map(x=>`<div class="asp ${x.a.t}" data-x="a:${x.t.k}:${x.a.n}:${x.n.k}"><b>${x.t.g} ${x.t.k} ${x.a.g} ${x.a.n.toLowerCase()} your ${x.n.g} ${x.n.k}</b>
-     ${interp(x.t.k,x.a,x.n)}<br><small>Orb ${x.orb.toFixed(1)}° · tighter = stronger</small></div>`).join("")
-     :`<p class="small">No major transits are close today. A quiet day.</p>`;
+  $("transits").innerHTML=asp.length?asp.map(x=>`<div class="asp ${x.a.t}" data-x="a:${x.t.k}:${x.a.n}:${x.n.k}"><b>${x.t.g} ${x.t.k} ${x.a.g} ${x.a.n.toLowerCase()} ${L("your","مع")} ${x.n.g} ${x.n.k}</b>
+     ${interp(x.t.k,x.a,x.n)}<br><small>${L("Orb","الفارق")} ${x.orb.toFixed(1)}° · ${L("tighter = stronger","كلما قلّ كان أقوى")}</small></div>`).join("")
+     :`<p class="small">${L("No major transits are close today. A quiet day.","لا عبورات كبيرة قريبة اليوم. يوم هادئ.")}</p>`;
   $("nowTable").innerHTML=now.map(row).join("");
 }
 function topAspects(now){
@@ -1047,7 +1069,7 @@ function renderWeek(){
   if(!NAT) return;
   const n=7*weekSpan-1, arr=daysFrom(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate(),n);
   const days=arr.slice(1,n+1).filter(x=>x.day.getDay()!==0), end=days[days.length-1].day;
-  const fmt=x=>x.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  const fmt=x=>x.toLocaleDateString(LOC(),{month:"short",day:"numeric"});
   $("weekLbl").textContent=`${fmt(days[0].day)} – ${fmt(end)}${end.getFullYear()!==new Date().getFullYear()?", "+end.getFullYear():""}`;
   $("thisWeekBtn").classList.toggle("hidden",ymd(upcomingMonday())===ymd(weekSel)); renderWeekChips();
   const S=areaSets(), sc=days.map(x=>({day:x.day,pos:x.pos,...scoresAt(x.jd,x.pos)}));
@@ -1062,9 +1084,9 @@ function renderWeek(){
     const evs=ev.filter(e=>ymd(new Date(e.ms))===ymd(x.day));
     const cls=(ymd(x.day)===todayY?" today":"")+(x===bestD?" best":x===badD?" bad":"");
     html+=`<div class="wd${cls}" data-ms="${x.day.getTime()}">
-      <div class="d"><span>${x.day.toLocaleDateString(undefined,{weekday:"short"})}</span><b>${x.day.getDate()}</b>${x===bestD?'<span style="color:var(--good)">best</span>':x===badD?'<span style="color:var(--hard)">careful</span>':""}</div>
+      <div class="d"><span>${x.day.toLocaleDateString(LOC(),{weekday:"short"})}</span><b>${x.day.getDate()}</b>${x===bestD?`<span style="color:var(--good)">${L("best","الأفضل")}</span>`:x===badD?`<span style="color:var(--hard)">${L("careful","حذر")}</span>`:""}</div>
       <div class="t"><div class="row1">${dotsHtml(ovr(x))}<span class="tag">${S[best].ic} ${best}</span></div>
-        <div class="mn">${SG[signIdx(ml)]} Moon in ${ms} · your ${ord(h)} house (${HOUSES[h-1].n.toLowerCase()})</div>
+        <div class="mn">${SG[signIdx(ml)]} ${L(`Moon in ${ms} · your ${ord(h)} house`,`القمر في ${ms} · ${yh(h)}`)} (${HOUSES[h-1].n.toLowerCase()})</div>
         <div class="tip">${MOON_SIGN_DAY[ms]}</div>
         ${evs.map(e=>`<div class="we">${e.ic} ${e.title}</div>`).join("")}</div>
       <div class="go">›</div></div>`;
@@ -1073,17 +1095,17 @@ function renderWeek(){
   document.querySelectorAll("#weekDays .wd").forEach(w=>w.onclick=()=>{ setView(+w.dataset.ms+12*3600000); document.querySelector('.tabs button[data-t="today"]').click(); });
   $("weekAreas").innerHTML=Object.keys(S).map(k=>{
     const avg=sc.reduce((s,x)=>s+x.sc[k],0)/sc.length, s=Math.max(1,Math.min(5,Math.round(avg)));
-    const pk=sc.slice().sort((a,b)=>b.tot[k]-a.tot[k])[0].day.toLocaleDateString(undefined,{weekday:"long",month:weekSpan>1?"short":undefined,day:weekSpan>1?"numeric":undefined});
-    return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(s)}<div class="why">${VERDICT[s]} Best day: ${pk}.</div>`;
+    const pk=sc.slice().sort((a,b)=>b.tot[k]-a.tot[k])[0].day.toLocaleDateString(LOC(),{weekday:"long",month:weekSpan>1?"short":undefined,day:weekSpan>1?"numeric":undefined});
+    return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(s)}<div class="why">${VERDICT[s]} ${L("Best day:","أفضل يوم:")} ${pk}.</div>`;
   }).join("");
-  $("weekEvents").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">No major events in these days. Steady days.</p>`;
+  $("weekEvents").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">${L("No major events in these days. Steady days.","لا أحداث كبيرة في هذه الأيام. أيام مستقرة.")}</p>`;
   const totA=k=>sc.reduce((s,x)=>s+x.tot[k],0), areas=Object.keys(S).sort((a,b)=>totA(b)-totA(a));
   const mh=[...new Set(sc.map(x=>house(x.pos[1].lon)))];
-  const wd=x=>x.day.toLocaleDateString(undefined,{weekday:"long",month:weekSpan>1?"short":undefined,day:weekSpan>1?"numeric":undefined});
-  let sum=`${weekSpan>1?"Over these two weeks, the":"The"} Moon moves through your ${mh.map(ord).join(", ")} houses (${mh.map(h=>HOUSES[h-1].n.toLowerCase()).join(" → ")}), so that's where your attention goes. <b>Strongest area: ${areas[0]}.</b> Weakest: ${areas[3]}. <b>Best day: ${wd(bestD)}.</b> Be careful on ${wd(badD)}.`;
+  const wd=x=>x.day.toLocaleDateString(LOC(),{weekday:"long",month:weekSpan>1?"short":undefined,day:weekSpan>1?"numeric":undefined});
+  let sum=L(`${weekSpan>1?"Over these two weeks, the":"The"} Moon moves through your ${mh.map(ord).join(", ")} houses (${mh.map(h=>HOUSES[h-1].n.toLowerCase()).join(" → ")}), so that's where your attention goes. <b>Strongest area: ${areas[0]}.</b> Weakest: ${areas[3]}. <b>Best day: ${wd(bestD)}.</b> Be careful on ${wd(badD)}.`,`يمرّ القمر عبر ${yhs(mh)} (${mh.map(h=>HOUSES[h-1].n).join(" ← ")})، فهناك يذهب انتباهك. <b>أقوى مجال: ${areas[0]}.</b> الأضعف: ${areas[3]}. <b>أفضل يوم: ${wd(bestD)}.</b> انتبه يوم ${wd(badD)}.`);
   const big=ev.filter(e=>e.kind==="big"||e.type==="station"||e.type==="ingress");
-  if(big.length) sum+=` Watch for: ${big.slice(0,4).map(e=>`${e.title} (${new Date(e.ms).toLocaleDateString(undefined,{weekday:"short",day:"numeric"})})`).join(", ")}.`;
-  if(sc.some(x=>x.pos[2].retro)) sum+=` Mercury is retrograde for part of this time, so double-check tech, emails and plans.`;
+  if(big.length) sum+=L(" Watch for: "," انتبه إلى: ")+big.slice(0,4).map(e=>`${e.title} (${new Date(e.ms).toLocaleDateString(LOC(),{weekday:"short",day:"numeric"})})`).join(L(", ","، "))+".";
+  if(sc.some(x=>x.pos[2].retro)) sum+=L(` Mercury is retrograde for part of this time, so double-check tech, emails and plans.`,` عطارد متراجع خلال جزء من هذه الفترة، فتحقّق مرتين من التقنية والإيميلات والخطط.`);
   $("weekSummary").innerHTML=sum;
 }
 
@@ -1106,7 +1128,7 @@ function slowContacts(arr,orbLim){
 function renderMonth(){
   if(!NAT) return;
   const y=monthSel.getFullYear(), m=monthSel.getMonth(), nd=new Date(y,m+1,0).getDate();
-  $("monthLbl").textContent=monthSel.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  $("monthLbl").textContent=monthSel.toLocaleDateString(LOC(),{month:"long",year:"numeric"});
   const arr=daysFrom(y,m,1,nd), days=arr.slice(1,nd+1);
   const scores=days.map(x=>({day:x.day,...scoresAt(x.jd,x.pos)}));
   // areas
@@ -1114,31 +1136,32 @@ function renderMonth(){
   $("monthAreas").innerHTML=Object.keys(S).map(k=>{
     const avg=scores.reduce((s,x)=>s+x.sc[k],0)/scores.length, s=Math.max(1,Math.min(5,Math.round(avg)));
     const top=scores.slice().sort((a,b)=>b.tot[k]-a.tot[k]).slice(0,2).map(x=>x.day.getDate()).sort((a,b)=>a-b);
-    return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(s)}<div class="why">${VERDICT[s]} Peak days: ${top.join(" & ")}.</div>`;
+    return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(s)}<div class="why">${VERDICT[s]} ${L("Peak days:","أيام الذروة:")} ${top.join(L(" & "," و"))}.</div>`;
   }).join("");
   // best/bad days
   const rank=scores.slice().sort((a,b)=>b.all-a.all);
-  const dl=list=>list.sort((a,b)=>a.day-b.day).map(x=>`<span>${x.day.toLocaleDateString(undefined,{weekday:"short",day:"numeric"})}</span>`).join("");
+  const dl=list=>list.sort((a,b)=>a.day-b.day).map(x=>`<span>${x.day.toLocaleDateString(LOC(),{weekday:"short",day:"numeric"})}</span>`).join("");
   $("bestDays").innerHTML=dl(rank.slice(0,4)); $("badDays").innerHTML=dl(rank.slice(-3));
   // slow
   const slow=slowContacts(days,2.5).sort((a,b)=>a.min-b.min);
-  $("monthSlow").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}" data-x="a:${s.t}:${s.a.n}:${s.n.k}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} your ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>Strongest around ${new Date(s.peak).toLocaleDateString(undefined,{month:"short",day:"numeric"})}</small></div>`).join("")
-    :`<p class="small">No slow-planet contacts this month. Day-to-day energy matters more.</p>`;
+  $("monthSlow").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}" data-x="a:${s.t}:${s.a.n}:${s.n.k}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} ${L("your","مع")} ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>${L("Strongest around","الأقوى حوالي")} ${new Date(s.peak).toLocaleDateString(LOC(),{month:"short",day:"numeric"})}</small></div>`).join("")
+    :`<p class="small">${L("No slow-planet contacts this month. Day-to-day energy matters more.","لا تلامس للكواكب البطيئة هذا الشهر. الطاقة اليومية أهم.")}</p>`;
   // events
   const ev=scanEvents(arr);
-  $("monthEvents").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">No key dates.</p>`;
+  $("monthEvents").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">${L("No key dates.","لا تواريخ مهمة.")}</p>`;
   // summary
   const s0=signIdx(days[0].pos[0].lon), s1=signIdx(days[nd-1].pos[0].lon);
   const moons=ev.filter(e=>e.ic==="🌑"||e.ic==="🌕");
   const bestA=Object.keys(S).sort((a,b)=>scores.reduce((s,x)=>s+x.tot[b],0)-scores.reduce((s,x)=>s+x.tot[a],0));
-  let sum=`The Sun moves from ${SIGNS[s0]} into ${SIGNS[s1]}, which puts the spotlight on your ${ord(house(days[0].pos[0].lon))} house (${HOUSE_TXT[house(days[0].pos[0].lon)-1]})`;
-  if(s1!==s0) sum+=` and then your ${ord(house(days[nd-1].pos[0].lon))} house (${HOUSE_TXT[house(days[nd-1].pos[0].lon)-1]})`;
-  sum+=`. <b>Strongest area: ${bestA[0]}.</b> Weakest: ${bestA[3]}.`;
-  if(slow[0]) sum+=` The big story is <b>${slow[0].t} ${slow[0].a.n.toLowerCase()} your ${slow[0].n.k}</b>: ${TONE[slow[0].t]}.`;
+  const h0=house(days[0].pos[0].lon), h1=house(days[nd-1].pos[0].lon);
+  let sum=L(`The Sun moves from ${SIGNS[s0]} into ${SIGNS[s1]}, which puts the spotlight on your ${ord(h0)} house (${HOUSE_TXT[h0-1]})`,`تنتقل الشمس من ${SIGNS[s0]} إلى ${SIGNS[s1]}، فيُسلَّط الضوء على ${yh(h0)} (${HOUSE_TXT[h0-1]})`);
+  if(s1!==s0) sum+=L(` and then your ${ord(h1)} house (${HOUSE_TXT[h1-1]})`,` ثم ${yh(h1)} (${HOUSE_TXT[h1-1]})`);
+  sum+=L(`. <b>Strongest area: ${bestA[0]}.</b> Weakest: ${bestA[3]}.`,`. <b>أقوى مجال: ${bestA[0]}.</b> الأضعف: ${bestA[3]}.`);
+  if(slow[0]) sum+=L(` The big story is <b>${slow[0].t} ${slow[0].a.n.toLowerCase()} your ${slow[0].n.k}</b>: ${TONE[slow[0].t]}.`,` القصة الكبرى هي <b>${slow[0].t} ${slow[0].a.n.toLowerCase()} مع ${slow[0].n.k} لديك</b>: ${TONE[slow[0].t]}.`);
   const st=ev.filter(e=>e.type==="station");
-  if(st.length) sum+=` Watch for ${st.map(e=>e.title.replace(" ℞","")).join(", ")}.`;
-  if(moons.some(e=>e.ecl)) sum+=` <b>Eclipse month</b>, so expect a turning point.`;
-  sum+=` Best days: ${rank.slice(0,3).sort((a,b)=>a.day-b.day).map(x=>x.day.getDate()).join(", ")}.`;
+  if(st.length) sum+=L(" Watch for "," انتبه إلى: ")+st.map(e=>e.title.replace(" ℞","")).join(L(", ","، "))+".";
+  if(moons.some(e=>e.ecl)) sum+=L(` <b>Eclipse month</b>, so expect a turning point.`,` <b>شهر كسوف/خسوف</b>، فتوقّع نقطة تحوّل.`);
+  sum+=L(" Best days: "," أفضل الأيام: ")+rank.slice(0,3).sort((a,b)=>a.day-b.day).map(x=>x.day.getDate()).join(L(", ","، "))+".";
   $("monthSummary").innerHTML=sum;
 }
 
@@ -1147,8 +1170,8 @@ function renderYear(){
   if(!NAT) return;
   const Y=yearSel, cy=new Date().getFullYear();
   $("yearLbl").textContent=Y;
-  $("yearHead").textContent=Y<cy?`Looking back at ${Y}`:Y===cy?`Your year ${Y}`:`Looking ahead to ${Y}`;
-  $("yearChips").innerHTML=[cy-1,cy,cy+1].map(v=>`<button class="${v===Y?"on":""}" data-y="${v}">${v===cy-1?"Last year":v===cy?"This year":"Next year"}</button>`).join("");
+  $("yearHead").textContent=Y<cy?L(`Looking back at ${Y}`,`نظرة إلى الوراء: ${Y}`):Y===cy?L(`Your year ${Y}`,`سنتك ${Y}`):L(`Looking ahead to ${Y}`,`نظرة إلى الأمام: ${Y}`);
+  $("yearChips").innerHTML=[cy-1,cy,cy+1].map(v=>`<button class="${v===Y?"on":""}" data-y="${v}">${v===cy-1?L("Last year","السنة الماضية"):v===cy?L("This year","هذه السنة"):L("Next year","السنة القادمة")}</button>`).join("");
   $("yearChips").querySelectorAll("button").forEach(b=>b.onclick=()=>{yearSel=+b.dataset.y;renderYear();});
 
   const nd=(new Date(Y+1,0,1)-new Date(Y,0,1))/DAY;
@@ -1158,22 +1181,24 @@ function renderYear(){
   days.forEach(x=>{const r=scoresAt(x.jd,x.pos); const o=mAvg[x.day.getMonth()]; o.s+=r.all; o.n++;});
   const vals=mAvg.map(o=>o.s/o.n), mn=Math.min(...vals), mx=Math.max(...vals);
   const order=vals.map((v,i)=>i).sort((a,b)=>vals[b]-vals[a]);
-  const mName=i=>new Date(Y,i,1).toLocaleDateString(undefined,{month:"short"});
-  $("yearBars").innerHTML=vals.map((v,i)=>`<div><i class="${order.slice(0,3).includes(i)?"top":order.slice(-2).includes(i)?"low":""}" style="height:${15+70*(v-mn)/((mx-mn)||1)}%"></i>${mName(i)[0]}</div>`).join("");
+  const mName=i=>new Date(Y,i,1).toLocaleDateString(LOC(),{month:"short"});
+  $("yearBars").innerHTML=vals.map((v,i)=>`<div><i class="${order.slice(0,3).includes(i)?"top":order.slice(-2).includes(i)?"low":""}" style="height:${15+70*(v-mn)/((mx-mn)||1)}%"></i>${LANG==="ar"?i+1:mName(i)[0]}</div>`).join("");
   // profection
   const age=Y-NAT.by, h=age%12+1, sign=(NAT.baseSign+age)%12, lord=RULER[sign];
   const prevH=(age-1+12)%12+1;
   const lordNat=NAT.planets.find(p=>p.k===lord);
-  $("yearTheme").innerHTML=`<p style="margin:0"><b>From your birthday (${new Date(Y,NAT.bm,NAT.bd).toLocaleDateString(undefined,{month:"short",day:"numeric"})}), you turn ${age}.</b> That turns on your <b>${ord(h)} house: ${HOUSE_TXT[h-1]}</b>. Your <b>year planet is ${GLYPH[lord]} ${lord}</b> (${PL.find(p=>p.k===lord).m}), and its moves this year affect you most.</p>
-    <p class="small" style="margin:8px 0 0">Before your birthday, you're still in last year's theme: ${ord(prevH)} house, ${HOUSE_TXT[prevH-1]}. In your birth chart, ${lord} sits in your ${ord(house(lordNat.lon))} house (${HOUSE_TXT[house(lordNat.lon)-1]}), so that area gets pulled in too.</p>`;
+  const bday=new Date(Y,NAT.bm,NAT.bd).toLocaleDateString(LOC(),{month:"short",day:"numeric"});
+  $("yearTheme").innerHTML=L(`<p style="margin:0"><b>From your birthday (${bday}), you turn ${age}.</b> That turns on your <b>${ord(h)} house: ${HOUSE_TXT[h-1]}</b>. Your <b>year planet is ${GLYPH[lord]} ${lord}</b> (${PL.find(p=>p.k===lord).m}), and its moves this year affect you most.</p>
+    <p class="small" style="margin:8px 0 0">Before your birthday, you're still in last year's theme: ${ord(prevH)} house, ${HOUSE_TXT[prevH-1]}. In your birth chart, ${lord} sits in your ${ord(house(lordNat.lon))} house (${HOUSE_TXT[house(lordNat.lon)-1]}), so that area gets pulled in too.</p>`,`<p style="margin:0"><b>من عيد ميلادك (${bday}) تُتمّ ${age} سنة.</b> هذا يُفعّل <b>${yh(h)}: ${HOUSE_TXT[h-1]}</b>. <b>كوكب سنتك هو ${GLYPH[lord]} ${lord}</b> (${PL.find(p=>p.k===lord).m})، وحركاته هذه السنة تؤثر عليك أكثر من غيرها.</p>
+    <p class="small" style="margin:8px 0 0">قبل عيد ميلادك ما زلت في موضوع السنة الماضية: ${hh(prevH)}، ${HOUSE_TXT[prevH-1]}. في خريطة ولادتك يقع ${lord} في ${yh(house(lordNat.lon))} (${HOUSE_TXT[house(lordNat.lon)-1]})، فيدخل هذا المجال أيضاً.</p>`);
   // major transits with ranges
   const slow=slowContacts(days,1.5).map(s=>{
     const rng=[]; s.days.forEach(t=>{const l=rng[rng.length-1]; if(l&&t-l[1]<=2*DAY) l[1]=t; else rng.push([t,t]);});
     return {...s,rng};
   }).sort((a,b)=>a.days[0]-b.days[0]);
-  const fd=t=>new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
-  $("yearMajor").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}" data-x="a:${s.t}:${s.a.n}:${s.n.k}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} your ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>${s.rng.map(r=>r[0]===r[1]?fd(r[0]):`${fd(r[0])} – ${fd(r[1])}`).join(" · ")} · peak ${fd(s.peak)}</small></div>`).join("")
-    :`<p class="small">No exact slow-planet contacts this year. A steadier year.</p>`;
+  const fd=t=>new Date(t).toLocaleDateString(LOC(),{month:"short",day:"numeric"});
+  $("yearMajor").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}" data-x="a:${s.t}:${s.a.n}:${s.n.k}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} ${L("your","مع")} ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>${s.rng.map(r=>r[0]===r[1]?fd(r[0]):`${fd(r[0])} – ${fd(r[1])}`).join(" · ")} · ${L("peak","الذروة")} ${fd(s.peak)}</small></div>`).join("")
+    :`<p class="small">${L("No exact slow-planet contacts this year. A steadier year.","لا تلامس دقيق للكواكب البطيئة هذه السنة. سنة أكثر استقراراً.")}</p>`;
   // eclipses, slow ingresses, retrogrades
   const ev=scanEvents(arr,{slowOnly:true,stations:true});
   const ecl=ev.filter(e=>e.ecl), ingr=ev.filter(e=>e.type==="ingress");
@@ -1184,22 +1209,22 @@ function renderYear(){
     if(open!=null) retro[k].push([open,null]);
   });
   let eh="";
-  if(ecl.length) eh+=`<h3 style="margin-top:0">Eclipses: turning points</h3>`+ecl.map(evHtml).join("");
-  if(ingr.length) eh+=`<h3>Slow planets change sign</h3>`+ingr.map(evHtml).join("");
-  eh+=`<h3>Retrograde periods (slow down and review)</h3>`;
-  eh+=Object.entries(retro).map(([k,r])=>`<p style="margin:4px 0"><b>${GLYPH[k]} ${k} ℞</b> <span class="small">${r.length?r.map(([a,b])=>`${a==null||a===days[0].day.getTime()?"until":fd(a)+" –"} ${b?fd(b):"into next year"}`.replace("until until","until")).join(" · "):"none this year"}</span></p>`).join("");
+  if(ecl.length) eh+=`<h3 style="margin-top:0">${L("Eclipses: turning points","الكسوف والخسوف: نقاط تحوّل")}</h3>`+ecl.map(evHtml).join("");
+  if(ingr.length) eh+=`<h3>${L("Slow planets change sign","الكواكب البطيئة تغيّر برجها")}</h3>`+ingr.map(evHtml).join("");
+  eh+=`<h3>${L("Retrograde periods (slow down and review)","فترات التراجع (تمهّل وراجع)")}</h3>`;
+  eh+=Object.entries(retro).map(([k,r])=>`<p style="margin:4px 0"><b>${GLYPH[k]} ${k} ℞</b> <span class="small">${r.length?r.map(([a,b])=>`${a==null||a===days[0].day.getTime()?L("until","حتى"):fd(a)+" –"} ${b?fd(b):L("into next year","إلى السنة القادمة")}`).join(" · "):L("none this year","لا يوجد هذه السنة")}</span></p>`).join("");
   $("yearEcl").innerHTML=eh;
   // summary
   const jup=days.map(x=>house(x.pos[5].lon)), sat=days.map(x=>house(x.pos[6].lon));
   const uniq=a=>[...new Set(a)];
-  const top3=order.slice(0,3).sort((a,b)=>a-b).map(i=>new Date(Y,i,1).toLocaleDateString(undefined,{month:"long"}));
-  const low2=order.slice(-2).sort((a,b)=>a-b).map(i=>new Date(Y,i,1).toLocaleDateString(undefined,{month:"long"}));
-  let sum=`<b>Luck zone:</b> Jupiter moves through your ${uniq(jup).map(ord).join(" then ")} house (${uniq(jup).map(h=>HOUSE_TXT[h-1]).join("; then ")}). This is where life opens doors.<br><br>`;
-  sum+=`<b>Work-hard zone:</b> Saturn is in your ${uniq(sat).map(ord).join(" then ")} house (${uniq(sat).map(h=>HOUSE_TXT[h-1]).join("; then ")}). Build slowly here, because effort lasts.<br><br>`;
+  const top3=order.slice(0,3).sort((a,b)=>a-b).map(i=>new Date(Y,i,1).toLocaleDateString(LOC(),{month:"long"}));
+  const low2=order.slice(-2).sort((a,b)=>a-b).map(i=>new Date(Y,i,1).toLocaleDateString(LOC(),{month:"long"}));
+  let sum=L(`<b>Luck zone:</b> Jupiter moves through your ${uniq(jup).map(ord).join(" then ")} house (${uniq(jup).map(h=>HOUSE_TXT[h-1]).join("; then ")}). This is where life opens doors.<br><br>`,`<b>منطقة الحظ:</b> يمرّ المشتري عبر ${uniq(jup).map(yh).join(" ثم ")} (${uniq(jup).map(h=>HOUSE_TXT[h-1]).join("؛ ثم ")}). هنا تفتح الحياة أبوابها.<br><br>`);
+  sum+=L(`<b>Work-hard zone:</b> Saturn is in your ${uniq(sat).map(ord).join(" then ")} house (${uniq(sat).map(h=>HOUSE_TXT[h-1]).join("; then ")}). Build slowly here, because effort lasts.<br><br>`,`<b>منطقة العمل الشاق:</b> زحل في ${uniq(sat).map(yh).join(" ثم ")} (${uniq(sat).map(h=>HOUSE_TXT[h-1]).join("؛ ثم ")}). ابنِ هنا ببطء، فالجهد يدوم.<br><br>`);
   const big=slow.slice().sort((a,b)=>({Uranus:0,Neptune:1,Saturn:2,Jupiter:3}[a.t]-{Uranus:0,Neptune:1,Saturn:2,Jupiter:3}[b.t])||a.min-b.min)[0];
-  if(big) sum+=`<b>Biggest story:</b> ${big.t} ${big.a.n.toLowerCase()} your ${big.n.k}, meaning ${TONE[big.t]} around ${big.n.m}.<br><br>`;
-  sum+=`<b>Strongest months:</b> ${top3.join(", ")}. <b>Hardest:</b> ${low2.join(", ")}.`;
-  if(ecl.length) sum+=` ${ecl.length} eclipses mark turning points.`;
+  if(big) sum+=L(`<b>Biggest story:</b> ${big.t} ${big.a.n.toLowerCase()} your ${big.n.k}, meaning ${TONE[big.t]} around ${big.n.m}.<br><br>`,`<b>القصة الأكبر:</b> ${big.t} ${big.a.n.toLowerCase()} مع ${big.n.k} لديك، أي ${TONE[big.t]} حول ${big.n.m}.<br><br>`);
+  sum+=L(`<b>Strongest months:</b> ${top3.join(", ")}. <b>Hardest:</b> ${low2.join(", ")}.`,`<b>أقوى الأشهر:</b> ${top3.join("، ")}. <b>الأصعب:</b> ${low2.join("، ")}.`);
+  if(ecl.length) sum+=L(` ${ecl.length} eclipses mark turning points.`,` ${ecl.length} كسوف وخسوف تمثّل نقاط تحوّل.`);
   $("yearSummary").innerHTML=sum;
 }
 
@@ -1236,13 +1261,13 @@ let selHouse=null;
 function houseHtml(h,big){
   const si=(NAT.baseSign+h-1)%12, H=HOUSES[h-1], rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl);
   const inside=NAT.planets.filter(p=>house(p.lon)===h);
-  const tags=[]; if(house(NAT.asc)===h) tags.push("Ascendant"); if(houseBase==="sun"&&h===1) tags.push("your Sun sign"); if(houseBase==="moon"&&h===1) tags.push("your Moon sign"); if(house(NAT.mc)===h) tags.push("Midheaven");
-  let s=`<div class="hl" data-x="h:${h}"><div class="top"><div class="num">${h}</div><div><div class="nm">${ord(h)} house · ${H.n}</div>
-    <div class="sg">${SG[si]} ${SIGNS[si]} · ruled by ${GLYPH[rl]} ${rl} (in your ${ord(house(rp.lon))})${tags.length?" · "+tags.join(", "):""}</div></div></div>
-    <div class="kw"><b>Represents:</b> ${H.k}. ${big?H.d:""}</div>
-    <div class="rd">With ${SIGNS[si]} here, you handle this area in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way.</div>`;
-  inside.forEach(p=>{ s+=`<div class="pp"><b>${p.g} ${p.k}${p.retro?" ℞":""} here:</b> ${PVERB[p.k]} ${H.k}.</div>`; });
-  s+=`<div class="rd">🔗 <b>Connect the dots:</b> ${inside.length?"":"no planets here, so follow the ruler. "}${SIGNS[si]} is ruled by ${rl}, which sits in your ${ord(house(rp.lon))} house, so this area plays out <b>${RH_FLAVOR[house(rp.lon)-1]}</b>. <span style="color:var(--accent)">Tap for the full reading ›</span></div>`;
+  const tags=[]; if(house(NAT.asc)===h) tags.push("Ascendant"); if(houseBase==="sun"&&h===1) tags.push(L("your Sun sign","برجك الشمسي")); if(houseBase==="moon"&&h===1) tags.push(L("your Moon sign","برجك القمري")); if(house(NAT.mc)===h) tags.push("Midheaven");
+  let s=`<div class="hl" data-x="h:${h}"><div class="top"><div class="num">${h}</div><div><div class="nm">${hh(h)} · ${H.n}</div>
+    <div class="sg">${SG[si]} ${SIGNS[si]} · ${L("ruled by","يحكمه")} ${GLYPH[rl]} ${rl} (${L(`in your ${ord(house(rp.lon))}`,`في ${yh(house(rp.lon))}`)})${tags.length?" · "+tags.join("، "):""}</div></div></div>
+    <div class="kw"><b>${L("Represents:","يمثّل:")}</b> ${H.k}. ${big?H.d:""}</div>
+    <div class="rd">${L(`With ${SIGNS[si]} here, you handle this area in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way.`,`مع ${SIGNS[si]} هنا، تتعامل مع هذا المجال بطريقة <b>${SIGN_KW[SIGNS[si]]}</b>.`)}</div>`;
+  inside.forEach(p=>{ s+=`<div class="pp"><b>${p.g} ${p.k}${p.retro?" ℞":""} ${L("here:","هنا:")}</b> ${PVERB[p.k]} ${H.k}.</div>`; });
+  s+=L(`<div class="rd">🔗 <b>Connect the dots:</b> ${inside.length?"":"no planets here, so follow the ruler. "}${SIGNS[si]} is ruled by ${rl}, which sits in your ${ord(house(rp.lon))} house, so this area plays out <b>${RH_FLAVOR[house(rp.lon)-1]}</b>. <span style="color:var(--accent)">Tap for the full reading ›</span></div>`,`<div class="rd">🔗 <b>ربط النقاط:</b> ${inside.length?"":"لا كواكب هنا، فاتبع الحاكم. "}${SIGNS[si]} يحكمه ${rl}، الموجود في ${yh(house(rp.lon))}، فيظهر هذا المجال <b>${RH_FLAVOR[house(rp.lon)-1]}</b>. <span style="color:var(--accent)">اضغط للقراءة الكاملة ‹</span></div>`);
   return s+"</div>";
 }
 function renderHouses(){
@@ -1250,10 +1275,10 @@ function renderHouses(){
   $("planetList").innerHTML=NAT.pts.map(p=>{
     const si=signIdx(p.lon), h=house(p.lon), deg=fmtDeg(p.lon).split(" ")[0];
     const ang=p.k==="Ascendant"||p.k==="Midheaven";
-    return `<div class="hl" data-x="p:${p.k}"><div class="top"><div class="num" style="font-size:${ang?".7rem":"1.1rem"}">${p.g}</div><div><div class="nm">${p.k}${p.retro?' <span class="r">℞ retrograde</span>':""}</div>
-      <div class="sg">${SG[si]} ${SIGNS[si]} ${deg} · ${ord(h)} house (${HOUSES[h-1].n})</div></div></div>
+    return `<div class="hl" data-x="p:${p.k}"><div class="top"><div class="num" style="font-size:${ang?".7rem":"1.1rem"}">${p.g}</div><div><div class="nm">${p.k}${p.retro?` <span class="r">℞ ${L("retrograde","متراجع")}</span>`:""}</div>
+      <div class="sg">${SG[si]} ${SIGNS[si]} ${deg} · ${hh(h)} (${HOUSES[h-1].n})</div></div></div>
       <div class="note">${PFULL[p.k]}</div>
-      <div class="rd"><b>In ${SIGNS[si]}:</b> it acts in ${art(SIGN_KW[SIGNS[si]])} ${SIGN_KW[SIGNS[si]]} way.${ang?"":` <b>In your ${ord(h)} house:</b> ${PVERB[p.k]} ${HOUSES[h-1].k}.`}${p.retro?" Being retrograde at birth, its energy turns inward: you reflect first, then act.":""}</div></div>`;
+      <div class="rd">${L(`<b>In ${SIGNS[si]}:</b> it acts in ${art(SIGN_KW[SIGNS[si]])} ${SIGN_KW[SIGNS[si]]} way.`,`<b>في ${SIGNS[si]}:</b> يتصرف بطريقة ${SIGN_KW[SIGNS[si]]}.`)}${ang?"":L(` <b>In your ${ord(h)} house:</b> ${PVERB[p.k]} ${HOUSES[h-1].k}.`,` <b>في ${yh(h)}:</b> ${PVERB[p.k]} ${HOUSES[h-1].k}.`)}${p.retro?L(" Being retrograde at birth, its energy turns inward: you reflect first, then act."," لأنه كان متراجعاً عند ولادتك، تتجه طاقته للداخل: تتأمّل أولاً ثم تتصرّف."):""}</div></div>`;
   }).join("");
   showHouse(selHouse);
 }
@@ -1284,34 +1309,41 @@ function nextMoves(ms){
   });
 }
 function durTxt(d){
+  if(LANG==="ar"){
+    if(d<1){const h=Math.max(1,Math.round(d*24)); return arCount(h,"ساعة","ساعتان","ساعات","ساعة");}
+    if(d<3){const n=Math.floor(d), h=Math.round((d-n)*24); return arCount(n,"يوم","يومان","أيام","يوماً")+(h?` و${arCount(h,"ساعة","ساعتان","ساعات","ساعة")}`:"");}
+    if(d<45) return arCount(Math.round(d),"يوم","يومان","أيام","يوماً");
+    const mo=Math.round(d/30.44); if(mo<24) return arCount(mo,"شهر","شهران","أشهر","شهراً");
+    const y=Math.floor(mo/12), m=mo%12; return arCount(y,"سنة","سنتان","سنوات","سنة")+(m?` و${arCount(m,"شهر","شهران","أشهر","شهراً")}`:"");
+  }
   if(d<1){const h=Math.max(1,Math.round(d*24)); return `${h} hour${h===1?"":"s"}`;}
   if(d<3){const n=Math.floor(d), h=Math.round((d-n)*24); return `${n} day${n===1?"":"s"}${h?` ${h} hrs`:""}`;}
   if(d<45){const n=Math.round(d); return `${n} day${n===1?"":"s"}`;}
   const mo=Math.round(d/30.44); if(mo<24) return `${mo} months`;
   const y=Math.floor(mo/12), m=mo%12; return `${y} yr${y>1?"s":""}${m?` ${m} mo`:""}`;
 }
-function untilTxt(jd,now){ const d=jd-now; return d<1/24?"within the hour":"in "+durTxt(d); }
+function untilTxt(jd,now){ const d=jd-now; return d<1/24?L("within the hour","خلال ساعة"):L("in ","خلال ")+durTxt(d); }
 function renderMoves(){
   const now=Date.now(), mv=nextMoves(now), jdn=mv[0].now;
-  const fd=(jd,withTime)=>{const d=new Date(msFromJd(jd)); return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined})+(withTime?", "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}):"");};
+  const fd=(jd,withTime)=>{const d=new Date(msFromJd(jd)); return d.toLocaleDateString(LOC(),{month:"short",day:"numeric",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined})+(withTime?"، "+d.toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"}):"");};
   const soon=mv.filter(p=>p.ing).sort((a,b)=>a.ing.jd-b.ing.jd);
   const longest=mv.filter(p=>p.ing).sort((a,b)=>b.ing.jd-a.ing.jd)[0];
   const back=mv.filter(p=>p.retro).length;
-  let html=`<div class="mvsum"><div><b>${soon[0].k}</b>next to move<br>${untilTxt(soon[0].ing.jd,jdn)}</div><div><b>${back} of 9</b>moving<br>backward ℞</div><div><b>${longest.k}</b>stays longest<br>${durTxt(longest.ing.jd-jdn)} more</div></div>`;
+  let html=L(`<div class="mvsum"><div><b>${soon[0].k}</b>next to move<br>${untilTxt(soon[0].ing.jd,jdn)}</div><div><b>${back} of 9</b>moving<br>backward ℞</div><div><b>${longest.k}</b>stays longest<br>${durTxt(longest.ing.jd-jdn)} more</div></div>`,`<div class="mvsum"><div><b>${soon[0].k}</b>التالي للانتقال<br>${untilTxt(soon[0].ing.jd,jdn)}</div><div><b>${back} من 9</b>تتحرك<br>للخلف ℞</div><div><b>${longest.k}</b>الأطول بقاءً<br>${durTxt(longest.ing.jd-jdn)} أخرى</div></div>`);
   html+=mv.map(p=>{
     const si=signIdx(p.lon), h=house(p.lon), fast=p.k==="Moon";
-    let s=`<div class="mv" data-x="p:${p.k}"><div class="top"><div class="g">${p.g}</div><div style="flex:1"><div class="nm">${p.k} <span class="dir ${p.retro?"b":"f"}">${p.retro?"← backward ℞":"→ forward"}</span></div>
-      <div class="sub">${SG[si]} ${SIGNS[si]} ${fmtDeg(p.lon).split(" ")[0]} · your ${ord(h)} house · ${HOUSES[h-1].n}</div></div></div>`;
+    let s=`<div class="mv" data-x="p:${p.k}"><div class="top"><div class="g">${p.g}</div><div style="flex:1"><div class="nm">${p.k} <span class="dir ${p.retro?"b":"f"}">${p.retro?L("← backward ℞","→ للخلف ℞"):L("→ forward","← للأمام")}</span></div>
+      <div class="sub">${SG[si]} ${SIGNS[si]} ${fmtDeg(p.lon).split(" ")[0]} · ${yh(h)} · ${HOUSES[h-1].n}</div></div></div>`;
     if(p.ing&&p.ent){
       const total=p.ing.jd-p.ent, done=jdn-p.ent, pct=Math.max(2,Math.min(100,Math.round(done/total*100)));
-      s+=`<div class="bar" title="${pct}% of its stay done"><i class="${p.retro?"b":""}" style="width:${pct}%"></i></div>
-        <div class="dates"><span>Entered ${fd(p.ent,fast)}</span><span>${pct}% done</span><span>Leaves ${fd(p.ing.jd,fast)}</span></div>
-        <div class="stats"><div class="stat"><span>Total stay</span><b>${durTxt(total)}</b></div><div class="stat"><span>Time left</span><b>${durTxt(p.ing.jd-jdn)}</b></div></div>`;
+      s+=`<div class="bar" title="${pct}%"><i class="${p.retro?"b":""}" style="width:${pct}%"></i></div>
+        <div class="dates"><span>${L("Entered","دخل")} ${fd(p.ent,fast)}</span><span>${pct}% ${L("done","مضى")}</span><span>${L("Leaves","يغادر")} ${fd(p.ing.jd,fast)}</span></div>
+        <div class="stats"><div class="stat"><span>${L("Total stay","مدة الإقامة")}</span><b>${durTxt(total)}</b></div><div class="stat"><span>${L("Time left","الوقت المتبقي")}</span><b>${durTxt(p.ing.jd-jdn)}</b></div></div>`;
       const nh=house(p.ing.sign*30+1);
-      s+=`<div class="nx">${p.ing.fwd?"→":"←"} <b>Next:</b> moves ${p.ing.fwd?"forward":"back"} into <b>${SG[p.ing.sign]} ${SIGNS[p.ing.sign]}</b>, your ${ord(nh)} house (${HOUSES[nh-1].n.toLowerCase()}: ${HOUSES[nh-1].k}).</div>`;
-    } else s+=`<div class="nx">Stays in ${SIGNS[si]} for a long time.</div>`;
-    if(p.station) s+=`<div class="tn">↻ ${p.retro?"Turns forward again":"Turns backward (retrograde)"} on ${fd(p.station)} (${untilTxt(p.station,jdn)}).</div>`;
-    else if(p.k==="Sun"||p.k==="Moon") s+=`<div class="tn">The ${p.k} always moves forward.</div>`;
+      s+=L(`<div class="nx">${p.ing.fwd?"→":"←"} <b>Next:</b> moves ${p.ing.fwd?"forward":"back"} into <b>${SG[p.ing.sign]} ${SIGNS[p.ing.sign]}</b>, your ${ord(nh)} house (${HOUSES[nh-1].n.toLowerCase()}: ${HOUSES[nh-1].k}).</div>`,`<div class="nx">${p.ing.fwd?"←":"→"} <b>التالي:</b> ينتقل ${p.ing.fwd?"للأمام":"للخلف"} إلى <b>${SG[p.ing.sign]} ${SIGNS[p.ing.sign]}</b>، ${yh(nh)} (${HOUSES[nh-1].n}: ${HOUSES[nh-1].k}).</div>`);
+    } else s+=`<div class="nx">${L(`Stays in ${SIGNS[si]} for a long time.`,`يبقى في ${SIGNS[si]} لفترة طويلة.`)}</div>`;
+    if(p.station) s+=`<div class="tn">↻ ${p.retro?L("Turns forward again","يعود للسير للأمام"):L("Turns backward (retrograde)","يبدأ التراجع")} ${L("on","في")} ${fd(p.station)} (${untilTxt(p.station,jdn)}).</div>`;
+    else if(p.k==="Sun"||p.k==="Moon") s+=`<div class="tn">${L(`The ${p.k} always moves forward.`,`${p.k} يتحرك دائماً للأمام.`)}</div>`;
     return s+"</div>";
   }).join("");
   $("moveList").innerHTML=html;
@@ -1327,7 +1359,7 @@ function renderLegend(planets){
   $("legH").innerHTML=Array.from({length:12},(_,i)=>{const h=i+1, si=(NAT.baseSign+i)%12;
     return `<div class="it${selHouse===h?" sel":""}" data-lh="${h}" data-x="h:${h}"><div class="b">${h}</div><div class="tx"><b>${HOUSES[i].n} <i>${SG[si]}</i></b><span>${HSHORT[i]}</span></div></div>`;}).join("");
   const pts=wheelMode==="now"?planets:NAT.pts;
-  $("legPT").textContent=wheelMode==="now"?"Planets now":"Planets";
+  $("legPT").textContent=wheelMode==="now"?L("Planets now","الكواكب الآن"):L("Planets","الكواكب");
   $("legP").innerHTML=pts.map(p=>`<div class="it" data-lh="${house(p.lon)}" data-x="p:${p.k}"><div class="pg">${p.g.length>3?p.g:`<span style="font-size:.62rem;font-weight:700">${p.g}</span>`}</div><div class="tx"><b>${p.k}${p.retro?" ℞":""} <i>${ord(house(p.lon))}</i></b><span>${PSHORT[p.k]}</span></div></div>`).join("");
 }
 function wheelPlanets(){ return wheelMode==="now"?positions(jdFromUTCms(Date.now())):NAT.planets; }
@@ -1343,7 +1375,7 @@ function drawWheel(){
   for(let i=0;i<12;i++){
     const h=(i-NAT.baseSign+12)%12+1, col=c('--'+ELEM[i%4]);
     s+=`<path d="${sector(i*30,i*30+30,rS,R)}" fill="${col}" fill-opacity=".13" stroke="${c('--line')}" data-x="s:${i}"/>`;
-    s+=`<path data-h="${h}" data-x="h:${h}" d="${sector(i*30,i*30+30,rC,rS)}" fill="${c('--accent')}" fill-opacity="0" stroke="${c('--line')}"><title>${ord(h)} house: ${HOUSES[h-1].n}</title></path>`;
+    s+=`<path data-h="${h}" data-x="h:${h}" d="${sector(i*30,i*30+30,rC,rS)}" fill="${c('--accent')}" fill-opacity="0" stroke="${c('--line')}"><title>${hh(h)}: ${HOUSES[h-1].n}</title></path>`;
     const [gx,gy]=pt(i*30+15,(R+rS)/2);
     s+=`<text x="${gx}" y="${gy-7}" text-anchor="middle" dominant-baseline="central" font-size="15" fill="${col}" pointer-events="none">${SG[i]}</text>
         <text x="${gx}" y="${gy+10}" text-anchor="middle" dominant-baseline="central" font-size="8.5" font-weight="600" fill="${c('--ink')}" pointer-events="none">${SIGNS[i]}</text>`;
@@ -1358,11 +1390,11 @@ function drawWheel(){
   // planets: stack crowded ones on inner levels so they stay in their own sign
   const left={}; $("stayBox").classList.toggle("hidden",wheelMode!=="now");
   if(wheelMode==="now"){const mv=nextMoves(Date.now());
-    $("stayBox").innerHTML=`<table class="stay"><thead><tr><th>Planet</th><th>House</th><th>Total stay</th><th>Time left</th></tr></thead><tbody>`+
+    $("stayBox").innerHTML=`<table class="stay"><thead><tr><th>${L("Planet","الكوكب")}</th><th>${L("House","البيت")}</th><th>${L("Total stay","مدة الإقامة")}</th><th>${L("Time left","المتبقي")}</th></tr></thead><tbody>`+
       mv.filter(m=>m.ing&&m.ent).sort((a,b)=>(a.ing.jd-a.now)-(b.ing.jd-b.now)).map(m=>{const tot=m.ing.jd-m.ent, pct=Math.max(3,Math.min(100,Math.round((m.now-m.ent)/tot*100))), h=house(m.lon);
         return `<tr data-x="p:${m.k}"><td class="n">${m.g} ${m.k} ${m.retro?'<span class="r">←</span>':'<span style="color:var(--good)">→</span>'}</td><td>${ord(h)}<div class="mb"><i class="${m.retro?"b":""}" style="width:${pct}%"></i></div></td><td class="n">${durTxt(tot)}</td><td class="n"><b class="l">${durTxt(m.ing.jd-m.now)}</b></td></tr>`;}).join("")+
-      `</tbody></table><p class="small" style="text-align:left;margin:6px 0 0"><b>Total stay</b> = the planet's whole visit to that house, from the day it entered to the day it leaves. <b>Time left</b> = how much of that visit remains from today. The bar shows how far through it is.</p>`;
-    mv.forEach(m=>{ if(!m.ing) return; const d=m.ing.jd-m.now; left[m.k]=d<1?Math.max(1,Math.round(d*24))+"h":d<45?Math.round(d)+"d":d<730?Math.round(d/30.44)+"mo":(d/365.25).toFixed(1).replace(/\.0$/,"")+"y"; });}
+      `</tbody></table><p class="small" style="text-align:start;margin:6px 0 0">${L(`<b>Total stay</b> = the planet's whole visit to that house, from the day it entered to the day it leaves. <b>Time left</b> = how much of that visit remains from today. The bar shows how far through it is.`,`<b>مدة الإقامة</b> = زيارة الكوكب الكاملة لذلك البيت، من يوم دخوله إلى يوم مغادرته. <b>المتبقي</b> = كم بقي من هذه الزيارة من اليوم. الشريط يُظهر كم مضى منها.`)}</p>`;
+    mv.forEach(m=>{ if(!m.ing) return; const d=m.ing.jd-m.now; left[m.k]=d<1?Math.max(1,Math.round(d*24))+L("h","س"):d<45?Math.round(d)+L("d","ي"):d<730?Math.round(d/30.44)+L("mo","ش"):(d/365.25).toFixed(1).replace(/\.0$/,"")+L("y","سنة"); });}
   const LV=wheelMode==="now"?[136,98,62]:[130,101,73], placed=[], pc=wheelMode==="now"?c('--hard'):c('--ink');
   wheelPlanets().slice().sort((a,b)=>a.lon-b.lon).forEach(p=>{
     let lv=0; while(lv<2&&placed.some(q=>q.lv===lv&&sep(q.lon,p.lon)<14)) lv++;
@@ -1372,7 +1404,7 @@ function drawWheel(){
     const r=LV[p.lv], [x,y0]=pt(p.lon,r), y=y0-4, nx=x, ny=y+14, [m1,m2]=pt(p.lon,rS), [m3,m4]=pt(p.lon,rS-6);
     s+=`<line x1="${m1}" y1="${m2}" x2="${m3}" y2="${m4}" stroke="${pc}" stroke-width="1.5" pointer-events="none"/>
         <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="17" fill="${pc}" data-x="p:${p.k}">${p.g}</text>
-        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro&&wheelMode!=="now"?" ℞":""}${wheelMode==="now"?(p.retro?" ←":" →"):""}</text>${left[p.k]?`<text x="${nx}" y="${ny+10}" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="700" fill="${pc}" pointer-events="none">${left[p.k]} left</text>`:""}`;
+        <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro&&wheelMode!=="now"?" ℞":""}${wheelMode==="now"?(p.retro?" ←":" →"):""}</text>${left[p.k]?`<text x="${nx}" y="${ny+10}" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="700" fill="${pc}" pointer-events="none">${left[p.k]} ${L("left","باقٍ")}</text>`:""}`;
   });
   $("wheel").innerHTML=s;
   renderLegend(wheelPlanets());
@@ -1381,32 +1413,34 @@ function drawWheel(){
 
 // ---------- Full reading (Rising + Sun + Moon blended) ----------
 const LENS=[["asc","🌅","Rising"],["sun","☀️","Sun"],["moon","🌙","Moon"]];
+const LENSN={asc:()=>L("Rising","الطالع"),sun:()=>L("Sun","الشمس"),moon:()=>L("Moon","القمر")};
 function baseOf(b){ return b==="sun"?[signIdx(NAT.planets[0].lon),NAT.planets[0].lon]:b==="moon"?[signIdx(NAT.planets[1].lon),NAT.planets[1].lon]:[NAT.ascSign,NAT.asc]; }
 function withBase(b,fn){ const s=NAT.baseSign,l=NAT.baseLon; [NAT.baseSign,NAT.baseLon]=baseOf(b); try{return fn();}finally{NAT.baseSign=s;NAT.baseLon=l;} }
-function lensHead(b){const L=LENS.find(x=>x[0]===b); return `<div class="lh">${L[1]} ${L[2]} view<small>· ${SIGNS[baseOf(b)[0]]} = 1st house</small></div>`;}
-function consensus(list,noun){
+function lensHead(b){const Lx=LENS.find(x=>x[0]===b); return `<div class="lh">${Lx[1]} ${L(LENSN[b]()+" view","رؤية "+LENSN[b]())}<small>· ${SIGNS[baseOf(b)[0]]} = ${hh(1)}</small></div>`;}
+function consensus(list,noun,nounAr){
   const c={}; list.forEach(x=>c[x]=(c[x]||0)+1); const top=Object.entries(c).sort((a,b)=>b[1]-a[1])[0];
-  return top[1]>=2?`<b>${top[1]===3?"All 3":"2 of 3"} views agree</b> on your ${noun}: <b>${top[0]}</b>.`:`The three views give different ${noun}s (${list.join(", ")}), so balance all of them.`;
+  if(top[1]>=2) return L(`<b>${top[1]===3?"All 3":"2 of 3"} views agree</b> on your ${noun}: <b>${top[0]}</b>.`,`<b>${top[1]===3?"الرؤى الثلاث تتفق":"رؤيتان من ثلاث تتفقان"}</b> على ${nounAr}: <b>${top[0]}</b>.`);
+  return L(`The three views give different ${noun}s (${list.join(", ")}), so balance all of them.`,`الرؤى الثلاث تعطي إجابات مختلفة لـ${nounAr} (${list.join("، ")})، فوازن بينها.`);
 }
 const AREAS=["Work","Money","Love","Health"];
-const FULLHEAD=`<h2>✨ Full reading: Rising + Sun + Moon</h2>`;
+const FULLHEAD=()=>`<h2>${L("✨ Full reading: Rising + Sun + Moon","✨ قراءة شاملة: الطالع + الشمس + القمر")}</h2>`;
 function fullDayHtml(){
   const v=new Date(viewMs??Date.now()), jd=jdFromUTCms(new Date(v.getFullYear(),v.getMonth(),v.getDate(),12).getTime()), tr=positions(jd);
   const bests=[], themes=[];
   const h=LENS.map(([b])=>withBase(b,()=>{ const r=scoresOne(jd,tr), mh=house(tr[1].lon), sh=house(tr[0].lon), best=AREAS.slice().sort((x,y)=>r.tot[y]-r.tot[x])[0];
     bests.push(best); themes.push(HOUSES[mh-1].n.toLowerCase());
-    return `<div class="lens">${lensHead(b)}🌙 Moon in your <b>${ord(mh)} house</b>: ${HSHORT[mh-1]}<br>☀️ Sun in your ${ord(sh)} house (${HOUSES[sh-1].n.toLowerCase()})<br>Strongest area: <b>${best}</b>${dotsHtml(r.sc[best])}</div>`;})).join("");
-  return FULLHEAD+`<p class="lead">${consensus(bests,"strongest area")} Today touches <b>${[...new Set(themes)].join(", ")}</b>. All scores on this page are the average of the three views.</p>`+h;
+    return `<div class="lens">${lensHead(b)}🌙 ${L(`Moon in your <b>${ord(mh)} house</b>`,`القمر في <b>${yh(mh)}</b>`)}: ${HSHORT[mh-1]}<br>☀️ ${L(`Sun in your ${ord(sh)} house`,`الشمس في ${yh(sh)}`)} (${HOUSES[sh-1].n.toLowerCase()})<br>${L("Strongest area:","أقوى مجال:")} <b>${best}</b>${dotsHtml(r.sc[best])}</div>`;})).join("");
+  return FULLHEAD()+`<p class="lead">${consensus(bests,"strongest area","أقوى مجال")} ${L(`Today touches <b>${[...new Set(themes)].join(", ")}</b>. All scores on this page are the average of the three views.`,`اليوم يلامس <b>${[...new Set(themes)].join("، ")}</b>. كل التقييمات في هذه الصفحة هي متوسط الرؤى الثلاث.`)}</p>`+h;
 }
 function fullWeekHtml(){
   const arr=daysFrom(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate(),6), days=arr.slice(1,7).filter(x=>x.day.getDay()!==0);
   const bests=[], bds=[];
   const h=LENS.map(([b])=>withBase(b,()=>{ const sc=days.map(x=>({day:x.day,pos:x.pos,...scoresOne(x.jd,x.pos)}));
     const tA=k=>sc.reduce((s,x)=>s+x.tot[k],0), best=AREAS.slice().sort((a,c)=>tA(c)-tA(a))[0];
-    const bd=sc.slice().sort((a,c)=>c.all-a.all)[0].day.toLocaleDateString(undefined,{weekday:"long"}), mh=[...new Set(sc.map(x=>house(x.pos[1].lon)))];
+    const bd=sc.slice().sort((a,c)=>c.all-a.all)[0].day.toLocaleDateString(LOC(),{weekday:"long"}), mh=[...new Set(sc.map(x=>house(x.pos[1].lon)))];
     bests.push(best); bds.push(bd);
-    return `<div class="lens">${lensHead(b)}🌙 Moon moves through your <b>${mh.map(ord).join(" → ")}</b> houses (${mh.map(x=>HOUSES[x-1].n.toLowerCase()).join(", ")})<br>Strongest area: <b>${best}</b> · Best day: <b>${bd}</b></div>`;})).join("");
-  return FULLHEAD+`<p class="lead">${consensus(bests,"strongest area")} ${consensus(bds,"best day")}</p>`+h;
+    return `<div class="lens">${lensHead(b)}🌙 ${L(`Moon moves through your <b>${mh.map(ord).join(" → ")}</b> houses`,`يمرّ القمر عبر <b>${yhs(mh)}</b>`)} (${mh.map(x=>HOUSES[x-1].n.toLowerCase()).join(L(", ","، "))})<br>${L("Strongest area:","أقوى مجال:")} <b>${best}</b> · ${L("Best day:","أفضل يوم:")} <b>${bd}</b></div>`;})).join("");
+  return FULLHEAD()+`<p class="lead">${consensus(bests,"strongest area","أقوى مجال")} ${consensus(bds,"best day","أفضل يوم")}</p>`+h;
 }
 function fullMonthHtml(){
   const y=monthSel.getFullYear(), m=monthSel.getMonth(), nd=new Date(y,m+1,0).getDate(), days=daysFrom(y,m,1,nd).slice(1,nd+1);
@@ -1416,8 +1450,8 @@ function fullMonthHtml(){
     const top=sc.slice().sort((a,c)=>c.all-a.all).slice(0,3).map(x=>x.day.getDate()).sort((a,c)=>a-c);
     const h0=house(days[0].pos[0].lon), h1=house(days[nd-1].pos[0].lon);
     bests.push(order[0]); weak.push(order[3]);
-    return `<div class="lens">${lensHead(b)}☀️ Sun lights up your <b>${ord(h0)}</b>${h1!==h0?` then <b>${ord(h1)}</b>`:""} house (${HOUSES[h0-1].n.toLowerCase()}${h1!==h0?" → "+HOUSES[h1-1].n.toLowerCase():""})<br>Strongest: <b>${order[0]}</b> · Weakest: ${order[3]} · Best days: <b>${top.join(", ")}</b></div>`;})).join("");
-  return FULLHEAD+`<p class="lead">${consensus(bests,"strongest area")} ${consensus(weak,"weakest area")}</p>`+h;
+    return `<div class="lens">${lensHead(b)}☀️ ${L(`Sun lights up your <b>${ord(h0)}</b>${h1!==h0?` then <b>${ord(h1)}</b>`:""} house`,`الشمس تضيء <b>${yh(h0)}</b>${h1!==h0?` ثم <b>${yh(h1)}</b>`:""}`)} (${HOUSES[h0-1].n.toLowerCase()}${h1!==h0?" → "+HOUSES[h1-1].n.toLowerCase():""})<br>${L("Strongest:","الأقوى:")} <b>${order[0]}</b> · ${L("Weakest:","الأضعف:")} ${order[3]} · ${L("Best days:","أفضل الأيام:")} <b>${top.join(L(", ","، "))}</b></div>`;})).join("");
+  return FULLHEAD()+`<p class="lead">${consensus(bests,"strongest area","أقوى مجال")} ${consensus(weak,"weakest area","أضعف مجال")}</p>`+h;
 }
 function fullYearHtml(){
   const Y=yearSel, age=Y-NAT.by, samples=Array.from({length:12},(_,i)=>positions(jdFromUTCms(new Date(Y,i,15,12).getTime())));
@@ -1425,17 +1459,16 @@ function fullYearHtml(){
   const h=LENS.map(([b])=>withBase(b,()=>{ const ph=age%12+1, lord=RULER[(NAT.baseSign+age)%12];
     const jz=[...new Set(samples.map(p=>house(p[5].lon)))], sz=[...new Set(samples.map(p=>house(p[6].lon)))];
     lords.push(lord);
-    return `<div class="lens">${lensHead(b)}🎂 From your birthday: <b>${ord(ph)} house</b> (${HOUSES[ph-1].n.toLowerCase()}) · year planet <b>${GLYPH[lord]} ${lord}</b><br>♃ Luck zone: your ${jz.map(ord).join(" then ")} (${jz.map(x=>HOUSES[x-1].n.toLowerCase()).join(", ")})<br>♄ Work-hard zone: your ${sz.map(ord).join(" then ")} (${sz.map(x=>HOUSES[x-1].n.toLowerCase()).join(", ")})</div>`;})).join("");
+    return `<div class="lens">${lensHead(b)}🎂 ${L("From your birthday:","من عيد ميلادك:")} <b>${hh(ph)}</b> (${HOUSES[ph-1].n.toLowerCase()}) · ${L("year planet","كوكب السنة")} <b>${GLYPH[lord]} ${lord}</b><br>♃ ${L("Luck zone: your","منطقة الحظ:")} ${jz.map(x=>L(ord(x),yh(x))).join(L(" then "," ثم "))} (${jz.map(x=>HOUSES[x-1].n.toLowerCase()).join(L(", ","، "))})<br>♄ ${L("Work-hard zone: your","منطقة العمل الشاق:")} ${sz.map(x=>L(ord(x),yh(x))).join(L(" then "," ثم "))} (${sz.map(x=>HOUSES[x-1].n.toLowerCase()).join(L(", ","، "))})</div>`;})).join("");
   const uniq=[...new Set(lords)];
-  return FULLHEAD+`<p class="lead">${uniq.length===1?`All 3 views give the same year planet: <b>${GLYPH[uniq[0]]} ${uniq[0]}</b>. Its moves this year really matter.`:`Your year planets: <b>${lords.map((l,i)=>`${GLYPH[l]} ${l} (${LENS[i][2]})`).join(", ")}</b>. Watch what each of them does this year.`}</p>`+h;
+  return FULLHEAD()+`<p class="lead">${uniq.length===1?L(`All 3 views give the same year planet: <b>${GLYPH[uniq[0]]} ${uniq[0]}</b>. Its moves this year really matter.`,`الرؤى الثلاث تعطي كوكب السنة نفسه: <b>${GLYPH[uniq[0]]} ${uniq[0]}</b>. حركاته هذه السنة مهمة جداً.`):L(`Your year planets: <b>${lords.map((l,i)=>`${GLYPH[l]} ${l} (${LENSN[LENS[i][0]]()})`).join(", ")}</b>. Watch what each of them does this year.`,`كواكب سنتك: <b>${lords.map((l,i)=>`${GLYPH[l]} ${l} (${LENSN[LENS[i][0]]()})`).join("، ")}</b>. راقب ما يفعله كل منها هذه السنة.`)}</p>`+h;
 }
 function fullChartHtml(){
-  const pts=NAT.pts;
-  let same=0;
+  const pts=NAT.pts; let same=0;
   const rows=pts.map(p=>{ const hs=LENS.map(([b])=>withBase(b,()=>house(p.lon))); const eq=hs[0]===hs[1]&&hs[1]===hs[2]; if(eq) same++;
     return `<tr class="${eq?"same":""}" data-x="p:${p.k}"><td>${p.g.length>3?p.g:""} ${p.k}</td>${hs.map(x=>`<td>${ord(x)}<small>${HOUSES[x-1].n}</small></td>`).join("")}</tr>`;}).join("");
-  return FULLHEAD+`<p class="lead">Where each of your planets falls in all three views. ${same?`<b>Green rows</b> land in the same house in all 3 views, which makes those placements extra strong.`:`Each planet lands in a different house per view, so each view shows a different side of you: outer life (Rising), core self (Sun) and emotions (Moon).`}</p>
-    <table class="tri"><thead><tr><th>Planet</th><th>🌅 Rising</th><th>☀️ Sun</th><th>🌙 Moon</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return FULLHEAD()+`<p class="lead">${L("Where each of your planets falls in all three views.","أين يقع كل كوكب من كواكبك في الرؤى الثلاث.")} ${same?L(`<b>Green rows</b> land in the same house in all 3 views, which makes those placements extra strong.`,`<b>الصفوف الخضراء</b> تقع في البيت نفسه في الرؤى الثلاث، فتكون هذه المواقع قوية جداً.`):L(`Each planet lands in a different house per view, so each view shows a different side of you: outer life (Rising), core self (Sun) and emotions (Moon).`,`كل كوكب يقع في بيت مختلف حسب الرؤية، فكل رؤية تُظهر جانباً مختلفاً منك: الحياة الخارجية (الطالع)، الذات الجوهرية (الشمس)، والمشاعر (القمر).`)}</p>
+    <table class="tri"><thead><tr><th>${L("Planet","الكوكب")}</th><th>🌅 ${LENSN.asc()}</th><th>☀️ ${LENSN.sun()}</th><th>🌙 ${LENSN.moon()}</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 const FULLFN={fullDay:fullDayHtml,fullWeek:fullWeekHtml,fullMonth:fullMonthHtml,fullYear:fullYearHtml,fullChart:fullChartHtml};
 function renderFull(id){ const el=$(id); if(!el) return; if(houseBase!=="all"||!NAT){el.classList.add("hidden");return;} el.innerHTML=FULLFN[id](); el.classList.remove("hidden"); }
@@ -1638,8 +1671,12 @@ const PLKEYS=["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus",
 const MODERN={Uranus:10,Neptune:11};
 const xl=(key,label)=>`<a class="xl" data-x="${key}">${label}</a>`;
 const xs=i=>xl("s:"+i,`${SG[i]} ${SIGNS[i]}`);
-const xh=h=>xl("h:"+h,`${ord(h)} house`);
+const xh=h=>xl("h:"+h,L(`${ord(h)} house`,`البيت ${ord(h)}`));
+const xyh=h=>xl("h:"+h,yh(h));
 const xp=k=>xl("p:"+k,`${GLYPH[k]||""} ${k}`);
+const hn=h=>HOUSES[h-1].n.toLowerCase();
+const kwAt=i=>SIGN_KW[SIGNS[i]];
+const way=i=>L(`${art(kwAt(i))} <b>${kwAt(i)}</b> way`,`بطريقة <b>${kwAt(i)}</b>`);
 function natalAspects(){
   const out=[], pts=NAT.pts;
   for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
@@ -1649,96 +1686,101 @@ function natalAspects(){
   return out.sort((p,q)=>p.orb-q.orb);
 }
 function dotsHouse(h){
-  const si=(NAT.baseSign+h-1)%12, H=HOUSES[h-1], rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl), rh=house(rp.lon), rs=signIdx(rp.lon);
+  const si=(NAT.baseSign+h-1)%12, rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl), rh=house(rp.lon), rs=signIdx(rp.lon);
   const inside=NAT.planets.filter(p=>house(p.lon)===h);
-  let s=`<ol class="chain"><li>Your ${xh(h)} (${H.n.toLowerCase()}) is in ${xs(si)}, so you handle ${HSHORT[h-1]} in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way.</li>`;
-  if(inside.length) s+=`<li>Planets here: ${inside.map(p=>`${xp(p.k)} (${PLANETDATA[p.k].short})`).join(", ")}. ${inside.map(p=>`With ${p.k} here, ${PVERB[p.k]} ${HSHORT[h-1]}.`).join(" ")}</li>`;
-  else s+=`<li>No planets here, so follow its ruler.</li>`;
-  s+=`<li>${SIGNS[si]} is ruled by ${xp(rl)}, which sits in your ${xh(rh)} (${HOUSES[rh-1].n.toLowerCase()}) in ${xs(rs)}.</li>`;
-  let concl;
-  if(rh===h) concl=`its ruler sits right here, so this area is strong and self-directed. You're in charge of it.`;
-  else concl=`your ${H.n.toLowerCase()} plays out <b>${RH_FLAVOR[rh-1]}</b>, with ${art(SIGN_KW[SIGNS[rs]])} ${SIGN_KW[SIGNS[rs]]} (${SIGNS[rs]}) flavor.`;
-  s+=`</ol><p class="concl"><b>In short:</b> ${concl}${inside.length?` And with ${inside.map(p=>p.k).join(" and ")} here, it's an <b>active, important</b> area of your life.`:""}</p>`;
+  let s=`<ol class="chain"><li>${L(`Your ${xh(h)} (${hn(h)}) is in ${xs(si)}, so you handle ${HSHORT[h-1]} in ${way(si)}.`,`${xyh(h)} (${hn(h)}) في ${xs(si)}، فتتعامل مع ${HSHORT[h-1]} ${way(si)}.`)}</li>`;
+  if(inside.length) s+=`<li>${L("Planets here:","الكواكب هنا:")} ${inside.map(p=>`${xp(p.k)} (${PLANETDATA[p.k].short})`).join(L(", ","، "))}. ${inside.map(p=>L(`With ${p.k} here, ${PVERB[p.k]} ${HSHORT[h-1]}.`,`مع ${p.k} هنا، ${PVERB[p.k]} ${HSHORT[h-1]}.`)).join(" ")}</li>`;
+  else s+=`<li>${L("No planets here, so follow its ruler.","لا كواكب هنا، فاتبع حاكمه.")}</li>`;
+  s+=`<li>${L(`${SIGNS[si]} is ruled by ${xp(rl)}, which sits in your ${xh(rh)} (${hn(rh)}) in ${xs(rs)}.`,`${SIGNS[si]} يحكمه ${xp(rl)}، الموجود في ${xyh(rh)} (${hn(rh)}) في ${xs(rs)}.`)}</li>`;
+  const concl=rh===h?L(`its ruler sits right here, so this area is strong and self-directed. You're in charge of it.`,`حاكمه موجود هنا تماماً، فهذا المجال قوي ومستقل. أنت المسيطر عليه.`)
+    :L(`your ${hn(h)} plays out <b>${RH_FLAVOR[rh-1]}</b>, with ${art(kwAt(rs))} ${kwAt(rs)} (${SIGNS[rs]}) flavor.`,`${hn(h)} لديك يظهر <b>${RH_FLAVOR[rh-1]}</b>، بنكهة ${kwAt(rs)} (${SIGNS[rs]}).`);
+  s+=`</ol><p class="concl"><b>${L("In short:","باختصار:")}</b> ${concl}${inside.length?L(` And with ${inside.map(p=>p.k).join(" and ")} here, it's an <b>active, important</b> area of your life.`,` ومع وجود ${inside.map(p=>p.k).join(" و")} هنا، فهو مجال <b>نشِط ومهم</b> في حياتك.`):""}</p>`;
   return s;
 }
 function section(t,body){ return `<section class="xs"><h4>${t}</h4>${body}</section>`; }
 function ul(a){ return `<ul>${a.map(x=>`<li>${x}</li>`).join("")}</ul>`; }
 function wearBox(o){ return `<div class="wear">${o.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join("")}</div>`; }
-const WEAR_NOTE=`<p class="small">Traditional astrology symbolism: use it as a mindful reminder of the energy you want to bring in, not as a guarantee.</p>`;
-function lensHouses(lon){ return LENS.map(([b,ic,n])=>`${ic} ${n}: ${withBase(b,()=>xh(house(lon)))}`).join(" · "); }
+const WEAR_NOTE=()=>`<p class="small">${L("Traditional astrology symbolism: use it as a mindful reminder of the energy you want to bring in, not as a guarantee.","رمزية فلكية تقليدية: استخدمها كتذكير واعٍ بالطاقة التي تريد جلبها، لا كضمان.")}</p>`;
+const W=()=>({day:L("Best day","أفضل يوم"),colors:L("Colors","الألوان"),stones:L("Stones","الأحجار"),metal:L("Metal","المعدن"),doo:L("Do","افعل")});
+function lensHouses(lon){ return LENS.map(([b,ic])=>`${ic} ${LENSN[b]()}: ${withBase(b,()=>xh(house(lon)))}`).join(" · "); }
 
 function explainPlanet(k){
   const P=PLANETDATA[k], np=NAT.pts.find(p=>p.k===k), si=signIdx(np.lon), h=house(np.lon), ang=k==="Ascendant"||k==="Midheaven";
-  const head={ic:np.g, t:k, sub:`${SG[si]} ${SIGNS[si]} ${fmtDeg(np.lon).split(" ")[0]} · ${ord(h)} house${np.retro?" · ℞ retrograde at birth":""}`};
-  let b=section("What it is",`<p>${P.what}</p>`);
+  const head={ic:np.g, t:k, sub:`${SG[si]} ${SIGNS[si]} ${fmtDeg(np.lon).split(" ")[0]} · ${hh(h)}${np.retro?L(" · ℞ retrograde at birth"," · ℞ متراجع عند الولادة"):""}`};
+  let b=section(L("What it is","ما هو"),`<p>${P.what}</p>`);
   let mine;
-  if(k==="Ascendant") mine=`<p>Your Rising sign is ${xs(si)}: people first see you as <b>${SIGN_KW[SIGNS[si]]}</b>. Your <b>chart ruler</b> is ${xp(RULER[si])}, the planet that rules ${SIGNS[si]}. It sits in your ${xh(house(NAT.planets.find(p=>p.k===RULER[si]).lon))}, which makes it one of the most important planets for you.</p>`;
-  else if(k==="Midheaven") mine=`<p>Your Midheaven is in ${xs(si)}: your career and public image grow best in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way. Its ruler ${xp(RULER[si])} sits in your ${xh(house(NAT.planets.find(p=>p.k===RULER[si]).lon))}, so your career path connects to ${HOUSES[house(NAT.planets.find(p=>p.k===RULER[si]).lon)-1].n.toLowerCase()}.</p>`;
+  const rOf=x=>NAT.planets.find(p=>p.k===RULER[x]);
+  if(k==="Ascendant") mine=`<p>${L(`Your Rising sign is ${xs(si)}: people first see you as <b>${kwAt(si)}</b>. Your <b>chart ruler</b> is ${xp(RULER[si])}, the planet that rules ${SIGNS[si]}. It sits in your ${xh(house(rOf(si).lon))}, which makes it one of the most important planets for you.`,`طالعك هو ${xs(si)}: يراك الناس أولاً <b>${kwAt(si)}</b>. <b>حاكم خريطتك</b> هو ${xp(RULER[si])}، الكوكب الذي يحكم ${SIGNS[si]}. يقع في ${xyh(house(rOf(si).lon))}، وهذا يجعله من أهم الكواكب لك.`)}</p>`;
+  else if(k==="Midheaven") mine=`<p>${L(`Your Midheaven is in ${xs(si)}: your career and public image grow best in ${way(si)}. Its ruler ${xp(RULER[si])} sits in your ${xh(house(rOf(si).lon))}, so your career path connects to ${hn(house(rOf(si).lon))}.`,`وسط سمائك في ${xs(si)}: مهنتك وصورتك العامة تنمو أفضل ${way(si)}. حاكمه ${xp(RULER[si])} في ${xyh(house(rOf(si).lon))}، فمسارك المهني مرتبط بـ${hn(house(rOf(si).lon))}.`)}</p>`;
   else {
-    mine=`<p class="formula"><b>${k}</b> (${P.short}) + <b>${SIGNS[si]}</b> (${SIGN_KW[SIGNS[si]]}) + <b>${ord(h)} house</b> (${HOUSES[h-1].n.toLowerCase()})</p>
-      <p>Put together: your ${xp(k)} is in ${xs(si)} in your ${xh(h)}. It acts in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way, and ${PVERB[k]} <b>${HSHORT[h-1]}</b>.${np.retro?" It was retrograde when you were born, so this energy turns inward first: you reflect, then act.":""}</p>`;
+    mine=`<p class="formula"><b>${k}</b> (${P.short}) + <b>${SIGNS[si]}</b> (${kwAt(si)}) + <b>${hh(h)}</b> (${hn(h)})</p>
+      <p>${L(`Put together: your ${xp(k)} is in ${xs(si)} in your ${xh(h)}. It acts in ${way(si)}, and ${PVERB[k]} <b>${HSHORT[h-1]}</b>.`,`معاً: ${xp(k)} لديك في ${xs(si)} في ${xyh(h)}. يتصرف ${way(si)}، و${PVERB[k]} <b>${HSHORT[h-1]}</b>.`)}${np.retro?L(" It was retrograde when you were born, so this energy turns inward first: you reflect, then act."," كان متراجعاً عند ولادتك، فتتجه هذه الطاقة للداخل أولاً: تتأمّل ثم تتصرّف."):""}</p>`;
     const rules=[]; RULER.forEach((r,i)=>{ if(r===k) rules.push(i); }); if(MODERN[k]!=null) rules.push(MODERN[k]);
-    if(rules.length) mine+=`<p>It ${MODERN[k]!=null?"co-rules (modern)":"rules"} ${rules.map(i=>`${xs(i)} (your ${xh((i-NAT.baseSign+12)%12+1)}: ${HOUSES[(i-NAT.baseSign+12)%12].n.toLowerCase()})`).join(" and ")}. So ${k} also manages those areas, and what happens to ${k} affects them too.</p>`;
+    if(rules.length) mine+=`<p>${L(`It ${MODERN[k]!=null?"co-rules (modern)":"rules"} ${rules.map(i=>`${xs(i)} (your ${xh((i-NAT.baseSign+12)%12+1)}: ${hn((i-NAT.baseSign+12)%12+1)})`).join(" and ")}. So ${k} also manages those areas, and what happens to ${k} affects them too.`,`${MODERN[k]!=null?"يشارك في حكم (حديثاً)":"يحكم"} ${rules.map(i=>`${xs(i)} (${xyh((i-NAT.baseSign+12)%12+1)}: ${hn((i-NAT.baseSign+12)%12+1)})`).join(" و")}. إذن ${k} يدير هذه المجالات أيضاً، وما يحدث لـ${k} يؤثر عليها.`)}</p>`;
   }
-  if(houseBase==="all") mine+=`<p class="small">House in each view: ${lensHouses(np.lon)}</p>`;
-  b+=section("In your chart",mine);
+  if(houseBase==="all") mine+=`<p class="small">${L("House in each view:","البيت في كل رؤية:")} ${lensHouses(np.lon)}</p>`;
+  b+=section(L("In your chart","في خريطتك"),mine);
   const asp=natalAspects().filter(x=>x.a.k===k||x.b.k===k);
-  if(asp.length) b+=section("Talks with your other planets (aspects)",ul(asp.map(x=>{const o=x.a.k===k?x.b:x.a; return `${x.asp.g} <b>${x.asp.n}</b> with ${xp(o.k)}: ${x.asp.t==="easy"?"easy flow, natural talent":x.asp.t==="hard"?"tension that pushes growth":"merged energies"} between ${P.short} and ${(PLANETDATA[o.k]||{short:o.m}).short}. <small>(orb ${x.orb.toFixed(1)}°)</small>`;})));
+  if(asp.length) b+=section(L("Talks with your other planets (aspects)","حواره مع كواكبك الأخرى (الجوانب)"),ul(asp.map(x=>{const o=x.a.k===k?x.b:x.a; const kind=x.asp.t==="easy"?L("easy flow, natural talent","تدفق سهل وموهبة طبيعية"):x.asp.t==="hard"?L("tension that pushes growth","توتر يدفع للنمو"):L("merged energies","طاقات مندمجة"); return `${x.asp.g} <b>${x.asp.n}</b> ${L("with","مع")} ${xp(o.k)}: ${kind} ${L("between","بين")} ${P.short} ${L("and","و")} ${(PLANETDATA[o.k]||{short:o.m}).short}. <small>(${L("orb","الفارق")} ${x.orb.toFixed(1)}°)</small>`;})));
   if(PLKEYS.includes(k)){
     const mv=nextMoves(Date.now()).find(m=>m.k===k), cs=signIdx(mv.lon), chh=house(mv.lon);
-    b+=section("Right now in the sky",`<p>${k} is in ${xs(cs)}, your ${xh(chh)} (${HOUSES[chh-1].n.toLowerCase()}), moving ${mv.retro?"<b>backward ℞</b>":"<b>forward</b>"}.${mv.ing?` It leaves on ${new Date(msFromJd(mv.ing.jd)).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})} for ${xs(mv.ing.sign)}.`:""}</p>`);
+    const leave=mv.ing?new Date(msFromJd(mv.ing.jd)).toLocaleDateString(LOC(),{month:"short",day:"numeric",year:"numeric"}):"";
+    b+=section(L("Right now in the sky","الآن في السماء"),`<p>${L(`${k} is in ${xs(cs)}, your ${xh(chh)} (${hn(chh)}), moving ${mv.retro?"<b>backward ℞</b>":"<b>forward</b>"}.${mv.ing?` It leaves on ${leave} for ${xs(mv.ing.sign)}.`:""}`,`${k} في ${xs(cs)}، ${xyh(chh)} (${hn(chh)})، ويتحرك ${mv.retro?"<b>للخلف ℞</b>":"<b>للأمام</b>"}.${mv.ing?` يغادر في ${leave} إلى ${xs(mv.ing.sign)}.`:""}`)}</p>`);
   }
-  b+=section("Advice",ul(P.adv.concat([`<b>When it's weak:</b> ${P.low}`,`<b>When it's too strong:</b> ${P.high}`])));
-  b+=section("Boost this energy",wearBox([["Best day",P.day],["Colors",P.color],["Stones",P.stone],["Metal",P.metal],["Do",P.act]])+WEAR_NOTE);
+  b+=section(L("Advice","نصائح"),ul(P.adv.concat([`<b>${L("When it's weak:","حين يكون ضعيفاً:")}</b> ${P.low}`,`<b>${L("When it's too strong:","حين يكون قوياً جداً:")}</b> ${P.high}`])));
+  const w=W(); b+=section(L("Boost this energy","عزّز هذه الطاقة"),wearBox([[w.day,P.day],[w.colors,P.color],[w.stones,P.stone],[w.metal,P.metal],[w.doo,P.act]])+WEAR_NOTE());
   const chips=[xs(si),xh(h)]; if(!ang) RULER.forEach((r,i)=>{ if(r===k) chips.push(xs(i)); });
   asp.slice(0,6).forEach(x=>{const o=x.a.k===k?x.b:x.a; chips.push(xp(o.k));});
-  b+=section("Connected to",`<div class="chipsx">${[...new Set(chips)].join("")}</div>`);
+  b+=section(L("Connected to","مرتبط بـ"),`<div class="chipsx">${[...new Set(chips)].join("")}</div>`);
   return {head,body:b};
 }
 function explainSign(i){
   const S=SIGNDATA[i], name=SIGNS[i], rl=RULER[i], rp=NAT.planets.find(p=>p.k===rl);
-  const head={ic:SG[i], t:name, sub:`${S.dates} · ${S.sym} · ${S.el} · ${S.mode} · ruled by ${S.ruler}`};
-  let b=section("What it is",`<p>${S.desc}</p><p class="small"><b>${S.el}</b> signs are ${({Fire:"action and passion",Earth:"practical and grounded",Air:"ideas and people",Water:"feelings and intuition"})[S.el]}. <b>${S.mode}</b> signs are good at ${({Cardinal:"starting things",Fixed:"keeping things going",Mutable:"adapting and finishing"})[S.mode]}.</p>`);
-  b+=section("Strengths",`<p>${S.str}</p>`)+section("Challenges",`<p>${S.ch}</p>`)+section("In love",`<p>${S.love}</p>`)+section("At work",`<p>${S.work}</p>`)+section("Body",`<p>${S.body}</p>`);
-  const big=[]; if(signIdx(NAT.planets[0].lon)===i) big.push("your <b>Sun sign</b>"); if(signIdx(NAT.planets[1].lon)===i) big.push("your <b>Moon sign</b>"); if(NAT.ascSign===i) big.push("your <b>Rising sign</b>");
+  const head={ic:SG[i], t:name, sub:`${S.dates} · ${S.sym} · ${S.el} · ${S.mode} · ${L("ruled by","يحكمه")} ${S.ruler}`};
+  const elKey=["Fire","Earth","Air","Water"][i%4], mdKey=["Cardinal","Fixed","Mutable"][i%3];
+  const elTxt=L({Fire:"action and passion",Earth:"practical and grounded",Air:"ideas and people",Water:"feelings and intuition"}[elKey],{Fire:"الفعل والشغف",Earth:"العملية والثبات",Air:"الأفكار والناس",Water:"المشاعر والحدس"}[elKey]);
+  const mdTxt=L({Cardinal:"starting things",Fixed:"keeping things going",Mutable:"adapting and finishing"}[mdKey],{Cardinal:"بدء الأمور",Fixed:"الاستمرار بالأمور",Mutable:"التكيّف والإنهاء"}[mdKey]);
+  let b=section(L("What it is","ما هو"),`<p>${S.desc}</p><p class="small">${L(`<b>${S.el}</b> signs are ${elTxt}. <b>${S.mode}</b> signs are good at ${mdTxt}.`,`أبراج <b>${S.el}</b> تمثّل ${elTxt}. والأبراج من نمط <b>${S.mode}</b> بارعة في ${mdTxt}.`)}</p>`);
+  b+=section(L("Strengths","نقاط القوة"),`<p>${S.str}</p>`)+section(L("Challenges","التحديات"),`<p>${S.ch}</p>`)+section(L("In love","في الحب"),`<p>${S.love}</p>`)+section(L("At work","في العمل"),`<p>${S.work}</p>`)+section(L("Body","الجسد"),`<p>${S.body}</p>`);
+  const big=[]; if(signIdx(NAT.planets[0].lon)===i) big.push(L("your <b>Sun sign</b>","<b>برجك الشمسي</b>")); if(signIdx(NAT.planets[1].lon)===i) big.push(L("your <b>Moon sign</b>","<b>برجك القمري</b>")); if(NAT.ascSign===i) big.push(L("your <b>Rising sign</b>","<b>برجك الطالع</b>"));
   const inside=NAT.planets.filter(p=>signIdx(p.lon)===i);
   const h=(i-NAT.baseSign+12)%12+1;
-  let mine=big.length?`<p>${name} is ${big.join(" and ")}. It's a big part of who you are.</p>`:"";
-  mine+=`<p>${name} sits on your ${xh(h)} (${HOUSES[h-1].n.toLowerCase()}), so you handle <b>${HSHORT[h-1]}</b> in ${art(SIGN_KW[name])} ${SIGN_KW[name]} way.</p>`;
-  if(houseBase==="all") mine+=`<p class="small">House in each view: ${LENS.map(([bb,ic,n])=>`${ic} ${n}: ${withBase(bb,()=>xh((i-NAT.baseSign+12)%12+1))}`).join(" · ")}</p>`;
-  mine+=inside.length?`<p>Your planets in ${name}: ${inside.map(p=>`${xp(p.k)} (${PLANETDATA[p.k].short})`).join(", ")}. They all express themselves in ${art(SIGN_KW[name])} ${SIGN_KW[name]} way.</p>`:`<p>None of your planets are in ${name}.</p>`;
-  mine+=`<p>Its ruler ${xp(rl)} sits in ${xs(signIdx(rp.lon))}, your ${xh(house(rp.lon))}. That's where ${name}'s energy gets sent in your life.</p>`;
-  b+=section("In your chart",mine);
-  b+=section("Advice",ul(S.adv));
-  const P=PLANETDATA[rl];
-  b+=section("Wear & carry to tune in",wearBox([["Colors",S.colors],["Stones",S.stones],["Best day",P.day+" (day of "+rl+")"],["Metal",P.metal+" ("+rl+")"]])+WEAR_NOTE);
+  let mine=big.length?`<p>${L(`${name} is ${big.join(" and ")}. It's a big part of who you are.`,`${name} هو ${big.join(" و")}. إنه جزء كبير ممن أنت.`)}</p>`:"";
+  mine+=`<p>${L(`${name} sits on your ${xh(h)} (${hn(h)}), so you handle <b>${HSHORT[h-1]}</b> in ${art(kwAt(i))} ${kwAt(i)} way.`,`${name} يقع على ${xyh(h)} (${hn(h)})، فتتعامل مع <b>${HSHORT[h-1]}</b> بطريقة ${kwAt(i)}.`)}</p>`;
+  if(houseBase==="all") mine+=`<p class="small">${L("House in each view:","البيت في كل رؤية:")} ${LENS.map(([bb,ic])=>`${ic} ${LENSN[bb]()}: ${withBase(bb,()=>xh((i-NAT.baseSign+12)%12+1))}`).join(" · ")}</p>`;
+  mine+=inside.length?`<p>${L(`Your planets in ${name}:`,`كواكبك في ${name}:`)} ${inside.map(p=>`${xp(p.k)} (${PLANETDATA[p.k].short})`).join(L(", ","، "))}. ${L(`They all express themselves in ${art(kwAt(i))} ${kwAt(i)} way.`,`كلها تعبّر عن نفسها بطريقة ${kwAt(i)}.`)}</p>`:`<p>${L(`None of your planets are in ${name}.`,`لا يوجد أي من كواكبك في ${name}.`)}</p>`;
+  mine+=`<p>${L(`Its ruler ${xp(rl)} sits in ${xs(signIdx(rp.lon))}, your ${xh(house(rp.lon))}. That's where ${name}'s energy gets sent in your life.`,`حاكمه ${xp(rl)} يقع في ${xs(signIdx(rp.lon))}، ${xyh(house(rp.lon))}. إلى هناك تُرسل طاقة ${name} في حياتك.`)}</p>`;
+  b+=section(L("In your chart","في خريطتك"),mine);
+  b+=section(L("Advice","نصائح"),ul(S.adv));
+  const P=PLANETDATA[rl], w=W();
+  b+=section(L("Wear & carry to tune in","ماذا تلبس وتحمل لتتناغم"),wearBox([[w.colors,S.colors],[w.stones,S.stones],[w.day,P.day+L(" (day of "+rl+")"," (يوم "+rl+")")],[w.metal,P.metal+" ("+rl+")"]])+WEAR_NOTE());
   const opp=(i+6)%12, mates=[0,1,2,3].map(n=>(i%4)+n*4).filter(x=>x!==i);
-  b+=section("Connected to",`<div class="chipsx">${xp(rl)}${xh(h)}${inside.map(p=>xp(p.k)).join("")}${xl("s:"+opp,`↔ ${SG[opp]} ${SIGNS[opp]} (opposite)`)}${mates.map(m=>xs(m)).join("")}</div><p class="small">Opposite sign = the balancing partner. The other ${S.el} signs share its element.</p>`);
+  b+=section(L("Connected to","مرتبط بـ"),`<div class="chipsx">${xp(rl)}${xh(h)}${inside.map(p=>xp(p.k)).join("")}${xl("s:"+opp,`↔ ${SG[opp]} ${SIGNS[opp]} (${L("opposite","المقابل")})`)}${mates.map(m=>xs(m)).join("")}</div><p class="small">${L(`Opposite sign = the balancing partner. The other ${S.el} signs share its element.`,`البرج المقابل = الشريك الموازن. وأبراج ${S.el} الأخرى تشاركه العنصر.`)}</p>`);
   return {head,body:b};
 }
 function explainHouse(h){
   const si=(NAT.baseSign+h-1)%12, H=HOUSES[h-1], M=HOUSEMORE[h-1], rl=RULER[si], inside=NAT.planets.filter(p=>house(p.lon)===h);
-  const head={ic:`<span class="hbig">${h}</span>`, t:`${ord(h)} house · ${H.n}`, sub:`${SG[si]} ${SIGNS[si]} · ruled by ${GLYPH[rl]} ${rl}${inside.length?" · "+inside.map(p=>p.g).join(" "):""}`};
-  let b=section("What it is",`<p><b>Represents:</b> ${H.k}. ${H.d}</p><p class="small">Natural sign: ${M.nat}. In every chart, the ${ord(h)} house carries some ${M.nat} flavor.</p>`);
-  b+=section("Life questions",`<p>${M.q}</p>`);
-  b+=section("Connect the dots (your chart)",dotsHouse(h));
-  if(houseBase==="all") b+=section("All three views",LENS.map(([bb,ic,n])=>`<div class="lens"><div class="lh">${ic} ${n} view</div>${withBase(bb,()=>{const s2=(NAT.baseSign+h-1)%12, r2=RULER[s2], rp=NAT.planets.find(p=>p.k===r2); const ins=NAT.planets.filter(p=>house(p.lon)===h); return `${SIGNS[s2]} on this house · ruler ${r2} in your ${ord(house(rp.lon))}${ins.length?" · planets: "+ins.map(p=>p.k).join(", "):""}`;})}</div>`).join(""));
-  b+=section("Advice to boost this area",`<p>${M.boost}</p>`);
-  const S=SIGNDATA[si], P=PLANETDATA[rl];
-  b+=section("Wear & carry for this area",`<p class="small">Use the colors and stones of ${SIGNS[si]} (the sign on this house) and ${rl} (its ruler):</p>`+wearBox([["Colors",S.colors],["Stones",S.stones],["Best day",P.day],["Metal",P.metal]])+WEAR_NOTE);
+  const head={ic:`<span class="hbig">${h}</span>`, t:`${hh(h)} · ${H.n}`, sub:`${SG[si]} ${SIGNS[si]} · ${L("ruled by","يحكمه")} ${GLYPH[rl]} ${rl}${inside.length?" · "+inside.map(p=>p.g).join(" "):""}`};
+  let b=section(L("What it is","ما هو"),`<p><b>${L("Represents:","يمثّل:")}</b> ${H.k}. ${H.d}</p><p class="small">${L(`Natural sign: ${M.nat}. In every chart, the ${ord(h)} house carries some ${M.nat} flavor.`,`البرج الطبيعي: ${M.nat}. في كل خريطة يحمل البيت ${ord(h)} شيئاً من نكهة ${M.nat}.`)}</p>`);
+  b+=section(L("Life questions","أسئلة الحياة"),`<p>${M.q}</p>`);
+  b+=section(L("Connect the dots (your chart)","ربط النقاط (خريطتك)"),dotsHouse(h));
+  if(houseBase==="all") b+=section(L("All three views","الرؤى الثلاث"),LENS.map(([bb,ic])=>`<div class="lens"><div class="lh">${ic} ${L(LENSN[bb]()+" view","رؤية "+LENSN[bb]())}</div>${withBase(bb,()=>{const s2=(NAT.baseSign+h-1)%12, r2=RULER[s2], rp=NAT.planets.find(p=>p.k===r2); const ins=NAT.planets.filter(p=>house(p.lon)===h); return L(`${SIGNS[s2]} on this house · ruler ${r2} in your ${ord(house(rp.lon))}${ins.length?" · planets: "+ins.map(p=>p.k).join(", "):""}`,`${SIGNS[s2]} على هذا البيت · الحاكم ${r2} في ${yh(house(rp.lon))}${ins.length?" · الكواكب: "+ins.map(p=>p.k).join("، "):""}`);})}</div>`).join(""));
+  b+=section(L("Advice to boost this area","نصائح لتعزيز هذا المجال"),`<p>${M.boost}</p>`);
+  const S=SIGNDATA[si], P=PLANETDATA[rl], w=W();
+  b+=section(L("Wear & carry for this area","ماذا تلبس وتحمل لهذا المجال"),`<p class="small">${L(`Use the colors and stones of ${SIGNS[si]} (the sign on this house) and ${rl} (its ruler):`,`استخدم ألوان وأحجار ${SIGNS[si]} (البرج على هذا البيت) و${rl} (حاكمه):`)}</p>`+wearBox([[w.colors,S.colors],[w.stones,S.stones],[w.day,P.day],[w.metal,P.metal]])+WEAR_NOTE());
   const rp=NAT.planets.find(p=>p.k===rl), opp=(h+5)%12+1;
-  b+=section("Connected to",`<div class="chipsx">${xs(si)}${xp(rl)}${xh(house(rp.lon))}${inside.map(p=>xp(p.k)).join("")}${xl("h:"+opp,`↔ ${ord(opp)} house (opposite)`)}</div>`);
+  b+=section(L("Connected to","مرتبط بـ"),`<div class="chipsx">${xs(si)}${xp(rl)}${xh(house(rp.lon))}${inside.map(p=>xp(p.k)).join("")}${xl("h:"+opp,`↔ ${hh(opp)} (${L("opposite","المقابل")})`)}</div>`);
   return {head,body:b};
 }
 function explainAspect(tk,an,nk){
-  const a=ASP.find(x=>x.n===an), n=NAT.pts.find(p=>p.k===nk), T=PLANETDATA[tk], N=PLANETDATA[nk];
-  const head={ic:a.g, t:`${tk} ${a.n.toLowerCase()} your ${nk}`, sub:"A transit: today's planet talking to your birth planet"};
-  let b=section("What this aspect is",`<p>${ASPLONG[a.n]}</p>`);
-  b+=section("The two actors",ul([`${xp(tk)} today brings <b>${TONE[tk]}</b>.`,`Your birth ${xp(nk)} stands for <b>${N?N.short:n.m}</b>, and sits in your ${xh(house(n.lon))}.`]));
-  b+=section("What it means for you",`<p>${interp(tk,a,n)} It touches your ${xh(house(n.lon))}: ${HSHORT[house(n.lon)-1]}.</p>`);
-  b+=section("Advice",ul(a.t==="hard"?["Slow down, and don't force results.","Turn the pressure into effort: fix what's weak.",...T.adv.slice(0,1)]:a.t==="easy"?["Say yes, and act on the chance.","Use the easy flow for something important.",...T.adv.slice(0,1)]:["A new chapter starts: set an intention.",...T.adv.slice(0,2)]));
-  b+=section("Wear & carry",wearBox([["Colors",T.color],["Stones",T.stone],["Day",T.day]])+WEAR_NOTE);
-  b+=section("Connected to",`<div class="chipsx">${xp(tk)}${xp(nk)}${xh(house(n.lon))}</div>`);
+  const a=ASP.find(x=>x.n===an), n=NAT.pts.find(p=>p.k===nk), T=PLANETDATA[tk], N=PLANETDATA[nk], nh=house(n.lon);
+  const head={ic:a.g, t:L(`${tk} ${a.n.toLowerCase()} your ${nk}`,`${tk} ${a.n.toLowerCase()} مع ${nk} لديك`), sub:L("A transit: today's planet talking to your birth planet","عبور: كوكب اليوم يحاور كوكب ولادتك")};
+  let b=section(L("What this aspect is","ما هذا الجانب"),`<p>${ASPLONG[a.n]}</p>`);
+  b+=section(L("The two actors","الممثلان"),ul([L(`${xp(tk)} today brings <b>${TONE[tk]}</b>.`,`${xp(tk)} اليوم يجلب <b>${TONE[tk]}</b>.`),L(`Your birth ${xp(nk)} stands for <b>${N?N.short:n.m}</b>, and sits in your ${xh(nh)}.`,`${xp(nk)} في ولادتك يمثّل <b>${N?N.short:n.m}</b>، ويقع في ${xyh(nh)}.`)]));
+  b+=section(L("What it means for you","ماذا يعني لك"),`<p>${interp(tk,a,n)} ${L(`It touches your ${xh(nh)}: ${HSHORT[nh-1]}.`,`يلامس ${xyh(nh)}: ${HSHORT[nh-1]}.`)}</p>`);
+  b+=section(L("Advice","نصائح"),ul(a.t==="hard"?[L("Slow down, and don't force results.","تمهّل، ولا تفرض النتائج."),L("Turn the pressure into effort: fix what's weak.","حوّل الضغط إلى جهد: أصلح ما هو ضعيف."),...T.adv.slice(0,1)]:a.t==="easy"?[L("Say yes, and act on the chance.","قل نعم، وتصرّف بناءً على الفرصة."),L("Use the easy flow for something important.","استخدم التدفق السهل لشيء مهم."),...T.adv.slice(0,1)]:[L("A new chapter starts: set an intention.","فصل جديد يبدأ: ضع نيّة."),...T.adv.slice(0,2)]));
+  const w=W(); b+=section(L("Wear & carry","ماذا تلبس وتحمل"),wearBox([[w.colors,T.color],[w.stones,T.stone],[w.day,T.day]])+WEAR_NOTE());
+  b+=section(L("Connected to","مرتبط بـ"),`<div class="chipsx">${xp(tk)}${xp(nk)}${xh(nh)}</div>`);
   return {head,body:b};
 }
 let xHist=[];
@@ -1746,7 +1788,7 @@ function renderSheet(){
   const key=xHist[xHist.length-1]; if(!key) return;
   const [t,a,b2,c]=key.split(":");
   let r;
-  try{ r=t==="p"?explainPlanet(a):t==="s"?explainSign(+a):t==="h"?explainHouse(+a):explainAspect(a,b2,c); }catch(e){ r={head:{ic:"?",t:"Sorry",sub:""},body:`<p>Couldn't load this explanation.</p>`}; }
+  try{ r=t==="p"?explainPlanet(a):t==="s"?explainSign(+a):t==="h"?explainHouse(+a):explainAspect(a,b2,c); }catch(e){ r={head:{ic:"?",t:L("Sorry","عذراً"),sub:""},body:`<p>${L("Couldn't load this explanation.","تعذّر تحميل هذا الشرح.")}</p>`}; }
   $("sIc").innerHTML=r.head.ic; $("sTitle").textContent=r.head.t; $("sSub").textContent=r.head.sub;
   $("sBody").innerHTML=r.body; $("sBody").scrollTop=0;
   $("sBack").classList.toggle("hidden",xHist.length<2);
@@ -1774,14 +1816,28 @@ function renderGuide(){
   const me=NAT.planets.find(p=>p.k==="Mercury"), ms=signIdx(me.lon), mh=house(me.lon);
   const empty=[...Array(12).keys()].map(i=>i+1).find(h=>!NAT.planets.some(p=>house(p.lon)===h));
   const es=(NAT.baseSign+empty-1)%12, er=RULER[es], erp=NAT.planets.find(p=>p.k===er);
+  if(LANG==="ar"){
+    g.innerHTML=`<h2>🧭 كيف يترابط كل شيء</h2>
+  <p><b>تخيّل خريطتك كمسرحية:</b></p>
+  ${ul(["🎭 <b>الكواكب هي الممثلون</b>: أي جزء منك (العقل، الحب، الاندفاع…).","👗 <b>الأبراج هي أزياؤهم</b>: كيف يتصرف كل ممثل (جريء، حذر، حالم…).","🏠 <b>البيوت هي المسارح</b>: أين في حياتك يحدث ذلك (المال، البيت، المهنة…).","👔 <b>الحكّام هم مديرو المسارح</b>: لكل برج كوكب يحكمه. إذا كان المسرح فارغاً، اتبع مديره.","💬 <b>الجوانب هي الحوارات</b> بين الممثلين: سهلة (تثليث، تسديس) أو متوترة (تربيع، مقابلة).","🎥 <b>الرؤى هي 3 كاميرات</b> على المسرحية نفسها: الطالع (الحياة الخارجية)، الشمس (الذات الجوهرية)، القمر (المشاعر). و✨ الشامل يعرض الثلاثة."])}
+  <h3>المعادلة الواحدة</h3>
+  <p class="formula"><b>الكوكب</b> (ماذا) + <b>البرج</b> (كيف) + <b>البيت</b> (أين)</p>
+  <p>مثالك: ${xp("Mercury")} (عقلك) في ${xs(ms)} (${kwAt(ms)}) في ${xyh(mh)} (${hn(mh)}) = <b>تفكّر بطريقة ${kwAt(ms).split("،")[0]}، ويركّز عقلك على ${HSHORT[mh-1]}</b>.</p>
+  <h3>قراءة بيت فارغ</h3>
+  <p>${xyh(empty)} بلا كواكب. هو في ${xs(es)}، الذي يحكمه ${xp(er)}، و${er} يقع في ${xyh(house(erp.lon))}. إذن ${hn(empty)} لديك يظهر ${RH_FLAVOR[house(erp.lon)-1]}.</p>
+  <h3>5 خطوات لقراءة أي شيء</h3>
+  ${ul([`1. اختر مجالاً من الحياة، أي بيتاً (ابدأ بـ${xyh(1)}).`,"2. انظر إلى البرج عليه: هذا هو الأسلوب.","3. انظر إلى الكواكب فيه: هذا هو الفعل.","4. اتبع حاكمه إلى البيت الذي يقع فيه: هذا هو الرابط.","5. راجع عبورات اليوم (تبويب اليوم) لترى ما هو نشط الآن."])}
+  <p class="small">نصيحة: <b>اضغط على أي كوكب أو برج أو رقم بيت أو جانب في أي مكان في التطبيق</b> لفتح شرحه الكامل، ثم تابع الضغط على الروابط لربط النقاط.</p>`;
+    return;
+  }
   g.innerHTML=`<h2>🧭 How it all fits together</h2>
   <p><b>Think of your chart as a play:</b></p>
   ${ul(["🎭 <b>Planets are the actors</b>: WHAT part of you (mind, love, drive…).","👗 <b>Signs are their costumes</b>: HOW each actor behaves (bold, careful, dreamy…).","🏠 <b>Houses are the stages</b>: WHERE in your life it happens (money, home, career…).","👔 <b>Rulers are the stage managers</b>: every sign has a ruling planet. If a stage is empty, follow its manager.","💬 <b>Aspects are conversations</b> between actors: easy (trine, sextile) or tense (square, opposition).","🎥 <b>The views are 3 cameras</b> on the same play: Rising (outer life), Sun (core self), Moon (emotions). ✨ Full shows all three."])}
   <h3>The one formula</h3>
   <p class="formula"><b>Planet</b> (what) + <b>Sign</b> (how) + <b>House</b> (where)</p>
-  <p>Your example: ${xp("Mercury")} (your mind) in ${xs(ms)} (${SIGN_KW[SIGNS[ms]]}) in your ${xh(mh)} (${HOUSES[mh-1].n.toLowerCase()}) = <b>you think in ${art(SIGN_KW[SIGNS[ms]].split(",")[0])} ${SIGN_KW[SIGNS[ms]].split(",")[0]} way, and your mind focuses on ${HSHORT[mh-1]}</b>.</p>
+  <p>Your example: ${xp("Mercury")} (your mind) in ${xs(ms)} (${kwAt(ms)}) in your ${xh(mh)} (${hn(mh)}) = <b>you think in ${art(kwAt(ms).split(",")[0])} ${kwAt(ms).split(",")[0]} way, and your mind focuses on ${HSHORT[mh-1]}</b>.</p>
   <h3>Reading an empty house</h3>
-  <p>Your ${xh(empty)} has no planets. It's in ${xs(es)}, which is ruled by ${xp(er)}, and ${er} sits in your ${xh(house(erp.lon))}. So your ${HOUSES[empty-1].n.toLowerCase()} plays out ${RH_FLAVOR[house(erp.lon)-1]}.</p>
+  <p>Your ${xh(empty)} has no planets. It's in ${xs(es)}, which is ruled by ${xp(er)}, and ${er} sits in your ${xh(house(erp.lon))}. So your ${hn(empty)} plays out ${RH_FLAVOR[house(erp.lon)-1]}.</p>
   <h3>5 steps to read anything</h3>
   ${ul([`1. Pick a life area, which is a house (start with your ${xh(1)}).`,"2. Look at the sign on it: that's the style.","3. Look at the planets in it: that's the action.","4. Follow its ruler to the house where it sits: that's the connection.","5. Check today's transits (Day tab) to see what's active now."])}
   <p class="small">Tip: <b>tap any planet, sign, house number or aspect anywhere in the app</b> to open its full explanation, then keep tapping the links to follow the dots.</p>`;
@@ -1789,9 +1845,125 @@ function renderGuide(){
 
 { const _rc=renderChart; renderChart=function(){ const r=_rc.apply(this,arguments); renderGuide(); return r; }; }
 
+// ---------- Arabic content ----------
+const SIGNS_AR=["الحمل","الثور","الجوزاء","السرطان","الأسد","العذراء","الميزان","العقرب","القوس","الجدي","الدلو","الحوت"];
+const KW_AR=["جريء، مباشر، مُبادِر","ثابت، حسّي، وفيّ","فضولي، سريع، كثير الكلام","حنون، حامٍ، حدسي","دافئ، فخور، مبدع","دقيق، خدوم، تحليلي","عادل، اجتماعي، يحب الانسجام","عميق، كتوم، يصنع التحوّل","حر، صادق، مغامر","طموح، منضبط، عملي","مبتكر، مستقل، ينظر للمستقبل","حالم، رحيم، فنان"];
+const MSD_AR=["الطاقة سريعة. ابدأ المهمة التي تؤجلها.","تمهّل واستمتع. يوم جيد للمال والطعام والراحة.","تحدّث، راسل، تعلّم. جيد للإيميلات والإصلاحات السريعة.","البيت والعائلة مهمّان اليوم. اعتنِ بنفسك.","اظهر للناس. شارك عملك واستمتع.","رتّب، نظّف، أصلح الأخطاء. التفاصيل الصغيرة تُثمر.","عمل جماعي وتوازن. أصلح العلاقات أو خطّط مع الآخرين.","تعمّق. ابحث، ركّز، واحفظ الأسرار.","فكّر بشكل كبير. سافر، ادرس، أو جرّب شيئاً جديداً.","كن جاداً بأهدافك. خطّط وابنِ أساساً متيناً.","جرّب تقنيات وأفكاراً جديدة. تواصل مع شبكتك.","الحدس عالٍ. استرح، أبدع، وضع حدوداً."];
+const PLM_AR=["الهوية، الحيوية","المشاعر، الاحتياجات","التفكير، التواصل","الحب، المال، الذوق","الاندفاع، الفعل","النمو، الحظ","الانضباط، الحدود","التغيير، المفاجآت","الأحلام، الحدس"];
+const AR_DATA={
+ HOUSE_TXT:["أنت، جسدك وصورتك","المال وما تقدّره","التواصل والتعلّم والرحلات القصيرة","البيت والعائلة","المرح والحب والإبداع والأطفال","العمل اليومي والروتين والصحة","الشركاء والعملاء والعقود","المال المشترك والديون والتحوّل العميق","السفر والدراسة والمعتقدات","المهنة والسمعة","الأصدقاء والشبكات والأهداف","الراحة والنهايات والعمل خلف الكواليس"],
+ TONE:{Sun:"الانتباه والطاقة",Moon:"المشاعر والمزاج",Mercury:"الكلام والأوراق والأفكار",Venus:"المتعة والحب والمال",Mars:"الاندفاع والحرارة وربما الخلاف",Jupiter:"النمو والفرص",Saturn:"الاختبارات والعمل الشاق والنتائج الدائمة",Uranus:"المفاجآت والتغيير المفاجئ",Neptune:"الإلهام، وبعض الالتباس أيضاً"},
+ ADV:{conj:"فصل جديد يبدأ هنا.",easy:"استفد منه: قل نعم للفرص.",hard:"تمهّل، وأصلح ما هو ضعيف."},
+ ACTION:{Sun:"ينتقل التركيز إلى",Mercury:"يتجه التفكير والكلام إلى",Venus:"يتدفق الحب والمال نحو",Mars:"تندفع الطاقة إلى",Jupiter:"حوالي سنة من النمو في",Saturn:"سنتان إلى ثلاث من العمل الشاق المثمر في",Uranus:"سنوات من التغيير والحرية في",Neptune:"مرحلة طويلة حالمة وملهمة في"},
+ VERDICT:["","صعب. ابقِ الأمور بسيطة.","مختلط. انتبه.","عادي ومستقر.","جيد. تقدّم.","ممتاز. انطلق."],
+ HOUSES:[
+  {n:"الذات",k:"الهوية، الجسد، المظهر، الانطباع الأول",d:"كيف تظهر للناس، كيف تبدأ الأمور، وجسدك."},
+  {n:"المال",k:"الدخل، الممتلكات، تقدير الذات، القيم",d:"كيف تكسب وتنفق، وما تراه ذا قيمة حقاً."},
+  {n:"التواصل",k:"الكلام، الكتابة، التعلّم، الإخوة، الجيران، الرحلات القصيرة",d:"كيف تفكر وتتعلم وتوصل رسالتك."},
+  {n:"البيت والعائلة",k:"البيت، العائلة، الجذور، الوالدان، الحياة الخاصة",d:"قاعدتك: حيث تشعر بالأمان، وروابطك العائلية."},
+  {n:"الفرح والرومانسية",k:"الرومانسية، المرح، الأطفال، الهوايات، الإبداع",d:"ما يُسعدك، وكيف تغازل وتلعب وتُبدع."},
+  {n:"العمل والصحة",k:"العمل اليومي، الروتين، الصحة، الزملاء، الخدمة",d:"عملك اليومي، عاداتك، وكيف تعتني بجسدك."},
+  {n:"الشركاء",k:"الزواج، الشركاء، العملاء، العقود، الخصوم العلنيون",d:"العلاقات الثنائية، في الحب وفي العمل."},
+  {n:"التحوّل",k:"المال المشترك، الديون، الضرائب، الميراث، الحميمية، الأزمات",d:"التغيير العميق، أموال الآخرين، وما تخفيه."},
+  {n:"المعتقدات والسفر",k:"التعليم العالي، السفر البعيد، الدين، القانون، النشر",d:"نظرتك للعالم، وكيف تنمو بالدراسة والسفر."},
+  {n:"المهنة",k:"المهنة، المكانة، السمعة، المدراء، الحياة العامة",d:"دورك العام، طموحاتك، وما تُعرف به."},
+  {n:"الأصدقاء والأهداف",k:"الأصدقاء، الشبكات، المجموعات، الآمال، التكنولوجيا",d:"دائرتك، شبكتك، وأحلامك البعيدة."},
+  {n:"العالم الداخلي",k:"الراحة، العزلة، الأسرار، الروحانية، النهايات",d:"حياتك الداخلية الخاصة، اللاوعي، وشحن طاقتك وحدك."}],
+ PFULL:{Sun:"ذاتك الجوهرية: الهوية، الأنا، الحيوية وهدف الحياة. وتمثّل أيضاً الأب.",Moon:"مشاعرك وغرائزك واحتياجاتك: ما يجعلك تشعر بالأمان. ويمثّل أيضاً الأم وحياة البيت.",Mercury:"عقلك: كيف تفكر وتتكلم وتكتب وتتعلم وتحل المشاكل. هذا هو «عقل الـIT» لديك.",Venus:"الحب والجمال والمتعة والذوق والمال: ما تقدّره وما تجذبه.",Mars:"الاندفاع والشجاعة والغضب والفعل: كيف تسعى لما تريد.",Jupiter:"الحظ والنمو والحكمة والتفاؤل: حيث تكون الحياة كريمة معك.",Saturn:"الانضباط والمسؤولية والمخاوف والحدود: حيث تعمل بجد وتحقق نجاحاً دائماً.",Uranus:"التغيير والحرية والأصالة والتكنولوجيا: حيث تكسر القواعد. يتحرك ببطء فيصف جيلاً كاملاً.",Neptune:"الأحلام والخيال والحدس والروحانية، وأحياناً الالتباس. يصف أيضاً جيلاً كاملاً.",Ascendant:"برجك الطالع: أسلوبك الخارجي، جسدك، والانطباع الأول الذي تتركه.",Midheaven:"قمة خريطتك: اتجاهك المهني، صورتك العامة، وسمعتك."},
+ PVERB:{Sun:"تتألق وتجد هدفك من خلال",Moon:"تحتاج الأمان العاطفي من خلال",Mercury:"يركّز عقلك على",Venus:"تجد الحب والمتعة والمال من خلال",Mars:"تضع طاقتك وكفاحك في",Jupiter:"يأتي الحظ والنمو من خلال",Saturn:"تأتي الدروس الصعبة، ثم النجاح الدائم، من خلال",Uranus:"تظهر التغييرات المفاجئة والأصالة في",Neptune:"تظهر الأحلام والحدس (وأحياناً الالتباس) في"},
+ HSHORT:["أنت، الجسد، المظهر، الانطباع الأول","الدخل، المدخرات، الممتلكات، القيم","الكلام، الرسائل، التعلّم، الإخوة، الرحلات القصيرة","البيت، العائلة، الوالدان، الجذور","الرومانسية، المرح، الأطفال، الهوايات، الإبداع","العمل اليومي، الصحة، الروتين، الزملاء","الزواج، الشركاء، العملاء، العقود","المال المشترك، الديون، الضرائب، الحميمية، التغييرات الكبيرة","السفر، الدراسة، المعتقدات، القانون، الخارج","المهنة، المكانة، السمعة، المدير","الأصدقاء، الشبكات، المجموعات، الآمال","الراحة، الأسرار، الروحانية، الأمور الخفية"],
+ PSHORT:{Sun:"أنت، الأنا، الطاقة، الهدف",Moon:"المشاعر، الاحتياجات، الأم، البيت",Mercury:"العقل، الكلام، التقنية، التعلّم",Venus:"الحب، المال، الجمال، الذوق",Mars:"الاندفاع، الفعل، الغضب، الشجاعة",Jupiter:"الحظ، النمو، الحكمة",Saturn:"الواجب، الحدود، العمل الشاق، الوقت",Uranus:"التغيير، الحرية، المفاجآت",Neptune:"الأحلام، الحدس، الروحانية",Ascendant:"الانطباع الأول، الأسلوب",Midheaven:"الهدف المهني، السمعة"},
+ RH_FLAVOR:["من خلالك شخصياً: أنت من يقودها","من خلال المال وما تقدّره","من خلال الكلام والتعلّم والإخوة ومحيطك القريب","من خلال البيت والعائلة","من خلال المرح والرومانسية والإبداع","من خلال عملك اليومي وروتينك","من خلال شريك أو علاقة ثنائية قريبة","من خلال الروابط العميقة والمال المشترك والتغييرات الكبيرة","من خلال السفر والدراسة والأفكار الكبيرة","من خلال مهنتك وحياتك العامة","من خلال الأصدقاء والمجموعات والشبكات","بهدوء، خلف الكواليس أو من خلال حياتك الداخلية"],
+ ASPLONG:{Conjunction:"الاقتران (0°) يعني كوكبين في المكان نفسه، فتندمج طاقتهما ويرتفع صوتها. سهولته أو صعوبته تعتمد على الكوكبين.",Sextile:"التسديس (60°) فرصة ودّية. الباب مفتوح، لكن عليك أن تعبره.",Square:"التربيع (90°) توتر واحتكاك يدفعك للتحرك. يبدو صعباً لكنه يبني القوة ويقود لتغيير حقيقي.",Trine:"التثليث (120°) تدفق سهل وموهبة طبيعية. الأمور تسير بلا جهد كبير، فاستفد منه قبل أن يمر.",Opposition:"المقابلة (180°) شدّ وجذب بين طرفين، غالباً يظهر عبر الآخرين. الهدف هو التوازن لا الانتصار."},
+ HOUSEMORE:[
+  {nat:"الحمل",q:"من أنا؟ كيف أبدو للناس؟ كيف أبدأ الأمور؟",boost:"اعتنِ بجسدك ومظهرك، جرّب أشياء جديدة، ابدأ مشاريع، ومارس الرياضة."},
+  {nat:"الثور",q:"ماذا أكسب وأملك؟ ما الذي أقدّره حقاً؟ هل أقدّر نفسي؟",boost:"ضع ميزانية، ادّخر، طوّر مهارات الدخل، استثمر في أشياء جيدة، وقدّر نفسك."},
+  {nat:"الجوزاء",q:"كيف أفكر وأتكلم وأتعلم؟ كيف علاقتي بإخوتي وجيراني؟",boost:"اكتب، اقرأ، خذ دورات قصيرة، اتصل بإخوتك، وقم برحلات قريبة."},
+  {nat:"السرطان",q:"أين بيتي؟ ما جذوري؟ كيف حال عائلتي؟",boost:"حسّن بيتك، اقضِ وقتاً مع العائلة، اطبخ، وكرّم جذورك."},
+  {nat:"الأسد",q:"ما الذي يُفرحني؟ كيف أحب وألعب وأبدع؟ الأطفال؟",boost:"العب، اخرج في مواعيد، أبدع، مارس هواياتك، اقضِ وقتاً مع الأطفال، واستمتع بلا ذنب."},
+  {nat:"العذراء",q:"كيف عملي اليومي وصحتي وروتيني؟ كيف أخدم؟",boost:"حافظ على روتين، افحص صحتك، نظّم عملك، كُل طعاماً صحياً، وساعد الآخرين."},
+  {nat:"الميزان",q:"من شركائي؟ كيف أتعامل مع العلاقات والعقود؟",boost:"استثمر في شريكك، اقرأ العقود بعناية، تعاون، وكن عادلاً."},
+  {nat:"العقرب",q:"كيف أشارك المال والقوة والحميمية؟ ما الذي يجب أن أغيّره؟",boost:"نظّم ديونك وضرائبك، أجرِ أحاديث عميقة، جرّب العلاج أو الشفاء، وتعلّم الترك."},
+  {nat:"القوس",q:"بماذا أؤمن؟ إلى أين سأسافر؟ ماذا سأدرس؟",boost:"سافر، احصل على شهادات، ادرس، استكشف المعتقدات، وعلّم."},
+  {nat:"الجدي",q:"ما مهنتي وسمعتي؟ ماذا سأحقق؟",boost:"ضع أهدافاً مهنية، كن ظاهراً، تحمّل المسؤولية، واعمل على سمعتك."},
+  {nat:"الدلو",q:"من أصدقائي ومجموعاتي؟ ما آمالي؟",boost:"وسّع شبكتك، انضم لمجتمعات، ضع أهدافاً بعيدة، واستخدم التقنية للخير."},
+  {nat:"الحوت",q:"ماذا في لاوعيي؟ كيف أرتاح وأتعافى وأترك؟",boost:"استرح، تأمّل، نم جيداً، اقضِ وقتاً وحدك، تصدّق، ومارس الروحانية."}],
+ SIGNDATA:[
+  {dates:"21 مارس – 19 أبريل",el:"نار",mode:"أساسي",ruler:"المريخ",sym:"الكبش",desc:"الحمل هو البرج الأول: الشرارة التي تبدأ كل شيء. طاقة خالصة وشجاعة ورغبة «أنا أولاً». يتصرف قبل أن يفكر ويحب التحدي.",str:"شجاع، مباشر، صادق، نشيط، مُبادِر وقائد بالفطرة، يتعافى بسرعة.",ch:"قليل الصبر، سريع الغضب، يبدأ أكثر مما يُنهي، قد يكون فظاً أو أنانياً.",love:"يقع في الحب بسرعة ويحب المطاردة. يريد الشغف والصدق وشريكاً يجاري سرعته.",work:"الأفضل حيث تفوز السرعة والمبادرة: بدء المشاريع، الطوارئ، المبيعات، الرياضة، ريادة الأعمال.",body:"الرأس والوجه والعينان. انتبه للصداع والإرهاق.",adv:["وجّه النار إلى الرياضة قبل المحادثات الكبيرة.","أنهِ شيئاً قبل أن تبدأ التالي.","عُدّ إلى عشرة قبل أن تردّ."],colors:"الأحمر، القرمزي",stones:"العقيق الأحمر (كارنيليان)، اليشب الأحمر، حجر الدم"},
+  {dates:"20 أبريل – 20 مايو",el:"تراب",mode:"ثابت",ruler:"الزهرة",sym:"الثور",desc:"الثور يبني ويحافظ. يدور حول الراحة والجسد والحواس والمال والنمو البطيء الثابت. حين يقرر، لا يتزحزح.",str:"وفيّ، صبور، يُعتمد عليه، عملي، ماهر بالمال والجمال، هادئ تحت الضغط.",ch:"عنيد، يقاوم التغيير، قد يكون متملكاً أو مرتاحاً أكثر من اللازم.",love:"بطيء في الالتزام، ثم وفيّ جداً. يعبّر عن حبه باللمس والطعام والهدايا والحضور.",work:"المالية والبنوك والعقارات والطعام والتصميم والموسيقى، وكل ما يزيد القيمة مع الوقت.",body:"الحلق والرقبة والصوت والغدة الدرقية. انتبه لالتهاب الحلق والإفراط بالأكل.",adv:["ادّخر قليلاً كل شهر: طاقة الثور تنمّي المال ببطء.","جرّب تغييراً صغيراً عمداً كي لا يخيفك التغيير.","دلّل حواسك: طعام جيد، موسيقى، طبيعة."],colors:"الأخضر، الوردي الفاتح، ألوان الأرض",stones:"الكوارتز الوردي، الزمرد، اليشم"},
+  {dates:"21 مايو – 20 يونيو",el:"هواء",mode:"متحوّل",ruler:"عطارد",sym:"التوأمان",desc:"الجوزاء هو الرسول: فضولي، سريع، كثير الكلام، ويتعلم دائماً. يربط الناس والأفكار ويحتاج التنوّع.",str:"ذكي، ظريف، مرن، متواصل ممتاز، سريع التعلم، يرى الجانبين.",ch:"قلق، مشتت، قد يكون عصبياً أو متقلباً أو كثير النميمة.",love:"يحتاج شريكاً هو أيضاً صديق مقرّب ومحاور جيد.",work:"الكتابة، التعليم، المبيعات، الإعلام، الدعم التقني، وكل ما فيه ناس ومعلومات كثيرة.",body:"الرئتان والذراعان واليدان والكتفان والجهاز العصبي. انتبه للتوتر والتنفس.",adv:["اكتب الأشياء: القوائم تهدّئ العقل المشغول.","اختر أولويتين في اليوم، لا عشراً.","تنفّس ببطء حين تشعر بالتشتت."],colors:"الأصفر، الأخضر الفاتح",stones:"السترين، العقيق، عين النمر"},
+  {dates:"21 يونيو – 22 يوليو",el:"ماء",mode:"أساسي",ruler:"القمر",sym:"السلطعون",desc:"السرطان هو البيت والعائلة والمشاعر. يحمي ويرعى ويتذكر. صدفة قاسية من الخارج، وقلب ناعم من الداخل.",str:"حنون، وفيّ، حدسي، حامٍ، ذاكرته قوية، يجعل الناس يشعرون أنهم في بيتهم.",ch:"متقلّب المزاج، حساس جداً، يتمسك بالماضي، قد يكون متعلقاً أو دفاعياً.",love:"يريد الأمان والعائلة والروابط العاطفية العميقة. يحب بالرعاية والاهتمام.",work:"الرعاية، الضيافة، الطعام، العقارات، الموارد البشرية، وكل ما يحمي الناس أو يطعمهم.",body:"الصدر والمعدة. المشاعر تذهب مباشرة إلى المعدة.",adv:["اجعل بيتك مكاناً يعيد شحنك.","قل ما تشعر به بدل أن تختبئ في صدفتك.","اترك الماضي حين يثقل عليك."],colors:"الفضي، الأبيض، الأزرق الفاتح",stones:"حجر القمر، اللؤلؤ، السيلينايت"},
+  {dates:"23 يوليو – 22 أغسطس",el:"نار",mode:"ثابت",ruler:"الشمس",sym:"الأسد",desc:"الأسد هو القلب والمسرح. مبدع، فخور، دافئ وكريم، يريد أن يتألق وأن يجعل الآخرين يتألقون.",str:"واثق، كريم، وفيّ، مبدع، دافئ القلب، قائد ومؤدٍّ بالفطرة.",ch:"متكبّر، يحتاج المديح، قد يكون درامياً أو متسلطاً أو عنيداً.",love:"رومانسي وكريم. يريد الإعجاب والوفاء واللفتات الكبيرة.",work:"القيادة، الأداء، الفنون الإبداعية، التعليم، وكل ما يجعلك ظاهراً.",body:"القلب والعمود الفقري وأعلى الظهر. انتبه لصحة القلب والوضعية.",adv:["اصنع شيئاً من أجل الفرح فقط.","امدح الآخرين: يعود إليك.","قُد بقلبك لا بغرورك."],colors:"الذهبي، البرتقالي، الأصفر المشمس",stones:"حجر الشمس، عين النمر، الكهرمان، الياقوت"},
+  {dates:"23 أغسطس – 22 سبتمبر",el:"تراب",mode:"متحوّل",ruler:"عطارد",sym:"العذراء",desc:"العذراء يُتقن. يحلّل وينظّم ويُصلح ويساعد. يلاحظ كل تفصيلة ويريد أن تعمل الأشياء كما يجب.",str:"دقيق، خدوم، عملي، مجتهد، بارع في حل المشاكل، مهتم بالصحة.",ch:"يفكر كثيراً، يقلق، يبحث عن الكمال، ينتقد نفسه والآخرين.",love:"يعبّر عن الحب بالأفعال والخدمة. يحتاج علاقة هادئة ومرتبة يُعتمد عليها.",work:"تقنية المعلومات، حل الأعطال، الصحة، التحليل، التدقيق، المحاسبة، وكل ما فيه أنظمة وتفاصيل.",body:"الهضم والأمعاء والمعدة العصبية. التوتر يظهر في البطن.",adv:["المُنجَز أفضل من الكامل.","حافظ على روتين يومي بسيط: يهدّئ طاقة العذراء.","كن لطيفاً مع نفسك كما أنت خدوم للآخرين."],colors:"الكحلي، البني، البيج، الزيتي",stones:"الأمازونيت، الياقوت الأزرق، العقيق الطحلبي"},
+  {dates:"23 سبتمبر – 22 أكتوبر",el:"هواء",mode:"أساسي",ruler:"الزهرة",sym:"الميزان",desc:"الميزان يوازن. يدور حول الشراكة والعدل والجمال والانسجام. يرى كل الجوانب ويريد السلام.",str:"عادل، جذاب، دبلوماسي، اجتماعي، أنيق، ممتاز في العمل الجماعي والصفقات.",ch:"متردد، يرضي الناس، يتجنب الصراع، قد يعتمد على الآخرين كثيراً.",love:"مخلوق للشراكة. يريد الرومانسية والجمال والمساواة والذوق.",work:"القانون، التصميم، الدبلوماسية، الموارد البشرية، علاقات العملاء، التفاوض، الأزياء.",body:"الكليتان وأسفل الظهر وتوازن البشرة. اشرب الماء.",adv:["اتخذ قراراً والتزم به.","قل لا بلطف: السلام الذي يؤذيك ليس سلاماً.","أحِط نفسك بالجمال والترتيب."],colors:"الأزرق الباستيل، الوردي، الخزامي",stones:"اللازورد، الأوبال، الكوارتز الوردي"},
+  {dates:"23 أكتوبر – 21 نوفمبر",el:"ماء",mode:"ثابت",ruler:"المريخ",sym:"العقرب",desc:"العقرب يغوص في العمق. القوة والشدة والأسرار والتحوّل والحميمية والولادة من جديد. كل شيء أو لا شيء.",str:"وفيّ، مركّز، شجاع، حدسي، استراتيجي، باحث ممتاز، يتحوّل عبر الأزمات.",ch:"غيور، كتوم، متحكّم، يحمل الضغينة.",love:"شديد ووفيّ. يريد ثقة كاملة وروابط عاطفية وجسدية عميقة.",work:"التحقيق، الأمن، الأمن السيبراني، البحث، المالية، علم النفس، إدارة الأزمات.",body:"الأعضاء التناسلية والإخراج. التخلص من السموم والتحرر.",adv:["اترك الضغائن: هي أثقل عليك.","استخدم تركيزك لهدف واحد كبير.","ثِق ببطء، لكن ثِق."],colors:"الأحمر الداكن، الأسود، العنابي",stones:"الأوبسيديان، الغارنت، الكوارتز الدخاني"},
+  {dates:"22 نوفمبر – 21 ديسمبر",el:"نار",mode:"متحوّل",ruler:"المشتري",sym:"الرامي",desc:"القوس يستكشف. الحرية والسفر والحقيقة والإيمان والدراسة والأفكار الكبيرة. متفائل ويسعى دائماً لأبعد.",str:"متفائل، صادق، مغامر، مرح، كريم، معلّم ومستكشف.",ch:"قلق، يَعِد أكثر مما يفي، صريح جداً، يتجنب الالتزام والتفاصيل.",love:"يحتاج الحرية والمغامرة وشريكاً ينمو معه.",work:"التعليم، السفر، القانون، النشر، العمل الدولي، التدريب والإرشاد.",body:"الوركان والفخذان والكبد. انتبه للإفراط في الطعام أو الشراب.",adv:["استمر في التعلّم: دورة أو رحلة تغذي هذه الطاقة.","عِد أقل، وأنجز أكثر.","كن صادقاً، لكن لطيفاً."],colors:"البنفسجي، الأزرق الملكي، الفيروزي",stones:"الفيروز، الجمشت، اللازورد"},
+  {dates:"22 ديسمبر – 19 يناير",el:"تراب",mode:"أساسي",ruler:"زحل",sym:"الماعز البحري",desc:"الجدي يتسلّق. الطموح والانضباط والمسؤولية والبناء والنجاح طويل المدى. يتحسن مع العمر.",str:"منضبط، مسؤول، صبور، طموح، عملي، بانٍ ومدير قوي.",ch:"جادّ أكثر من اللازم، مدمن عمل، متشائم، بارد حين يتوتر.",love:"جادّ ووفيّ. يعبّر عن الحب بالإعالة وبناء مستقبل مشترك.",work:"الإدارة، الهندسة، الحكومة، المالية، البنية التحتية، وكل ما فيه هيكلة.",body:"العظام والركبتان والأسنان والجلد. انتبه للمفاصل والتوتر.",adv:["خطّط بخطوات: درجة درجة.","حدّد وقت راحة كأنه اجتماع.","احتفل بالانتصارات الصغيرة، لا بالقمة فقط."],colors:"الرمادي الفحمي، البني الداكن، الأخضر الغامق، الأسود",stones:"الجزع (أونيكس)، الغارنت، التورمالين الأسود"},
+  {dates:"20 يناير – 18 فبراير",el:"هواء",mode:"ثابت",ruler:"زحل (حديثاً: أورانوس)",sym:"ساقي الماء",desc:"الدلو يبتكر. التكنولوجيا والمستقبل والصداقة والمجموعات والحرية والأفكار الأصيلة. متمرّد لهدف.",str:"أصيل، مخترع، مستقل، ودود، إنساني، عقل تقني.",ch:"منفصل عاطفياً، عنيد في أفكاره، متمرّد، قد يبدو بارداً.",love:"يحتاج الصداقة أولاً، ومساحة، وشريكاً يحترم استقلاله.",work:"التكنولوجيا، تقنية المعلومات، العلوم، الابتكار، الشبكات، المنظمات غير الربحية، وكل ما يتجه للمستقبل.",body:"الكاحلان والساقان والدورة الدموية والجهاز العصبي.",adv:["شارك أفكارك: تساعد ناساً أكثر مما تظن.","ابقَ متصلاً بمشاعرك، لا بأفكارك فقط.","انضم لمجموعة أو مجتمع تؤمن به."],colors:"الأزرق الكهربائي، الفيروزي، الفضي",stones:"الجمشت، الأكوامارين، اللابرادوريت"},
+  {dates:"19 فبراير – 20 مارس",el:"ماء",mode:"متحوّل",ruler:"المشتري (حديثاً: نبتون)",sym:"السمكتان",desc:"الحوت يحلم. الرحمة والخيال والحدس والفن والروحانية. آخر الأبراج يحمل شيئاً من كل الأبراج.",str:"رحيم، حدسي، مبدع، لطيف، مرن، روحاني، يفهم الجميع.",ch:"يهرب من الواقع، حساس جداً، قد يكون غامضاً، يحمل آلام الآخرين، يصعب عليه وضع الحدود.",love:"رومانسي ومخلص. يريد صلة روحية ورعاية لطيفة.",work:"الفنون، الموسيقى، العلاج والشفاء، الرعاية الصحية، الروحانية، العمل الخيري، التصميم والتقنية الإبداعية.",body:"القدمان والجهاز اللمفاوي والمناعة. النوم مهم جداً.",adv:["احمِ طاقتك: ليست كل مشكلة مسؤوليتك.","نم جيداً واقضِ وقتاً قرب الماء.","حوّل مشاعرك إلى فن أو موسيقى أو دعاء."],colors:"أخضر البحر، الخزامي، الأزرق الناعم",stones:"الأكوامارين، الجمشت، الفلوريت"}],
+ PLANETDATA:{
+  Sun:{short:"الهوية، الحيوية، الهدف",what:"الشمس مركز خريطتك: هويتك الجوهرية، الأنا، هدف حياتك، حيويتك وإرادتك. هي من تصبح. وتمثّل أيضاً الأب والسلطة.",day:"الأحد",metal:"الذهب",color:"الذهبي، البرتقالي، الأصفر",stone:"حجر الشمس، الياقوت، السترين",act:"تعرّض لشمس الصباح، قُد شيئاً، افعل ما يجعلك فخوراً، وكن مبدعاً.",low:"ثقة منخفضة، تعب، اتجاه غير واضح.",high:"غرور، كبرياء، الحاجة لأن تكون محور الاهتمام.",adv:["افعل كل يوم شيئاً يمثّلك حقاً.","انسب الفضل لنفسك في عملك.","استرح حين تنخفض طاقتك: الشمس تعيد الشحن."]},
+  Moon:{short:"المشاعر، الاحتياجات، البيت",what:"القمر عالمك الداخلي: المشاعر والغرائز والعادات وما يجعلك تشعر بالأمان وكيف ترعى الآخرين. ويمثّل أيضاً الأم والبيت وإيقاع جسدك.",day:"الاثنين",metal:"الفضة",color:"الأبيض، الفضي، اللؤلؤي",stone:"حجر القمر، اللؤلؤ، السيلينايت",act:"استرح، اشرب الماء، اطبخ، اكتب يومياتك، اقضِ وقتاً في البيت أو قرب الماء، وتابع أطوار القمر.",low:"تقلّب المزاج، عدم الأمان، عدم الشعور بالانتماء.",high:"عاطفية زائدة، تعلّق، ردود فعل سريعة.",adv:["سمِّ شعورك قبل أن تتصرف بناءً عليه.","حافظ على طقوس الراحة: شاي، موسيقى، مساء هادئ.","ابدأ الأمور الكبيرة مع القمر الجديد وأنهِها مع البدر."]},
+  Mercury:{short:"العقل، الكلام، التقنية",what:"عطارد عقلك: كيف تفكر وتتعلم وتتكلم وتكتب وتحل المشاكل وتستخدم التكنولوجيا. ويحكم أيضاً الرحلات القصيرة والإخوة والأوراق. لشخص في مجال الـIT هو صندوق أدواتك.",day:"الأربعاء",metal:"الزئبق (تقليدياً)؛ اليوم معادن مختلطة",color:"الأصفر، الأخضر الفاتح، الألوان المتعددة",stone:"العقيق، السترين، عين النمر",act:"اقرأ، اكتب، تعلّم شيئاً جديداً، حل الألغاز، نظّم الملفات، ووثّق عملك.",low:"تفكير ضبابي، سوء فهم، مشاكل تقنية.",high:"تفكير زائد، قلق، كلام كثير.",adv:["اكتبها: عطارد يحب القوائم والملاحظات.","راجع الإيميلات والأكواد مرتين حين يكون عطارد متراجعاً.","تعلّم مهارة جديدة هذا الشهر."]},
+  Venus:{short:"الحب، المال، الجمال",what:"الزهرة هي الحب والجاذبية والجمال والمتعة والذوق والانسجام والمال. تُظهر ما تقدّره، وكيف تحب، وما تجذبه.",day:"الجمعة",metal:"النحاس",color:"الأخضر، الوردي، الألوان الهادئة",stone:"الكوارتز الوردي، الزمرد، اليشم",act:"البس شيئاً تحبه، استمتع بالفن والموسيقى، اشترِ زهوراً، خطّط لموعد، ودلّل نفسك.",low:"شعور بعدم المحبة، ضيق مادي، لا شيء يبدو جميلاً.",high:"إسراف، كسل، إرضاء الناس.",adv:["أنفق على ما تقدّره حقاً.","اجعل مكانك جميلاً.","قل شكراً وامدح الآخرين."]},
+  Mars:{short:"الاندفاع، الفعل، الشجاعة",what:"المريخ محرّكك: الاندفاع والطموح والشجاعة والغضب والمنافسة، وكيف تقاتل من أجل ما تريد.",day:"الثلاثاء",metal:"الحديد",color:"الأحمر",stone:"العقيق الأحمر، حجر الدم، اليشب الأحمر",act:"تمرّن بقوة، نافس، ابدأ مشروعاً، تخلّص من الفوضى، وحدّد موعداً نهائياً.",low:"لا حافز، تجنّب المواجهة، الشعور بالجمود.",high:"غضب، نفاد صبر، حوادث، إرهاق.",adv:["حرّك جسدك حين تغضب.","ضع نارك في هدف واحد واضح.","اختر معاركك."]},
+  Jupiter:{short:"الحظ، النمو، الحكمة",what:"المشتري هو النمو والحظ والوفرة والتفاؤل والحكمة والمعلّمون والإيمان والسفر والتعليم العالي. حيث يذهب المشتري، تُفتح الأبواب.",day:"الخميس",metal:"القصدير",color:"الأزرق الملكي، البنفسجي",stone:"الجمشت، الياقوت الأصفر، اللازورد",act:"ادرس، سافر، علّم، كن كريماً، مارس الامتنان، وخذ مخاطرة ذكية.",low:"تشاؤم، شعور بالصغر، فقدان الإيمان.",high:"مبالغة، إسراف، وعود أكثر من اللازم.",adv:["قل نعم لفرص النمو.","احتفظ بقائمة امتنان.","انمُ بحكمة: الأكثر ليس دائماً أفضل."]},
+  Saturn:{short:"الانضباط، الحدود، الوقت",what:"زحل هو المعلّم: الانضباط والمسؤولية والوقت والهيكلة والحدود والمخاوف والنجاح طويل المدى. صعب في البداية، مُجزٍ لاحقاً.",day:"السبت",metal:"الرصاص (رمزياً فقط؛ لا تلبس الرصاص أبداً). استخدم الفولاذ الداكن أو الحديد.",color:"الأسود، الأزرق الداكن، الرمادي الفحمي",stone:"الجزع، التورمالين الأسود، الياقوت الأزرق، الأوبسيديان",act:"ضع خطة، حافظ على الروتين، أنهِ ما بدأته، احترم الكبار، تخلّص من الفوضى، وضع حدوداً.",low:"شعور بالانسداد أو الخوف أو الوحدة أو الثقل.",high:"جمود، برود، إدمان العمل.",adv:["ببطء وثبات: زحل يكافئ الصبر.","تحمّل المسؤولية، والنتائج تتبع.","ابنِ هيكلاً: تقويمات، ميزانيات، عادات."]},
+  Uranus:{short:"التغيير، الحرية، المفاجآت",what:"أورانوس هو التغيير المفاجئ والحرية والتمرّد والأصالة والاختراعات والتكنولوجيا. يوقظك. يتحرك ببطء، فيصف جيلك أيضاً.",day:"(كوكب حديث، بلا يوم تقليدي)",metal:"اليورانيوم (رمزياً)؛ البس الألمنيوم أو الفضة",color:"الأزرق الكهربائي، النيون",stone:"اللابرادوريت، الأكوامارين",act:"جرّب تقنية جديدة، غيّر روتيناً، افعل شيئاً غير مألوف، انضم لمجتمع، وابتكر.",low:"شعور بأنك عالق في حياة مملة.",high:"فوضى، انقطاعات مفاجئة، قلق دائم.",adv:["توقّع غير المتوقع، وابقَ مرناً.","اعمل نسخة احتياطية لبياناتك!","غيّر شيئاً عمداً قبل أن تغيّره الحياة عنك."]},
+  Neptune:{short:"الأحلام، الحدس، الروح",what:"نبتون هو الأحلام والخيال والحدس والروحانية والفن والموسيقى والرحمة. وقد يجلب الالتباس أو الوهم. وهو كوكب جيلي أيضاً.",day:"(كوكب حديث، بلا يوم تقليدي)",metal:"النبتونيوم (رمزياً)؛ البس الفضة",color:"أخضر البحر، الخزامي، الأزرق الناعم",stone:"الجمشت، الأكوامارين، الفلوريت",act:"تأمّل، صلِّ، اسبح، استمع للموسيقى، أبدع فناً، ونم جيداً.",low:"فقدان المعنى، لا إلهام.",high:"التباس، هروب من الواقع، التعرّض للخداع.",adv:["تحقّق من الحقائق قبل أن تثق.","احمِ نومك.","حوّل الأحلام إلى فن أو خدمة."]},
+  Ascendant:{short:"الانطباع الأول، الأسلوب، الجسد",what:"الطالع هو البرج الذي كان يشرق في الأفق الشرقي لحظة ولادتك. إنه أسلوبك الخارجي وانطباعك الأول وجسدك وطريقتك في بدء الأمور. ويحدد بيتك الأول، فيقرر في أي بيت يقع كل برج.",day:"يوم الكوكب الحاكم لخريطتك",metal:"معدن الكوكب الحاكم لخريطتك",color:"ألوان برجك الطالع",stone:"أحجار برجك الطالع",act:"البس بأسلوب برجك الطالع، اعتنِ بجسدك، وابدأ الأمور على طريقتك.",low:"شعور بأنك غير مرئي.",high:"الاختباء خلف قناع.",adv:["برجك الطالع هو بابك: استخدم أسلوبه حين تقابل الناس.","حاكم خريطتك (الكوكب الذي يحكم طالعك) كوكب مهم جداً لك."]},
+  Midheaven:{short:"الهدف المهني، السمعة",what:"وسط السماء (MC) هو أعلى نقطة في خريطتك: اتجاهك المهني، صورتك العامة، سمعتك وأهداف حياتك.",day:"يوم حاكمه",metal:"معدن حاكمه",color:"ألوان برجه",stone:"أحجار برجه",act:"ضع أهدافاً مهنية، ابنِ سمعتك، وتقدّم لأدوار ظاهرة.",low:"اتجاه مهني غير واضح.",high:"العيش من أجل المكانة فقط.",adv:["دع برج وسط السماء يصف العمل الذي ستُعرف به."]}}
+};
+// proper nouns translated in rendered text (planets, life areas, aspects)
+const NOUN_AR=[["Midheaven","وسط السماء"],["Ascendant","الطالع"],["Mercury","عطارد"],["Jupiter","المشتري"],["Neptune","نبتون"],["Uranus","أورانوس"],["Saturn","زحل"],["Venus","الزهرة"],["Mars","المريخ"],["Moon","القمر"],["Sun","الشمس"],["Work","العمل"],["Money","المال"],["Love","الحب"],["Health","الصحة"],["Conjunction","اقتران"],["conjunction","اقتران"],["Sextile","تسديس"],["sextile","تسديس"],["Square","تربيع"],["square","تربيع"],["Trine","تثليث"],["trine","تثليث"],["Opposition","مقابلة"],["opposition","مقابلة"]];
+
+// ---------- Language engine (English / Arabic) ----------
+function fillData(t,src){ const c=JSON.parse(JSON.stringify(src)); if(Array.isArray(t)){ t.length=0; c.forEach(x=>t.push(x)); } else { Object.keys(t).forEach(k=>delete t[k]); Object.assign(t,c); } }
+function applyLangData(){
+  if(LANG!=="ar") return;
+  const T={HOUSE_TXT,TONE,ADV,ACTION,VERDICT,HOUSES,PFULL,PVERB,HSHORT,PSHORT,RH_FLAVOR,ASPLONG,HOUSEMORE,SIGNDATA,PLANETDATA};
+  for(const k in T) fillData(T[k],AR_DATA[k]);
+  fillData(SIGN_KW,Object.fromEntries(SIGNS_AR.map((s,i)=>[s,KW_AR[i]])));
+  fillData(MOON_SIGN_DAY,Object.fromEntries(SIGNS_AR.map((s,i)=>[s,MSD_AR[i]])));
+  SIGNS.length=0; SIGNS_AR.forEach(s=>SIGNS.push(s));
+  PL.forEach((p,i)=>p.m=PLM_AR[i]);
+  ["يرفع صوت","يفتح باباً لـ","يضغط على","يدعم","يطلب التوازن مع"].forEach((m,i)=>ASP[i].m=m);
+}
+function applyStatic(){
+  document.documentElement.lang=LANG; document.documentElement.dir=LANG==="ar"?"rtl":"ltr";
+  if(LANG==="ar"){
+    document.querySelectorAll("[data-ar]").forEach(e=>{ e.innerHTML=e.getAttribute("data-ar"); });
+    document.querySelectorAll("[data-ar-ph]").forEach(e=>{ e.placeholder=e.getAttribute("data-ar-ph"); });
+    document.title="متتبّع الأبراج";
+  }
+  $("langBtn").textContent=LANG==="ar"?"EN":"ع";
+  $("langBtn").setAttribute("aria-label",LANG==="ar"?"Switch to English":"التبديل إلى العربية");
+}
+const NOUN_MAP=Object.fromEntries(NOUN_AR), NOUN_RE=new RegExp("\\b("+NOUN_AR.map(x=>x[0]).join("|")+")\\b","g");
+function arText(n){ if(n.nodeValue&&NOUN_RE.test(n.nodeValue)){ NOUN_RE.lastIndex=0; n.nodeValue=n.nodeValue.replace(NOUN_RE,m=>NOUN_MAP[m]); } NOUN_RE.lastIndex=0; }
+function arTree(root){
+  if(root.nodeType===3){ arText(root); return; }
+  if(root.nodeType!==1||root.closest&&root.closest(".notr")) return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())){ if(!(n.parentElement&&n.parentElement.closest(".notr"))) arText(n); }
+}
+let arObs=null;
+function startArObserver(){
+  if(LANG!=="ar") return;
+  arTree(document.body);
+  arObs=new MutationObserver(ms=>{ arObs.disconnect(); ms.forEach(m=>{ if(m.type==="characterData") arText(m.target); else m.addedNodes.forEach(arTree); }); arObs.observe(document.body,{childList:true,subtree:true,characterData:true}); });
+  arObs.observe(document.body,{childList:true,subtree:true,characterData:true});
+}
+function setLang(l){
+  try{ localStorage.setItem("horoscope-lang",l); sessionStorage.setItem("horoscope-tab",tab); }catch(e){}
+  location.hash="lang="+l; location.reload();
+}
+$("langBtn").onclick=()=>setLang(LANG==="ar"?"en":"ar");
+applyLangData(); applyStatic(); startArObserver();
+
 window.HT={scoresAt:jd=>scoresAt(jd),jdFromUTCms};
 const saved=load();
 if(saved){fillForm(saved);start(saved);}
+try{ const t0=sessionStorage.getItem("horoscope-tab"); sessionStorage.removeItem("horoscope-tab"); if(t0&&t0!=="today"&&NAT){ const b=document.querySelector(`.tabs button[data-t="${t0}"]`); if(b) b.click(); } }catch(e){}
 })();
 </script>
 </body>
