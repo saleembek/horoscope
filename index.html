@@ -208,7 +208,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
     <input id="name" placeholder="Your name">
     <div class="row">
       <div><label for="bdate">Birth date</label><input id="bdate" type="date" value="1990-01-01"></div>
-      <div><label for="btime">Birth time</label><input id="btime" type="time" value="12:00"></div>
+      <div><label for="btime">Birth time <span style="font-weight:400">(local, in birth city)</span></label><input id="btime" type="time" value="12:00"></div>
     </div>
     <label for="cityQ">Birth city</label>
     <div class="cs">
@@ -729,7 +729,7 @@ function updateOffset(){
   const o=tzOffsetHours(picked.tz,y,mo,d,h,mi);
   if(o==null) return;
   $("tz").value=o;
-  $("cityPicked").innerHTML=`✓ <b>${picked.label}</b> · ${(+$("lat").value).toFixed(2)}, ${(+$("lon").value).toFixed(2)} · time zone ${picked.tz.replace(/_/g," ")} = <b>${fmtOff(o)}</b> on your birth date and time (daylight saving included).`;
+  $("cityPicked").innerHTML=`✓ <b>${picked.label}</b> · ${(+$("lat").value).toFixed(2)}, ${(+$("lon").value).toFixed(2)} · time zone ${picked.tz.replace(/_/g," ")} = <b>${fmtOff(o)}</b> on your birth date. Your birth time <b>${$("btime").value||"12:00"}</b> is read as local time in ${picked.name||"that city"} (daylight saving included).`;
 }
 let cityTimer=null, cityList=[], cityAct=0;
 function showCities(list,msg){
