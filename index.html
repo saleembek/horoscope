@@ -63,7 +63,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .moon{font-size:2.6rem;line-height:1}
 .flex{display:flex;gap:12px;align-items:center}
 .small{font-size:.85rem;color:var(--muted)}
-.listen{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:20;width:auto;margin:0;
+.listen{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:60;width:auto;margin:0;
   padding:14px 20px;border-radius:99px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:1rem}
 .listen.on{background:var(--hard)}
 .wrap{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
@@ -175,6 +175,41 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .tri td{padding:6px 4px;border-bottom:1px solid var(--line)}
 .tri tr.same td{background:color-mix(in srgb,var(--good) 12%,transparent)}
 .tri td small{display:block;color:var(--muted);font-size:.7rem}
+.xl{color:var(--accent);font-weight:600;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}
+[data-x]{cursor:pointer;-webkit-tap-highlight-color:color-mix(in srgb,var(--accent) 20%,transparent)}
+.sbg{position:fixed;inset:0;background:rgba(10,8,20,.45);z-index:50}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:55;max-width:720px;margin:0 auto;background:var(--card);border-radius:20px 20px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.3);max-height:88vh;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .28s ease;visibility:hidden}
+.sheet.open{transform:translateY(0);visibility:visible}
+.sgrab{padding:8px 0 2px;touch-action:none}
+.sgrab i{display:block;width:44px;height:5px;border-radius:3px;background:var(--mid);margin:0 auto}
+.shead{display:flex;align-items:center;gap:10px;padding:6px 14px 10px;border-bottom:1px solid var(--line);touch-action:none}
+.shead button{width:36px;height:36px;flex:none;margin:0;padding:0;border-radius:50%;background:var(--soft);color:var(--ink);font-size:1.1rem}
+.shead .ic{flex:none;width:44px;height:44px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--accent)}
+.shead .ic .hbig{font-weight:800;font-size:1.2rem}
+.shead .tt{flex:1;min-width:0}
+.shead .tt b{display:block;font-size:1.08rem;line-height:1.2}
+.shead .tt span{display:block;font-size:.78rem;color:var(--muted)}
+.sbody{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 16px calc(90px + env(safe-area-inset-bottom));overscroll-behavior:contain}
+.xs{padding:10px 0;border-bottom:1px dashed var(--line)}
+.xs:last-child{border-bottom:0}
+.xs h4{margin:0 0 6px;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.xs p{margin:6px 0}
+.xs ul,.xs ol{margin:4px 0;padding-left:20px}
+.xs li{margin:4px 0}
+.formula{background:var(--soft);border-radius:10px;padding:8px 10px;text-align:center}
+.chain li{margin:6px 0}
+.concl{background:color-mix(in srgb,var(--good) 12%,transparent);border-radius:10px;padding:8px 10px}
+.wear{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.wear div{background:var(--soft);border-radius:10px;padding:7px 9px;font-size:.85rem}
+.wear div:last-child:nth-child(odd){grid-column:1/-1}
+.wear span{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.chipsx{display:flex;flex-wrap:wrap;gap:6px}
+.chipsx .xl{text-decoration:none;background:var(--soft);border-radius:99px;padding:5px 11px;font-size:.85rem}
+body.noscroll{overflow:hidden}
+body.noscroll .listen{font-size:0;padding:0;width:52px;height:52px;display:flex;align-items:center;justify-content:center}
+body.noscroll .listen::before{content:"🔊";font-size:1.35rem}
+body.noscroll .listen.on::before{content:"⏹"}
+.tapnote{font-size:.78rem;color:var(--accent);margin:-4px 0 8px}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -386,11 +421,13 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
       </div>
       <div class="card">
         <h2>Your 12 houses</h2>
+        <p class="tapnote">👆 Tap any house for its full reading: connect the dots, advice, and what to wear.</p>
         <p class="small" style="margin-top:-6px">Each house is one area of life. The <b>sign</b> on it shows <i>how</i> you handle that area. The <b>planets</b> in it show where your energy goes.</p>
         <div id="houseList"></div>
       </div>
       <div class="card">
         <h2>Your planets</h2>
+        <p class="tapnote">👆 Tap any planet for its full meaning, aspects, advice and what to wear.</p>
         <p class="small" style="margin-top:-6px">Each planet is one part of you. Its <b>sign</b> shows <i>how</i> it acts and its <b>house</b> shows <i>where</i> in life.</p>
         <div id="planetList"></div>
       </div>
@@ -403,6 +440,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 
     <!-- LEARN -->
     <section id="t-learn" class="hidden">
+      <div class="card" id="guide"></div>
       <div class="card">
         <h2>How to read this</h2>
         <p><b>Sun</b> is your core self. <b>Moon</b> is your emotions and what makes you feel safe. <b>Rising (Ascendant)</b> is the sign that was rising on the eastern horizon when you were born. It shapes your first impression and outward style.</p>
@@ -441,6 +479,12 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
   <p class="foot">For reflection and fun. The astronomy is real; how you read it is up to you.<br>City data © <a href="https://www.geonames.org" style="color:inherit">GeoNames</a> (CC BY 4.0) via the cities.json package; time zones matched with city-timezones (MIT).</p>
 </div>
 
+<div id="sheetBg" class="sbg hidden"></div>
+<div id="sheet" class="sheet" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="sTitle">
+  <div class="sgrab" id="sGrab"><i></i></div>
+  <div class="shead"><button id="sBack" class="hidden" aria-label="Back">‹</button><div class="ic" id="sIc"></div><div class="tt"><b id="sTitle"></b><span id="sSub"></span></div><button id="sClose" aria-label="Close">✕</button></div>
+  <div class="sbody" id="sBody"></div>
+</div>
 <button id="listen" class="listen hidden" aria-label="Read this page aloud">🔊 Listen</button>
 <script>
 (function(){
@@ -552,6 +596,7 @@ function angles(jd,lat,lonE){
 }
 const signIdx=l=>Math.floor(norm(l)/30);
 const fmtDeg=l=>{const s=signIdx(l), d=norm(l)-s*30; const deg=Math.floor(d), min=Math.floor((d-deg)*60); return `${deg}°${String(min).padStart(2,"0")}′ ${SIGNS[s]}`;};
+const art=w=>/^[aeiou]/i.test(String(w).trim())?"an":"a";
 const ord=n=>n+(n===1?"st":n===2?"nd":n===3?"rd":"th");
 
 // ---------- Aspects & meanings ----------
@@ -814,6 +859,7 @@ function load(){try{return JSON.parse(localStorage.getItem(KEY)||"null");}catch(
 const TTS=window.speechSynthesis;
 const txt=id=>{const e=$(id); return e?e.innerText:"";};
 function speechText(){
+  if($("sheet")&&$("sheet").classList.contains("open")) return ($("sTitle").innerText+". "+$("sSub").innerText+". "+$("sBody").innerText).replace(/℞/g," retrograde ").replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/°/g," degrees");
   const ev=sel=>[...document.querySelectorAll(sel)].slice(0,5).map(e=>{
     const d=new Date(+e.dataset.ms||0); return (e.dataset.ms?d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+". ":"")+e.querySelector(".t").innerText;}).join(". ");
   let t;
@@ -915,13 +961,13 @@ function start(f){
 }
 
 // ---------- Chart tab ----------
-const row=p=>`<tr><td class="gl">${p.g}</td><td><b>${p.k}</b>${p.retro?' <span class="r">℞</span>':""}<div class="small">${p.m}</div></td><td>${SG[signIdx(p.lon)]} ${fmtDeg(p.lon)}<div class="small">${ord(house(p.lon))} house</div></td></tr>`;
+const row=p=>`<tr data-x="p:${p.k}"><td class="gl">${p.g}</td><td><b>${p.k}</b>${p.retro?' <span class="r">℞</span>':""}<div class="small">${p.m}</div></td><td>${SG[signIdx(p.lon)]} ${fmtDeg(p.lon)}<div class="small">${ord(house(p.lon))} house</div></td></tr>`;
 function renderChart(){
   const sun=NAT.planets[0], moon=NAT.planets[1];
   const S=SIGNS[signIdx(sun.lon)], M=SIGNS[signIdx(moon.lon)], A=SIGNS[NAT.ascSign];
   $("chartTitle").textContent=(F.name?F.name.split(" ")[0]+"'s":"Your")+" Big Three";
   $("big3").innerHTML=[["Sun",sun.lon],["Moon",moon.lon],["Rising",NAT.asc]].map(([k,l])=>
-    `<div class="b3"><div class="k">${k}</div><div class="g">${SG[signIdx(l)]}</div><div class="v">${SIGNS[signIdx(l)]}</div></div>`).join("");
+    `<div class="b3" data-x="p:${k==="Rising"?"Ascendant":k}"><div class="k">${k}</div><div class="g">${SG[signIdx(l)]}</div><div class="v">${SIGNS[signIdx(l)]}</div></div>`).join("");
   $("big3Text").innerHTML=`At your core you're <b>${SIGN_KW[S]}</b> (Sun in ${S}). Emotionally you need things that feel <b>${SIGN_KW[M]}</b> (Moon in ${M}). People first see you as <b>${SIGN_KW[A]}</b> (${A} Rising).`;
   renderHouses(); renderMoves();
 
@@ -984,7 +1030,7 @@ function renderDay(){
   const ev=scanEvents(daysFrom(vd.getFullYear(),vd.getMonth(),vd.getDate(),30));
   $("next30").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">Nothing major in the next 30 days.</p>`;
 
-  $("transits").innerHTML=asp.length?asp.map(x=>`<div class="asp ${x.a.t}"><b>${x.t.g} ${x.t.k} ${x.a.g} ${x.a.n.toLowerCase()} your ${x.n.g} ${x.n.k}</b>
+  $("transits").innerHTML=asp.length?asp.map(x=>`<div class="asp ${x.a.t}" data-x="a:${x.t.k}:${x.a.n}:${x.n.k}"><b>${x.t.g} ${x.t.k} ${x.a.g} ${x.a.n.toLowerCase()} your ${x.n.g} ${x.n.k}</b>
      ${interp(x.t.k,x.a,x.n)}<br><small>Orb ${x.orb.toFixed(1)}° · tighter = stronger</small></div>`).join("")
      :`<p class="small">No major transits are close today. A quiet day.</p>`;
   $("nowTable").innerHTML=now.map(row).join("");
@@ -1076,7 +1122,7 @@ function renderMonth(){
   $("bestDays").innerHTML=dl(rank.slice(0,4)); $("badDays").innerHTML=dl(rank.slice(-3));
   // slow
   const slow=slowContacts(days,2.5).sort((a,b)=>a.min-b.min);
-  $("monthSlow").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} your ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>Strongest around ${new Date(s.peak).toLocaleDateString(undefined,{month:"short",day:"numeric"})}</small></div>`).join("")
+  $("monthSlow").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}" data-x="a:${s.t}:${s.a.n}:${s.n.k}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} your ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>Strongest around ${new Date(s.peak).toLocaleDateString(undefined,{month:"short",day:"numeric"})}</small></div>`).join("")
     :`<p class="small">No slow-planet contacts this month. Day-to-day energy matters more.</p>`;
   // events
   const ev=scanEvents(arr);
@@ -1126,7 +1172,7 @@ function renderYear(){
     return {...s,rng};
   }).sort((a,b)=>a.days[0]-b.days[0]);
   const fd=t=>new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
-  $("yearMajor").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} your ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>${s.rng.map(r=>r[0]===r[1]?fd(r[0]):`${fd(r[0])} – ${fd(r[1])}`).join(" · ")} · peak ${fd(s.peak)}</small></div>`).join("")
+  $("yearMajor").innerHTML=slow.length?slow.map(s=>`<div class="asp ${s.a.t}" data-x="a:${s.t}:${s.a.n}:${s.n.k}"><b>${GLYPH[s.t]} ${s.t} ${s.a.g} ${s.a.n.toLowerCase()} your ${s.n.k}</b>${interp(s.t,s.a,s.n)}<br><small>${s.rng.map(r=>r[0]===r[1]?fd(r[0]):`${fd(r[0])} – ${fd(r[1])}`).join(" · ")} · peak ${fd(s.peak)}</small></div>`).join("")
     :`<p class="small">No exact slow-planet contacts this year. A steadier year.</p>`;
   // eclipses, slow ingresses, retrogrades
   const ev=scanEvents(arr,{slowOnly:true,stations:true});
@@ -1191,12 +1237,12 @@ function houseHtml(h,big){
   const si=(NAT.baseSign+h-1)%12, H=HOUSES[h-1], rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl);
   const inside=NAT.planets.filter(p=>house(p.lon)===h);
   const tags=[]; if(house(NAT.asc)===h) tags.push("Ascendant"); if(houseBase==="sun"&&h===1) tags.push("your Sun sign"); if(houseBase==="moon"&&h===1) tags.push("your Moon sign"); if(house(NAT.mc)===h) tags.push("Midheaven");
-  let s=`<div class="hl"><div class="top"><div class="num">${h}</div><div><div class="nm">${ord(h)} house · ${H.n}</div>
+  let s=`<div class="hl" data-x="h:${h}"><div class="top"><div class="num">${h}</div><div><div class="nm">${ord(h)} house · ${H.n}</div>
     <div class="sg">${SG[si]} ${SIGNS[si]} · ruled by ${GLYPH[rl]} ${rl} (in your ${ord(house(rp.lon))})${tags.length?" · "+tags.join(", "):""}</div></div></div>
     <div class="kw"><b>Represents:</b> ${H.k}. ${big?H.d:""}</div>
-    <div class="rd">With ${SIGNS[si]} here, you handle this area in a <b>${SIGN_KW[SIGNS[si]]}</b> way.</div>`;
+    <div class="rd">With ${SIGNS[si]} here, you handle this area in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way.</div>`;
   inside.forEach(p=>{ s+=`<div class="pp"><b>${p.g} ${p.k}${p.retro?" ℞":""} here:</b> ${PVERB[p.k]} ${H.k}.</div>`; });
-  if(big&&!inside.length) s+=`<div class="rd">No planets here. Look at its ruler, ${rl}, in your ${ord(house(rp.lon))} house (${HOUSES[house(rp.lon)-1].n.toLowerCase()}), to see how this area plays out.</div>`;
+  s+=`<div class="rd">🔗 <b>Connect the dots:</b> ${inside.length?"":"no planets here, so follow the ruler. "}${SIGNS[si]} is ruled by ${rl}, which sits in your ${ord(house(rp.lon))} house, so this area plays out <b>${RH_FLAVOR[house(rp.lon)-1]}</b>. <span style="color:var(--accent)">Tap for the full reading ›</span></div>`;
   return s+"</div>";
 }
 function renderHouses(){
@@ -1204,10 +1250,10 @@ function renderHouses(){
   $("planetList").innerHTML=NAT.pts.map(p=>{
     const si=signIdx(p.lon), h=house(p.lon), deg=fmtDeg(p.lon).split(" ")[0];
     const ang=p.k==="Ascendant"||p.k==="Midheaven";
-    return `<div class="hl"><div class="top"><div class="num" style="font-size:${ang?".7rem":"1.1rem"}">${p.g}</div><div><div class="nm">${p.k}${p.retro?' <span class="r">℞ retrograde</span>':""}</div>
+    return `<div class="hl" data-x="p:${p.k}"><div class="top"><div class="num" style="font-size:${ang?".7rem":"1.1rem"}">${p.g}</div><div><div class="nm">${p.k}${p.retro?' <span class="r">℞ retrograde</span>':""}</div>
       <div class="sg">${SG[si]} ${SIGNS[si]} ${deg} · ${ord(h)} house (${HOUSES[h-1].n})</div></div></div>
       <div class="note">${PFULL[p.k]}</div>
-      <div class="rd"><b>In ${SIGNS[si]}:</b> it acts in a ${SIGN_KW[SIGNS[si]]} way.${ang?"":` <b>In your ${ord(h)} house:</b> ${PVERB[p.k]} ${HOUSES[h-1].k}.`}${p.retro?" Being retrograde at birth, its energy turns inward: you reflect first, then act.":""}</div></div>`;
+      <div class="rd"><b>In ${SIGNS[si]}:</b> it acts in ${art(SIGN_KW[SIGNS[si]])} ${SIGN_KW[SIGNS[si]]} way.${ang?"":` <b>In your ${ord(h)} house:</b> ${PVERB[p.k]} ${HOUSES[h-1].k}.`}${p.retro?" Being retrograde at birth, its energy turns inward: you reflect first, then act.":""}</div></div>`;
   }).join("");
   showHouse(selHouse);
 }
@@ -1254,7 +1300,7 @@ function renderMoves(){
   let html=`<div class="mvsum"><div><b>${soon[0].k}</b>next to move<br>${untilTxt(soon[0].ing.jd,jdn)}</div><div><b>${back} of 9</b>moving<br>backward ℞</div><div><b>${longest.k}</b>stays longest<br>${durTxt(longest.ing.jd-jdn)} more</div></div>`;
   html+=mv.map(p=>{
     const si=signIdx(p.lon), h=house(p.lon), fast=p.k==="Moon";
-    let s=`<div class="mv"><div class="top"><div class="g">${p.g}</div><div style="flex:1"><div class="nm">${p.k} <span class="dir ${p.retro?"b":"f"}">${p.retro?"← backward ℞":"→ forward"}</span></div>
+    let s=`<div class="mv" data-x="p:${p.k}"><div class="top"><div class="g">${p.g}</div><div style="flex:1"><div class="nm">${p.k} <span class="dir ${p.retro?"b":"f"}">${p.retro?"← backward ℞":"→ forward"}</span></div>
       <div class="sub">${SG[si]} ${SIGNS[si]} ${fmtDeg(p.lon).split(" ")[0]} · your ${ord(h)} house · ${HOUSES[h-1].n}</div></div></div>`;
     if(p.ing&&p.ent){
       const total=p.ing.jd-p.ent, done=jdn-p.ent, pct=Math.max(2,Math.min(100,Math.round(done/total*100)));
@@ -1279,11 +1325,10 @@ const HSHORT=["you, body, looks, first impressions","income, savings, possession
 const PSHORT={Sun:"you, ego, energy, purpose",Moon:"feelings, needs, mom, home",Mercury:"mind, talking, tech, learning",Venus:"love, money, beauty, taste",Mars:"drive, action, anger, courage",Jupiter:"luck, growth, wisdom",Saturn:"duty, limits, hard work, time",Uranus:"change, freedom, surprises",Neptune:"dreams, intuition, spirituality",Ascendant:"first impression, style",Midheaven:"career goal, reputation"};
 function renderLegend(planets){
   $("legH").innerHTML=Array.from({length:12},(_,i)=>{const h=i+1, si=(NAT.baseSign+i)%12;
-    return `<div class="it${selHouse===h?" sel":""}" data-lh="${h}"><div class="b">${h}</div><div class="tx"><b>${HOUSES[i].n} <i>${SG[si]}</i></b><span>${HSHORT[i]}</span></div></div>`;}).join("");
+    return `<div class="it${selHouse===h?" sel":""}" data-lh="${h}" data-x="h:${h}"><div class="b">${h}</div><div class="tx"><b>${HOUSES[i].n} <i>${SG[si]}</i></b><span>${HSHORT[i]}</span></div></div>`;}).join("");
   const pts=wheelMode==="now"?planets:NAT.pts;
   $("legPT").textContent=wheelMode==="now"?"Planets now":"Planets";
-  $("legP").innerHTML=pts.map(p=>`<div class="it" data-lh="${house(p.lon)}"><div class="pg">${p.g.length>3?p.g:`<span style="font-size:.62rem;font-weight:700">${p.g}</span>`}</div><div class="tx"><b>${p.k}${p.retro?" ℞":""} <i>${ord(house(p.lon))}</i></b><span>${PSHORT[p.k]}</span></div></div>`).join("");
-  document.querySelectorAll(".leg .it").forEach(e=>e.onclick=()=>{const h=+e.dataset.lh; showHouse(selHouse===h?null:h); $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});});
+  $("legP").innerHTML=pts.map(p=>`<div class="it" data-lh="${house(p.lon)}" data-x="p:${p.k}"><div class="pg">${p.g.length>3?p.g:`<span style="font-size:.62rem;font-weight:700">${p.g}</span>`}</div><div class="tx"><b>${p.k}${p.retro?" ℞":""} <i>${ord(house(p.lon))}</i></b><span>${PSHORT[p.k]}</span></div></div>`).join("");
 }
 function wheelPlanets(){ return wheelMode==="now"?positions(jdFromUTCms(Date.now())):NAT.planets; }
 
@@ -1297,8 +1342,8 @@ function drawWheel(){
   let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${c('--card')}" stroke="${c('--line')}"/>`;
   for(let i=0;i<12;i++){
     const h=(i-NAT.baseSign+12)%12+1, col=c('--'+ELEM[i%4]);
-    s+=`<path d="${sector(i*30,i*30+30,rS,R)}" fill="${col}" fill-opacity=".13" stroke="${c('--line')}"/>`;
-    s+=`<path data-h="${h}" d="${sector(i*30,i*30+30,rC,rS)}" fill="${c('--accent')}" fill-opacity="0" stroke="${c('--line')}"><title>${ord(h)} house: ${HOUSES[h-1].n}</title></path>`;
+    s+=`<path d="${sector(i*30,i*30+30,rS,R)}" fill="${col}" fill-opacity=".13" stroke="${c('--line')}" data-x="s:${i}"/>`;
+    s+=`<path data-h="${h}" data-x="h:${h}" d="${sector(i*30,i*30+30,rC,rS)}" fill="${c('--accent')}" fill-opacity="0" stroke="${c('--line')}"><title>${ord(h)} house: ${HOUSES[h-1].n}</title></path>`;
     const [gx,gy]=pt(i*30+15,(R+rS)/2);
     s+=`<text x="${gx}" y="${gy-7}" text-anchor="middle" dominant-baseline="central" font-size="15" fill="${col}" pointer-events="none">${SG[i]}</text>
         <text x="${gx}" y="${gy+10}" text-anchor="middle" dominant-baseline="central" font-size="8.5" font-weight="600" fill="${c('--ink')}" pointer-events="none">${SIGNS[i]}</text>`;
@@ -1315,7 +1360,7 @@ function drawWheel(){
   if(wheelMode==="now"){const mv=nextMoves(Date.now());
     $("stayBox").innerHTML=`<table class="stay"><thead><tr><th>Planet</th><th>House</th><th>Total stay</th><th>Time left</th></tr></thead><tbody>`+
       mv.filter(m=>m.ing&&m.ent).sort((a,b)=>(a.ing.jd-a.now)-(b.ing.jd-b.now)).map(m=>{const tot=m.ing.jd-m.ent, pct=Math.max(3,Math.min(100,Math.round((m.now-m.ent)/tot*100))), h=house(m.lon);
-        return `<tr><td class="n">${m.g} ${m.k} ${m.retro?'<span class="r">←</span>':'<span style="color:var(--good)">→</span>'}</td><td>${ord(h)}<div class="mb"><i class="${m.retro?"b":""}" style="width:${pct}%"></i></div></td><td class="n">${durTxt(tot)}</td><td class="n"><b class="l">${durTxt(m.ing.jd-m.now)}</b></td></tr>`;}).join("")+
+        return `<tr data-x="p:${m.k}"><td class="n">${m.g} ${m.k} ${m.retro?'<span class="r">←</span>':'<span style="color:var(--good)">→</span>'}</td><td>${ord(h)}<div class="mb"><i class="${m.retro?"b":""}" style="width:${pct}%"></i></div></td><td class="n">${durTxt(tot)}</td><td class="n"><b class="l">${durTxt(m.ing.jd-m.now)}</b></td></tr>`;}).join("")+
       `</tbody></table><p class="small" style="text-align:left;margin:6px 0 0"><b>Total stay</b> = the planet's whole visit to that house, from the day it entered to the day it leaves. <b>Time left</b> = how much of that visit remains from today. The bar shows how far through it is.</p>`;
     mv.forEach(m=>{ if(!m.ing) return; const d=m.ing.jd-m.now; left[m.k]=d<1?Math.max(1,Math.round(d*24))+"h":d<45?Math.round(d)+"d":d<730?Math.round(d/30.44)+"mo":(d/365.25).toFixed(1).replace(/\.0$/,"")+"y"; });}
   const LV=wheelMode==="now"?[136,98,62]:[130,101,73], placed=[], pc=wheelMode==="now"?c('--hard'):c('--ink');
@@ -1326,12 +1371,11 @@ function drawWheel(){
   placed.forEach(p=>{
     const r=LV[p.lv], [x,y0]=pt(p.lon,r), y=y0-4, nx=x, ny=y+14, [m1,m2]=pt(p.lon,rS), [m3,m4]=pt(p.lon,rS-6);
     s+=`<line x1="${m1}" y1="${m2}" x2="${m3}" y2="${m4}" stroke="${pc}" stroke-width="1.5" pointer-events="none"/>
-        <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="17" fill="${pc}" pointer-events="none">${p.g}</text>
+        <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="17" fill="${pc}" data-x="p:${p.k}">${p.g}</text>
         <text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${c('--muted')}" pointer-events="none">${p.k}${p.retro&&wheelMode!=="now"?" ℞":""}${wheelMode==="now"?(p.retro?" ←":" →"):""}</text>${left[p.k]?`<text x="${nx}" y="${ny+10}" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="700" fill="${pc}" pointer-events="none">${left[p.k]} left</text>`:""}`;
   });
   $("wheel").innerHTML=s;
   renderLegend(wheelPlanets());
-  $("wheel").onclick=e=>{const t=e.target.closest("[data-h]"); if(t){const h=+t.dataset.h; showHouse(selHouse===h?null:h); if(selHouse) $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});}};
   showHouse(selHouse);
 }
 
@@ -1389,7 +1433,7 @@ function fullChartHtml(){
   const pts=NAT.pts;
   let same=0;
   const rows=pts.map(p=>{ const hs=LENS.map(([b])=>withBase(b,()=>house(p.lon))); const eq=hs[0]===hs[1]&&hs[1]===hs[2]; if(eq) same++;
-    return `<tr class="${eq?"same":""}"><td>${p.g.length>3?p.g:""} ${p.k}</td>${hs.map(x=>`<td>${ord(x)}<small>${HOUSES[x-1].n}</small></td>`).join("")}</tr>`;}).join("");
+    return `<tr class="${eq?"same":""}" data-x="p:${p.k}"><td>${p.g.length>3?p.g:""} ${p.k}</td>${hs.map(x=>`<td>${ord(x)}<small>${HOUSES[x-1].n}</small></td>`).join("")}</tr>`;}).join("");
   return FULLHEAD+`<p class="lead">Where each of your planets falls in all three views. ${same?`<b>Green rows</b> land in the same house in all 3 views, which makes those placements extra strong.`:`Each planet lands in a different house per view, so each view shows a different side of you: outer life (Rising), core self (Sun) and emotions (Moon).`}</p>
     <table class="tri"><thead><tr><th>Planet</th><th>🌅 Rising</th><th>☀️ Sun</th><th>🌙 Moon</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
@@ -1397,6 +1441,353 @@ const FULLFN={fullDay:fullDayHtml,fullWeek:fullWeekHtml,fullMonth:fullMonthHtml,
 function renderFull(id){ const el=$(id); if(!el) return; if(houseBase!=="all"||!NAT){el.classList.add("hidden");return;} el.innerHTML=FULLFN[id](); el.classList.remove("hidden"); }
 { const wrap=(fn,id)=>function(){ const r=fn.apply(this,arguments); renderFull(id); return r; };
   renderDay=wrap(renderDay,"fullDay"); renderWeek=wrap(renderWeek,"fullWeek"); renderMonth=wrap(renderMonth,"fullMonth"); renderYear=wrap(renderYear,"fullYear"); renderChart=wrap(renderChart,"fullChart"); }
+
+// ---------- Explain: knowledge base ----------
+const SIGNDATA=[
+ {dates:"Mar 21 – Apr 19",el:"Fire",mode:"Cardinal",ruler:"Mars",sym:"the Ram",
+  desc:"Aries is the first sign: the spark that starts everything. Pure energy, courage and \"me first\" drive. It acts before it thinks and loves a challenge.",
+  str:"Brave, direct, honest, energetic, a natural starter and leader, bounces back fast.",
+  ch:"Impatient, quick temper, starts more than it finishes, can be blunt or selfish.",
+  love:"Falls fast and loves the chase. Wants passion, honesty and a partner who can keep up.",
+  work:"Best where speed and initiative win: starting projects, emergencies, sales, sports, entrepreneurship.",
+  body:"Head, face, eyes, adrenal energy. Watch headaches and burnout.",
+  adv:["Channel the fire into exercise before big conversations.","Finish one thing before starting the next.","Count to ten before you react."],
+  colors:"Red, scarlet",stones:"Carnelian, red jasper, bloodstone"},
+ {dates:"Apr 20 – May 20",el:"Earth",mode:"Fixed",ruler:"Venus",sym:"the Bull",
+  desc:"Taurus builds and keeps. It's about comfort, the body, the senses, money and slow, steady growth. Once it decides, it doesn't move.",
+  str:"Loyal, patient, reliable, practical, great with money and beauty, calm under pressure.",
+  ch:"Stubborn, resists change, can be possessive or too comfortable.",
+  love:"Slow to commit, then deeply loyal. Shows love with touch, food, gifts and being there.",
+  work:"Finance, banking, property, food, design, music, anything that grows value over time.",
+  body:"Throat, neck, voice, thyroid. Watch sore throats and overeating.",
+  adv:["Save a little every month: Taurus energy grows money slowly.","Try one small change on purpose so change doesn't scare you.","Treat your senses: good food, music, nature."],
+  colors:"Green, soft pink, earth tones",stones:"Rose quartz, emerald, jade"},
+ {dates:"May 21 – Jun 20",el:"Air",mode:"Mutable",ruler:"Mercury",sym:"the Twins",
+  desc:"Gemini is the messenger: curious, quick, talkative and always learning. It connects people and ideas and needs variety.",
+  str:"Smart, witty, adaptable, great communicator, learns fast, sees both sides.",
+  ch:"Restless, scattered, can be nervous, inconsistent or gossipy.",
+  love:"Needs a partner who is also a best friend and a good conversation.",
+  work:"Writing, teaching, sales, media, IT support, anything with lots of people and information.",
+  body:"Lungs, arms, hands, shoulders, nervous system. Watch stress and breathing.",
+  adv:["Write things down: lists calm a busy mind.","Pick two priorities a day, not ten.","Breathe slowly when you feel scattered."],
+  colors:"Yellow, light green",stones:"Citrine, agate, tiger's eye"},
+ {dates:"Jun 21 – Jul 22",el:"Water",mode:"Cardinal",ruler:"Moon",sym:"the Crab",
+  desc:"Cancer is home, family and feelings. It protects, nurtures and remembers. Hard shell outside, soft inside.",
+  str:"Caring, loyal, intuitive, protective, great memory, makes people feel at home.",
+  ch:"Moody, too sensitive, holds on to the past, can be clingy or defensive.",
+  love:"Wants safety, family and deep emotional bonds. Loves by looking after you.",
+  work:"Caregiving, hospitality, food, real estate, HR, anything that protects or feeds people.",
+  body:"Chest, breasts, stomach. Emotions go straight to the stomach.",
+  adv:["Make your home a place that recharges you.","Say what you feel instead of hiding in your shell.","Let the past go when it's heavy."],
+  colors:"Silver, white, pale blue",stones:"Moonstone, pearl, selenite"},
+ {dates:"Jul 23 – Aug 22",el:"Fire",mode:"Fixed",ruler:"Sun",sym:"the Lion",
+  desc:"Leo is the heart and the stage. Creative, proud, warm and generous, it wants to shine and to make others shine too.",
+  str:"Confident, generous, loyal, creative, warm-hearted, a natural leader and performer.",
+  ch:"Proud, needs praise, can be dramatic, bossy or stubborn.",
+  love:"Romantic and generous. Wants admiration, loyalty and grand gestures.",
+  work:"Leadership, performance, creative arts, teaching, anything where you're visible.",
+  body:"Heart, spine, upper back. Watch heart health and posture.",
+  adv:["Create something just for joy.","Praise others: it comes back to you.","Lead with the heart, not the ego."],
+  colors:"Gold, orange, sunny yellow",stones:"Sunstone, tiger's eye, amber, ruby"},
+ {dates:"Aug 23 – Sep 22",el:"Earth",mode:"Mutable",ruler:"Mercury",sym:"the Maiden",
+  desc:"Virgo perfects. It analyzes, organizes, fixes and helps. It notices every detail and wants things to work properly.",
+  str:"Precise, helpful, practical, hardworking, great problem-solver, health-minded.",
+  ch:"Overthinks, worries, perfectionist, critical of self and others.",
+  love:"Shows love through acts of service. Needs a calm, reliable, clean partnership.",
+  work:"IT, troubleshooting, health, analysis, editing, accounting, anything with systems and details.",
+  body:"Digestion, intestines, nervous stomach. Stress shows in the gut.",
+  adv:["Done is better than perfect.","Keep a simple daily routine: it calms Virgo energy.","Be as kind to yourself as you are helpful to others."],
+  colors:"Navy, brown, beige, olive",stones:"Amazonite, sapphire, moss agate"},
+ {dates:"Sep 23 – Oct 22",el:"Air",mode:"Cardinal",ruler:"Venus",sym:"the Scales",
+  desc:"Libra balances. It's about partnership, fairness, beauty and harmony. It sees every side and wants peace.",
+  str:"Fair, charming, diplomatic, social, stylish, great at teamwork and deals.",
+  ch:"Indecisive, people-pleasing, avoids conflict, can depend too much on others.",
+  love:"Made for partnership. Wants romance, beauty, equality and good manners.",
+  work:"Law, design, diplomacy, HR, client relations, negotiation, fashion.",
+  body:"Kidneys, lower back, skin balance. Drink water.",
+  adv:["Make a decision and stick with it.","Say no kindly: peace that hurts you isn't peace.","Surround yourself with beauty and order."],
+  colors:"Pastel blue, pink, lavender",stones:"Lapis lazuli, opal, rose quartz"},
+ {dates:"Oct 23 – Nov 21",el:"Water",mode:"Fixed",ruler:"Mars",sym:"the Scorpion",
+  desc:"Scorpio goes deep. Power, intensity, secrets, transformation, intimacy and rebirth. All or nothing.",
+  str:"Loyal, focused, brave, intuitive, strategic, great researcher, transforms through crisis.",
+  ch:"Jealous, secretive, controlling, holds grudges.",
+  love:"Intense and loyal. Wants total trust and deep emotional and physical bonds.",
+  work:"Investigation, security, cybersecurity, research, finance, psychology, crisis management.",
+  body:"Reproductive organs, elimination. Detox and release.",
+  adv:["Let go of grudges: they weigh more on you.","Use your focus on one big goal.","Trust slowly, but trust."],
+  colors:"Deep red, black, burgundy",stones:"Obsidian, garnet, smoky quartz"},
+ {dates:"Nov 22 – Dec 21",el:"Fire",mode:"Mutable",ruler:"Jupiter",sym:"the Archer",
+  desc:"Sagittarius explores. Freedom, travel, truth, faith, study and big ideas. Optimistic and always aiming further.",
+  str:"Optimistic, honest, adventurous, funny, generous, a teacher and explorer.",
+  ch:"Restless, overpromises, too blunt, avoids commitment and details.",
+  love:"Needs freedom, adventure and a partner who grows with them.",
+  work:"Teaching, travel, law, publishing, international work, coaching, training.",
+  body:"Hips, thighs, liver. Watch overdoing food or drink.",
+  adv:["Keep learning: a course or trip feeds this energy.","Promise less, deliver more.","Be honest, but kind."],
+  colors:"Purple, royal blue, turquoise",stones:"Turquoise, amethyst, lapis"},
+ {dates:"Dec 22 – Jan 19",el:"Earth",mode:"Cardinal",ruler:"Saturn",sym:"the Sea-Goat",
+  desc:"Capricorn climbs. Ambition, discipline, responsibility, structure and long-term success. It gets better with age.",
+  str:"Disciplined, responsible, patient, ambitious, practical, a strong builder and manager.",
+  ch:"Too serious, workaholic, pessimistic, cold when stressed.",
+  love:"Serious and loyal. Shows love by providing and building a future together.",
+  work:"Management, engineering, government, finance, infrastructure, anything with structure.",
+  body:"Bones, knees, teeth, skin. Watch joints and stress.",
+  adv:["Plan in steps: one stair at a time.","Schedule rest like a meeting.","Celebrate small wins, not only the summit."],
+  colors:"Charcoal, dark brown, forest green, black",stones:"Onyx, garnet, black tourmaline"},
+ {dates:"Jan 20 – Feb 18",el:"Air",mode:"Fixed",ruler:"Saturn (modern: Uranus)",sym:"the Water-Bearer",
+  desc:"Aquarius innovates. Technology, the future, friendship, groups, freedom and original ideas. The rebel with a cause.",
+  str:"Original, inventive, independent, friendly, humanitarian, tech-minded.",
+  ch:"Detached, stubborn about ideas, rebellious, can seem cold.",
+  love:"Needs friendship first, space, and a partner who respects independence.",
+  work:"Technology, IT, science, innovation, networks, nonprofits, anything future-facing.",
+  body:"Ankles, calves, circulation, nervous system.",
+  adv:["Share your ideas: they help more people than you think.","Stay connected to your feelings, not only ideas.","Join a group or community you believe in."],
+  colors:"Electric blue, turquoise, silver",stones:"Amethyst, aquamarine, labradorite"},
+ {dates:"Feb 19 – Mar 20",el:"Water",mode:"Mutable",ruler:"Jupiter (modern: Neptune)",sym:"the Fish",
+  desc:"Pisces dreams. Compassion, imagination, intuition, art and spirituality. The last sign holds a little of all the others.",
+  str:"Compassionate, intuitive, creative, gentle, adaptable, spiritual, understands everyone.",
+  ch:"Escapist, over-sensitive, can be vague, take on others' pain, struggle with boundaries.",
+  love:"Romantic and devoted. Wants a soul connection and gentle care.",
+  work:"Arts, music, healing, health care, spirituality, charity, creative tech and design.",
+  body:"Feet, lymph, immune system. Sleep matters a lot.",
+  adv:["Protect your energy: not every problem is yours to carry.","Get enough sleep and time near water.","Turn feelings into art, music or prayer."],
+  colors:"Sea green, lavender, soft blue",stones:"Aquamarine, amethyst, fluorite"}
+];
+const PLANETDATA={
+ Sun:{short:"identity, vitality, purpose",what:"The Sun is the center of your chart: your core identity, ego, life purpose, vitality and willpower. It's who you're becoming. It also stands for father figures and authority.",
+  day:"Sunday",metal:"Gold",color:"Gold, orange, yellow",stone:"Sunstone, ruby, citrine",
+  act:"Get sunlight in the morning, lead something, do what makes you proud, be creative.",
+  low:"Low confidence, tired, unclear direction.",high:"Ego, pride, needing to be the center.",
+  adv:["Do one thing each day that is truly 'you'.","Take credit for your work.","Rest when your energy is low: the Sun recharges."]},
+ Moon:{short:"emotions, needs, home",what:"The Moon is your inner world: emotions, instincts, habits, what makes you feel safe, and how you care for others. It also stands for mother, home and your body's rhythms.",
+  day:"Monday",metal:"Silver",color:"White, silver, pearl",stone:"Moonstone, pearl, selenite",
+  act:"Rest, drink water, cook, journal, spend time at home or near water, follow the Moon phases.",
+  low:"Moody, insecure, not feeling at home anywhere.",high:"Overly emotional, clingy, reactive.",
+  adv:["Name your feeling before acting on it.","Keep comfort rituals: tea, music, a calm evening.","Plan big starts at the New Moon and finishes at the Full Moon."]},
+ Mercury:{short:"mind, talking, tech",what:"Mercury is your mind: how you think, learn, speak, write, solve problems and use technology. It also rules short trips, siblings and paperwork. For an IT person, it's your toolkit.",
+  day:"Wednesday",metal:"Quicksilver (traditional); today mixed metals",color:"Yellow, light green, multicolor",stone:"Agate, citrine, tiger's eye",
+  act:"Read, write, learn something new, solve puzzles, organize files, document your work.",
+  low:"Foggy thinking, misunderstandings, tech problems.",high:"Overthinking, anxiety, talking too much.",
+  adv:["Write it down: Mercury loves lists and notes.","Double-check emails and code when Mercury is retrograde.","Learn one new skill this month."]},
+ Venus:{short:"love, money, beauty",what:"Venus is love, attraction, beauty, pleasure, taste, harmony and money. It shows what you value, how you love, and what you attract.",
+  day:"Friday",metal:"Copper",color:"Green, pink, pastel colors",stone:"Rose quartz, emerald, jade",
+  act:"Wear something you love, enjoy art and music, buy flowers, plan a date, treat yourself with care.",
+  low:"Feeling unloved, money tight, nothing feels beautiful.",high:"Overspending, laziness, people-pleasing.",
+  adv:["Spend on what you truly value.","Make your space beautiful.","Say thank you and give compliments."]},
+ Mars:{short:"drive, action, courage",what:"Mars is your engine: drive, ambition, courage, anger, competition, sex drive and how you fight for what you want.",
+  day:"Tuesday",metal:"Iron",color:"Red",stone:"Carnelian, bloodstone, red jasper",
+  act:"Exercise hard, compete, start a project, clear clutter, set a deadline.",
+  low:"No motivation, avoiding conflict, feeling stuck.",high:"Anger, impatience, accidents, burnout.",
+  adv:["Move your body when angry.","Put your fire into one clear goal.","Pick your battles."]},
+ Jupiter:{short:"luck, growth, wisdom",what:"Jupiter is growth, luck, abundance, optimism, wisdom, teachers, faith, travel and higher learning. Where Jupiter goes, doors open.",
+  day:"Thursday",metal:"Tin",color:"Royal blue, purple",stone:"Amethyst, yellow sapphire, lapis",
+  act:"Study, travel, teach, be generous, practice gratitude, take a smart risk.",
+  low:"Pessimism, feeling small, no faith.",high:"Overdoing, overspending, overpromising.",
+  adv:["Say yes to growth chances.","Keep a gratitude list.","Grow wisely: more is not always better."]},
+ Saturn:{short:"discipline, limits, time",what:"Saturn is the teacher: discipline, responsibility, time, structure, limits, fears and long-term success. Hard at first, rewarding later.",
+  day:"Saturday",metal:"Lead (symbolic only; never wear lead). Use dark steel or iron.",color:"Black, dark blue, charcoal",stone:"Onyx, black tourmaline, blue sapphire, obsidian",
+  act:"Make a plan, keep routines, finish what you started, respect elders, declutter, set boundaries.",
+  low:"Feeling blocked, fearful, lonely or heavy.",high:"Rigid, cold, workaholic.",
+  adv:["Slow and steady: Saturn rewards patience.","Take responsibility, and results follow.","Build structure: calendars, budgets, habits."]},
+ Uranus:{short:"change, freedom, surprises",what:"Uranus is sudden change, freedom, rebellion, originality, inventions and technology. It wakes you up. It moves slowly, so it also describes your generation.",
+  day:"(modern planet, no traditional day)",metal:"Uranium (symbolic); wear aluminum or silver",color:"Electric blue, neon",stone:"Labradorite, aquamarine",
+  act:"Try new tech, change a routine, do something unusual, join a community, innovate.",
+  low:"Feeling stuck in a boring life.",high:"Chaos, sudden breaks, restlessness.",
+  adv:["Expect the unexpected, and stay flexible.","Back up your data!","Change one thing on purpose before life changes it for you."]},
+ Neptune:{short:"dreams, intuition, spirit",what:"Neptune is dreams, imagination, intuition, spirituality, art, music and compassion. It can also bring confusion or illusion. A generational planet too.",
+  day:"(modern planet, no traditional day)",metal:"Neptunium (symbolic); wear silver",color:"Sea green, lavender, soft blue",stone:"Amethyst, aquamarine, fluorite",
+  act:"Meditate, pray, swim, listen to music, make art, sleep well.",
+  low:"Lost meaning, no inspiration.",high:"Confusion, escapism, being deceived.",
+  adv:["Check facts before you trust.","Protect your sleep.","Turn dreams into art or service."]},
+ Ascendant:{short:"first impression, style, body",what:"The Ascendant (Rising sign) is the sign that was rising on the eastern horizon at the moment you were born. It's your outer style, first impression, body and how you approach new things. It also sets your 1st house, so it decides which house every sign falls in.",
+  day:"Day of your chart ruler",metal:"Metal of your chart ruler",color:"Colors of your Rising sign",stone:"Stones of your Rising sign",
+  act:"Dress in your Rising sign's style, look after your body, start things your way.",
+  low:"Feeling unseen.",high:"Hiding behind a mask.",
+  adv:["Your Rising sign is your doorway: use its style when meeting people.","Your chart ruler (the planet that rules your Rising sign) is a key planet for you."]},
+ Midheaven:{short:"career goal, reputation",what:"The Midheaven (MC) is the highest point of your chart: your career direction, public image, reputation and life goals.",
+  day:"Day of its ruler",metal:"Metal of its ruler",color:"Colors of its sign",stone:"Stones of its sign",
+  act:"Set career goals, build your reputation, step into visible roles.",
+  low:"Unclear career direction.",high:"Living only for status.",
+  adv:["Let your MC sign describe the work you'll be known for."]}
+};
+const HOUSEMORE=[
+ {nat:"Aries",q:"Who am I? How do I come across? How do I start things?",boost:"Look after your body and appearance, try new things, start projects, exercise."},
+ {nat:"Taurus",q:"What do I earn and own? What do I truly value? Do I value myself?",boost:"Budget, save, build income skills, invest in quality things, value yourself."},
+ {nat:"Gemini",q:"How do I think, talk and learn? How are my siblings and neighbors?",boost:"Write, read, take short courses, call your siblings, take local trips."},
+ {nat:"Cancer",q:"Where is home? What are my roots? How is my family?",boost:"Improve your home, spend time with family, cook, honor your roots."},
+ {nat:"Leo",q:"What brings me joy? How do I love, play and create? Children?",boost:"Play, date, create, do hobbies, spend time with kids, have fun without guilt."},
+ {nat:"Virgo",q:"How is my daily work, health and routine? How do I serve?",boost:"Keep routines, get health checkups, organize work, eat clean, help others."},
+ {nat:"Libra",q:"Who are my partners? How do I do relationships and contracts?",boost:"Invest in your partner, read contracts carefully, cooperate, be fair."},
+ {nat:"Scorpio",q:"How do I share money, power and intimacy? What do I need to transform?",boost:"Manage debts and taxes, have deep talks, try therapy or healing, let go."},
+ {nat:"Sagittarius",q:"What do I believe? Where will I travel? What will I study?",boost:"Travel, get certifications, study, explore beliefs, teach."},
+ {nat:"Capricorn",q:"What is my career and reputation? What will I achieve?",boost:"Set career goals, be visible, take responsibility, work on your reputation."},
+ {nat:"Aquarius",q:"Who are my friends and groups? What are my hopes?",boost:"Network, join communities, set long-term goals, use technology for good."},
+ {nat:"Pisces",q:"What's in my subconscious? How do I rest, heal and let go?",boost:"Rest, meditate, sleep well, spend time alone, give to charity, do spiritual practice."}
+];
+const ASPLONG={
+ Conjunction:"A conjunction (0°) is two planets in the same place, so their energies merge and get louder. Whether that's easy or hard depends on the planets.",
+ Sextile:"A sextile (60°) is a friendly opportunity. The door is open, but you have to walk through it.",
+ Square:"A square (90°) is tension and friction that pushes you to act. It feels hard, but it builds strength and leads to real change.",
+ Trine:"A trine (120°) is easy flow and natural talent. Things work without much effort, so use it before it passes.",
+ Opposition:"An opposition (180°) is a tug-of-war between two sides, often shown through other people. The goal is balance, not winning."
+};
+const RH_FLAVOR=["through you personally: you drive it yourself","through money and what you value","through talking, learning, siblings and your local circle","through home and family","through fun, romance and creativity","through your daily work and routines","through a partner or a close one-to-one bond","through deep bonds, shared money and big changes","through travel, study and big ideas","through your career and public life","through friends, groups and networks","quietly, behind the scenes or through your inner life"];
+
+// ---------- Explain: engine ----------
+const PLKEYS=["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune"];
+const MODERN={Uranus:10,Neptune:11};
+const xl=(key,label)=>`<a class="xl" data-x="${key}">${label}</a>`;
+const xs=i=>xl("s:"+i,`${SG[i]} ${SIGNS[i]}`);
+const xh=h=>xl("h:"+h,`${ord(h)} house`);
+const xp=k=>xl("p:"+k,`${GLYPH[k]||""} ${k}`);
+function natalAspects(){
+  const out=[], pts=NAT.pts;
+  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+    if(pts[i].k==="Ascendant"&&pts[j].k==="Midheaven") continue;
+    const x=aspectOf(pts[i].lon,pts[j].lon,7); if(x) out.push({a:pts[i],b:pts[j],asp:x.a,orb:x.orb});
+  }
+  return out.sort((p,q)=>p.orb-q.orb);
+}
+function dotsHouse(h){
+  const si=(NAT.baseSign+h-1)%12, H=HOUSES[h-1], rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl), rh=house(rp.lon), rs=signIdx(rp.lon);
+  const inside=NAT.planets.filter(p=>house(p.lon)===h);
+  let s=`<ol class="chain"><li>Your ${xh(h)} (${H.n.toLowerCase()}) is in ${xs(si)}, so you handle ${HSHORT[h-1]} in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way.</li>`;
+  if(inside.length) s+=`<li>Planets here: ${inside.map(p=>`${xp(p.k)} (${PLANETDATA[p.k].short})`).join(", ")}. ${inside.map(p=>`With ${p.k} here, ${PVERB[p.k]} ${HSHORT[h-1]}.`).join(" ")}</li>`;
+  else s+=`<li>No planets here, so follow its ruler.</li>`;
+  s+=`<li>${SIGNS[si]} is ruled by ${xp(rl)}, which sits in your ${xh(rh)} (${HOUSES[rh-1].n.toLowerCase()}) in ${xs(rs)}.</li>`;
+  let concl;
+  if(rh===h) concl=`its ruler sits right here, so this area is strong and self-directed. You're in charge of it.`;
+  else concl=`your ${H.n.toLowerCase()} plays out <b>${RH_FLAVOR[rh-1]}</b>, with ${art(SIGN_KW[SIGNS[rs]])} ${SIGN_KW[SIGNS[rs]]} (${SIGNS[rs]}) flavor.`;
+  s+=`</ol><p class="concl"><b>In short:</b> ${concl}${inside.length?` And with ${inside.map(p=>p.k).join(" and ")} here, it's an <b>active, important</b> area of your life.`:""}</p>`;
+  return s;
+}
+function section(t,body){ return `<section class="xs"><h4>${t}</h4>${body}</section>`; }
+function ul(a){ return `<ul>${a.map(x=>`<li>${x}</li>`).join("")}</ul>`; }
+function wearBox(o){ return `<div class="wear">${o.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join("")}</div>`; }
+const WEAR_NOTE=`<p class="small">Traditional astrology symbolism: use it as a mindful reminder of the energy you want to bring in, not as a guarantee.</p>`;
+function lensHouses(lon){ return LENS.map(([b,ic,n])=>`${ic} ${n}: ${withBase(b,()=>xh(house(lon)))}`).join(" · "); }
+
+function explainPlanet(k){
+  const P=PLANETDATA[k], np=NAT.pts.find(p=>p.k===k), si=signIdx(np.lon), h=house(np.lon), ang=k==="Ascendant"||k==="Midheaven";
+  const head={ic:np.g, t:k, sub:`${SG[si]} ${SIGNS[si]} ${fmtDeg(np.lon).split(" ")[0]} · ${ord(h)} house${np.retro?" · ℞ retrograde at birth":""}`};
+  let b=section("What it is",`<p>${P.what}</p>`);
+  let mine;
+  if(k==="Ascendant") mine=`<p>Your Rising sign is ${xs(si)}: people first see you as <b>${SIGN_KW[SIGNS[si]]}</b>. Your <b>chart ruler</b> is ${xp(RULER[si])}, the planet that rules ${SIGNS[si]}. It sits in your ${xh(house(NAT.planets.find(p=>p.k===RULER[si]).lon))}, which makes it one of the most important planets for you.</p>`;
+  else if(k==="Midheaven") mine=`<p>Your Midheaven is in ${xs(si)}: your career and public image grow best in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way. Its ruler ${xp(RULER[si])} sits in your ${xh(house(NAT.planets.find(p=>p.k===RULER[si]).lon))}, so your career path connects to ${HOUSES[house(NAT.planets.find(p=>p.k===RULER[si]).lon)-1].n.toLowerCase()}.</p>`;
+  else {
+    mine=`<p class="formula"><b>${k}</b> (${P.short}) + <b>${SIGNS[si]}</b> (${SIGN_KW[SIGNS[si]]}) + <b>${ord(h)} house</b> (${HOUSES[h-1].n.toLowerCase()})</p>
+      <p>Put together: your ${xp(k)} is in ${xs(si)} in your ${xh(h)}. It acts in ${art(SIGN_KW[SIGNS[si]])} <b>${SIGN_KW[SIGNS[si]]}</b> way, and ${PVERB[k]} <b>${HSHORT[h-1]}</b>.${np.retro?" It was retrograde when you were born, so this energy turns inward first: you reflect, then act.":""}</p>`;
+    const rules=[]; RULER.forEach((r,i)=>{ if(r===k) rules.push(i); }); if(MODERN[k]!=null) rules.push(MODERN[k]);
+    if(rules.length) mine+=`<p>It ${MODERN[k]!=null?"co-rules (modern)":"rules"} ${rules.map(i=>`${xs(i)} (your ${xh((i-NAT.baseSign+12)%12+1)}: ${HOUSES[(i-NAT.baseSign+12)%12].n.toLowerCase()})`).join(" and ")}. So ${k} also manages those areas, and what happens to ${k} affects them too.</p>`;
+  }
+  if(houseBase==="all") mine+=`<p class="small">House in each view: ${lensHouses(np.lon)}</p>`;
+  b+=section("In your chart",mine);
+  const asp=natalAspects().filter(x=>x.a.k===k||x.b.k===k);
+  if(asp.length) b+=section("Talks with your other planets (aspects)",ul(asp.map(x=>{const o=x.a.k===k?x.b:x.a; return `${x.asp.g} <b>${x.asp.n}</b> with ${xp(o.k)}: ${x.asp.t==="easy"?"easy flow, natural talent":x.asp.t==="hard"?"tension that pushes growth":"merged energies"} between ${P.short} and ${(PLANETDATA[o.k]||{short:o.m}).short}. <small>(orb ${x.orb.toFixed(1)}°)</small>`;})));
+  if(PLKEYS.includes(k)){
+    const mv=nextMoves(Date.now()).find(m=>m.k===k), cs=signIdx(mv.lon), chh=house(mv.lon);
+    b+=section("Right now in the sky",`<p>${k} is in ${xs(cs)}, your ${xh(chh)} (${HOUSES[chh-1].n.toLowerCase()}), moving ${mv.retro?"<b>backward ℞</b>":"<b>forward</b>"}.${mv.ing?` It leaves on ${new Date(msFromJd(mv.ing.jd)).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})} for ${xs(mv.ing.sign)}.`:""}</p>`);
+  }
+  b+=section("Advice",ul(P.adv.concat([`<b>When it's weak:</b> ${P.low}`,`<b>When it's too strong:</b> ${P.high}`])));
+  b+=section("Boost this energy",wearBox([["Best day",P.day],["Colors",P.color],["Stones",P.stone],["Metal",P.metal],["Do",P.act]])+WEAR_NOTE);
+  const chips=[xs(si),xh(h)]; if(!ang) RULER.forEach((r,i)=>{ if(r===k) chips.push(xs(i)); });
+  asp.slice(0,6).forEach(x=>{const o=x.a.k===k?x.b:x.a; chips.push(xp(o.k));});
+  b+=section("Connected to",`<div class="chipsx">${[...new Set(chips)].join("")}</div>`);
+  return {head,body:b};
+}
+function explainSign(i){
+  const S=SIGNDATA[i], name=SIGNS[i], rl=RULER[i], rp=NAT.planets.find(p=>p.k===rl);
+  const head={ic:SG[i], t:name, sub:`${S.dates} · ${S.sym} · ${S.el} · ${S.mode} · ruled by ${S.ruler}`};
+  let b=section("What it is",`<p>${S.desc}</p><p class="small"><b>${S.el}</b> signs are ${({Fire:"action and passion",Earth:"practical and grounded",Air:"ideas and people",Water:"feelings and intuition"})[S.el]}. <b>${S.mode}</b> signs are good at ${({Cardinal:"starting things",Fixed:"keeping things going",Mutable:"adapting and finishing"})[S.mode]}.</p>`);
+  b+=section("Strengths",`<p>${S.str}</p>`)+section("Challenges",`<p>${S.ch}</p>`)+section("In love",`<p>${S.love}</p>`)+section("At work",`<p>${S.work}</p>`)+section("Body",`<p>${S.body}</p>`);
+  const big=[]; if(signIdx(NAT.planets[0].lon)===i) big.push("your <b>Sun sign</b>"); if(signIdx(NAT.planets[1].lon)===i) big.push("your <b>Moon sign</b>"); if(NAT.ascSign===i) big.push("your <b>Rising sign</b>");
+  const inside=NAT.planets.filter(p=>signIdx(p.lon)===i);
+  const h=(i-NAT.baseSign+12)%12+1;
+  let mine=big.length?`<p>${name} is ${big.join(" and ")}. It's a big part of who you are.</p>`:"";
+  mine+=`<p>${name} sits on your ${xh(h)} (${HOUSES[h-1].n.toLowerCase()}), so you handle <b>${HSHORT[h-1]}</b> in ${art(SIGN_KW[name])} ${SIGN_KW[name]} way.</p>`;
+  if(houseBase==="all") mine+=`<p class="small">House in each view: ${LENS.map(([bb,ic,n])=>`${ic} ${n}: ${withBase(bb,()=>xh((i-NAT.baseSign+12)%12+1))}`).join(" · ")}</p>`;
+  mine+=inside.length?`<p>Your planets in ${name}: ${inside.map(p=>`${xp(p.k)} (${PLANETDATA[p.k].short})`).join(", ")}. They all express themselves in ${art(SIGN_KW[name])} ${SIGN_KW[name]} way.</p>`:`<p>None of your planets are in ${name}.</p>`;
+  mine+=`<p>Its ruler ${xp(rl)} sits in ${xs(signIdx(rp.lon))}, your ${xh(house(rp.lon))}. That's where ${name}'s energy gets sent in your life.</p>`;
+  b+=section("In your chart",mine);
+  b+=section("Advice",ul(S.adv));
+  const P=PLANETDATA[rl];
+  b+=section("Wear & carry to tune in",wearBox([["Colors",S.colors],["Stones",S.stones],["Best day",P.day+" (day of "+rl+")"],["Metal",P.metal+" ("+rl+")"]])+WEAR_NOTE);
+  const opp=(i+6)%12, mates=[0,1,2,3].map(n=>(i%4)+n*4).filter(x=>x!==i);
+  b+=section("Connected to",`<div class="chipsx">${xp(rl)}${xh(h)}${inside.map(p=>xp(p.k)).join("")}${xl("s:"+opp,`↔ ${SG[opp]} ${SIGNS[opp]} (opposite)`)}${mates.map(m=>xs(m)).join("")}</div><p class="small">Opposite sign = the balancing partner. The other ${S.el} signs share its element.</p>`);
+  return {head,body:b};
+}
+function explainHouse(h){
+  const si=(NAT.baseSign+h-1)%12, H=HOUSES[h-1], M=HOUSEMORE[h-1], rl=RULER[si], inside=NAT.planets.filter(p=>house(p.lon)===h);
+  const head={ic:`<span class="hbig">${h}</span>`, t:`${ord(h)} house · ${H.n}`, sub:`${SG[si]} ${SIGNS[si]} · ruled by ${GLYPH[rl]} ${rl}${inside.length?" · "+inside.map(p=>p.g).join(" "):""}`};
+  let b=section("What it is",`<p><b>Represents:</b> ${H.k}. ${H.d}</p><p class="small">Natural sign: ${M.nat}. In every chart, the ${ord(h)} house carries some ${M.nat} flavor.</p>`);
+  b+=section("Life questions",`<p>${M.q}</p>`);
+  b+=section("Connect the dots (your chart)",dotsHouse(h));
+  if(houseBase==="all") b+=section("All three views",LENS.map(([bb,ic,n])=>`<div class="lens"><div class="lh">${ic} ${n} view</div>${withBase(bb,()=>{const s2=(NAT.baseSign+h-1)%12, r2=RULER[s2], rp=NAT.planets.find(p=>p.k===r2); const ins=NAT.planets.filter(p=>house(p.lon)===h); return `${SIGNS[s2]} on this house · ruler ${r2} in your ${ord(house(rp.lon))}${ins.length?" · planets: "+ins.map(p=>p.k).join(", "):""}`;})}</div>`).join(""));
+  b+=section("Advice to boost this area",`<p>${M.boost}</p>`);
+  const S=SIGNDATA[si], P=PLANETDATA[rl];
+  b+=section("Wear & carry for this area",`<p class="small">Use the colors and stones of ${SIGNS[si]} (the sign on this house) and ${rl} (its ruler):</p>`+wearBox([["Colors",S.colors],["Stones",S.stones],["Best day",P.day],["Metal",P.metal]])+WEAR_NOTE);
+  const rp=NAT.planets.find(p=>p.k===rl), opp=(h+5)%12+1;
+  b+=section("Connected to",`<div class="chipsx">${xs(si)}${xp(rl)}${xh(house(rp.lon))}${inside.map(p=>xp(p.k)).join("")}${xl("h:"+opp,`↔ ${ord(opp)} house (opposite)`)}</div>`);
+  return {head,body:b};
+}
+function explainAspect(tk,an,nk){
+  const a=ASP.find(x=>x.n===an), n=NAT.pts.find(p=>p.k===nk), T=PLANETDATA[tk], N=PLANETDATA[nk];
+  const head={ic:a.g, t:`${tk} ${a.n.toLowerCase()} your ${nk}`, sub:"A transit: today's planet talking to your birth planet"};
+  let b=section("What this aspect is",`<p>${ASPLONG[a.n]}</p>`);
+  b+=section("The two actors",ul([`${xp(tk)} today brings <b>${TONE[tk]}</b>.`,`Your birth ${xp(nk)} stands for <b>${N?N.short:n.m}</b>, and sits in your ${xh(house(n.lon))}.`]));
+  b+=section("What it means for you",`<p>${interp(tk,a,n)} It touches your ${xh(house(n.lon))}: ${HSHORT[house(n.lon)-1]}.</p>`);
+  b+=section("Advice",ul(a.t==="hard"?["Slow down, and don't force results.","Turn the pressure into effort: fix what's weak.",...T.adv.slice(0,1)]:a.t==="easy"?["Say yes, and act on the chance.","Use the easy flow for something important.",...T.adv.slice(0,1)]:["A new chapter starts: set an intention.",...T.adv.slice(0,2)]));
+  b+=section("Wear & carry",wearBox([["Colors",T.color],["Stones",T.stone],["Day",T.day]])+WEAR_NOTE);
+  b+=section("Connected to",`<div class="chipsx">${xp(tk)}${xp(nk)}${xh(house(n.lon))}</div>`);
+  return {head,body:b};
+}
+let xHist=[];
+function renderSheet(){
+  const key=xHist[xHist.length-1]; if(!key) return;
+  const [t,a,b2,c]=key.split(":");
+  let r;
+  try{ r=t==="p"?explainPlanet(a):t==="s"?explainSign(+a):t==="h"?explainHouse(+a):explainAspect(a,b2,c); }catch(e){ r={head:{ic:"?",t:"Sorry",sub:""},body:`<p>Couldn't load this explanation.</p>`}; }
+  $("sIc").innerHTML=r.head.ic; $("sTitle").textContent=r.head.t; $("sSub").textContent=r.head.sub;
+  $("sBody").innerHTML=r.body; $("sBody").scrollTop=0;
+  $("sBack").classList.toggle("hidden",xHist.length<2);
+  if(t==="h"&&$("houseInfo")) showHouse(+a);
+}
+function openExplain(key){
+  if(!NAT) return;
+  if(xHist[xHist.length-1]!==key) xHist.push(key);
+  renderSheet();
+  $("sheet").classList.add("open"); $("sheetBg").classList.remove("hidden"); document.body.classList.add("noscroll");
+  $("sheet").setAttribute("aria-hidden","false");
+}
+function closeExplain(){ $("sheet").classList.remove("open"); $("sheet").style.transform=""; $("sheetBg").classList.add("hidden"); document.body.classList.remove("noscroll"); $("sheet").setAttribute("aria-hidden","true"); xHist=[]; stopTalk(); }
+$("sClose").onclick=closeExplain; $("sheetBg").onclick=closeExplain;
+$("sBack").onclick=()=>{ if(xHist.length>1){ xHist.pop(); renderSheet(); } };
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("sheet").classList.contains("open")) closeExplain(); });
+document.addEventListener("click",e=>{ const t=e.target.closest("[data-x]"); if(!t) return; e.preventDefault(); openExplain(t.getAttribute("data-x")); });
+(function(){ let y0=null, dy=0; const g=$("sGrab");
+  g.addEventListener("touchstart",e=>{y0=e.touches[0].clientY;dy=0;$("sheet").style.transition="none";},{passive:true});
+  g.addEventListener("touchmove",e=>{ if(y0==null) return; dy=Math.max(0,e.touches[0].clientY-y0); $("sheet").style.transform=`translateY(${dy}px)`; },{passive:true});
+  g.addEventListener("touchend",()=>{ $("sheet").style.transition=""; if(dy>90) closeExplain(); else $("sheet").style.transform=""; y0=null; });
+})();
+function renderGuide(){
+  const g=$("guide"); if(!g||!NAT) return;
+  const me=NAT.planets.find(p=>p.k==="Mercury"), ms=signIdx(me.lon), mh=house(me.lon);
+  const empty=[...Array(12).keys()].map(i=>i+1).find(h=>!NAT.planets.some(p=>house(p.lon)===h));
+  const es=(NAT.baseSign+empty-1)%12, er=RULER[es], erp=NAT.planets.find(p=>p.k===er);
+  g.innerHTML=`<h2>🧭 How it all fits together</h2>
+  <p><b>Think of your chart as a play:</b></p>
+  ${ul(["🎭 <b>Planets are the actors</b>: WHAT part of you (mind, love, drive…).","👗 <b>Signs are their costumes</b>: HOW each actor behaves (bold, careful, dreamy…).","🏠 <b>Houses are the stages</b>: WHERE in your life it happens (money, home, career…).","👔 <b>Rulers are the stage managers</b>: every sign has a ruling planet. If a stage is empty, follow its manager.","💬 <b>Aspects are conversations</b> between actors: easy (trine, sextile) or tense (square, opposition).","🎥 <b>The views are 3 cameras</b> on the same play: Rising (outer life), Sun (core self), Moon (emotions). ✨ Full shows all three."])}
+  <h3>The one formula</h3>
+  <p class="formula"><b>Planet</b> (what) + <b>Sign</b> (how) + <b>House</b> (where)</p>
+  <p>Your example: ${xp("Mercury")} (your mind) in ${xs(ms)} (${SIGN_KW[SIGNS[ms]]}) in your ${xh(mh)} (${HOUSES[mh-1].n.toLowerCase()}) = <b>you think in ${art(SIGN_KW[SIGNS[ms]].split(",")[0])} ${SIGN_KW[SIGNS[ms]].split(",")[0]} way, and your mind focuses on ${HSHORT[mh-1]}</b>.</p>
+  <h3>Reading an empty house</h3>
+  <p>Your ${xh(empty)} has no planets. It's in ${xs(es)}, which is ruled by ${xp(er)}, and ${er} sits in your ${xh(house(erp.lon))}. So your ${HOUSES[empty-1].n.toLowerCase()} plays out ${RH_FLAVOR[house(erp.lon)-1]}.</p>
+  <h3>5 steps to read anything</h3>
+  ${ul([`1. Pick a life area, which is a house (start with your ${xh(1)}).`,"2. Look at the sign on it: that's the style.","3. Look at the planets in it: that's the action.","4. Follow its ruler to the house where it sits: that's the connection.","5. Check today's transits (Day tab) to see what's active now."])}
+  <p class="small">Tip: <b>tap any planet, sign, house number or aspect anywhere in the app</b> to open its full explanation, then keep tapping the links to follow the dots.</p>`;
+}
+
+{ const _rc=renderChart; renderChart=function(){ const r=_rc.apply(this,arguments); renderGuide(); return r; }; }
 
 window.HT={scoresAt:jd=>scoresAt(jd),jdFromUTCms};
 const saved=load();
