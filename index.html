@@ -161,6 +161,20 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .wchips button small{display:block;font-size:.68rem;font-weight:500;color:var(--muted)}
 .wchips button.on{background:var(--accent);color:var(--accent-ink)}
 .wchips button.on small{color:var(--accent-ink);opacity:.85}
+.basesw{grid-template-columns:repeat(4,1fr) !important}
+.basesw button{padding:8px 2px !important;font-size:.82rem !important}
+.basesw button small{font-size:.66rem !important}
+.full{border:2px solid var(--accent);background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 8%,var(--card)),var(--card))}
+.lens{border-top:1px dashed var(--line);padding:10px 0 2px;font-size:.88rem}
+.lens .lh{font-weight:700;margin-bottom:3px}
+.lens .lh small{font-weight:500;color:var(--muted);margin-left:4px}
+.lens .dots{display:inline-flex;vertical-align:-2px;margin-left:4px}
+.lens .dots i{width:11px;height:11px}
+.tri{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:8px}
+.tri th{font-size:.72rem;color:var(--muted);font-weight:600;text-align:left;padding:5px 4px;border-bottom:1px solid var(--line)}
+.tri td{padding:6px 4px;border-bottom:1px solid var(--line)}
+.tri tr.same td{background:color-mix(in srgb,var(--good) 12%,transparent)}
+.tri td small{display:block;color:var(--muted);font-size:.7rem}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -234,7 +248,9 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
   <div id="out" class="hidden">
     <div class="basesw" id="baseSw" role="group" aria-label="Read houses from">
       <button data-b="asc" class="on">🌅 Rising<small id="bsA"></small></button>
-      <button data-b="sun">☀️ Sun sign<small id="bsS"></small></button>
+      <button data-b="sun">☀️ Sun<small id="bsS"></small></button>
+      <button data-b="moon">🌙 Moon<small id="bsM"></small></button>
+      <button data-b="all">✨ Full<small>all 3 mixed</small></button>
     </div>
     <div class="tabs">
       <button data-t="today" class="on">Day</button>
@@ -253,6 +269,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
         <button id="nextDay" aria-label="Next day">›</button>
       </div>
       <button id="todayBtn" class="ghost hidden">↺ Back to today</button>
+      <div class="card full hidden" id="fullDay"></div>
       <div class="card">
         <div class="flex">
           <div class="moon" id="moonIcon">☾</div>
@@ -292,6 +309,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
       </div>
       <div class="wchips" id="weekChips" role="tablist" aria-label="Pick a week"></div>
       <button id="thisWeekBtn" class="ghost hidden">↺ Back to the upcoming week</button>
+      <div class="card full hidden" id="fullWeek"></div>
       <div class="card"><h2>Week forecast</h2><p class="lead" id="weekSummary"></p></div>
       <div class="card">
         <h2>Day by day</h2>
@@ -309,6 +327,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
         <div class="lbl" id="monthLbl"></div>
         <button id="nextMonth" aria-label="Next month">›</button>
       </div>
+<div class="card full hidden" id="fullMonth"></div>
       <div class="card"><h2>Month forecast</h2><p class="lead" id="monthSummary"></p></div>
       <div class="card"><h2>Life areas this month</h2><div class="ga" id="monthAreas"></div></div>
       <div class="card">
@@ -328,6 +347,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
         <button id="nextYear" aria-label="Next year">›</button>
       </div>
       <div class="chips" id="yearChips"></div>
+<div class="card full hidden" id="fullYear"></div>
       <div class="card"><h2 id="yearHead">Year forecast</h2><p class="lead" id="yearSummary"></p></div>
       <div class="card"><h2>Your theme of the year</h2><div id="yearTheme"></div></div>
       <div class="card">
@@ -341,6 +361,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 
     <!-- CHART -->
     <section id="t-chart" class="hidden">
+<div class="card full hidden" id="fullChart"></div>
       <div class="card">
         <h2 id="chartTitle">Your Big Three</h2>
         <div class="big3" id="big3"></div>
@@ -386,7 +407,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
         <h2>How to read this</h2>
         <p><b>Sun</b> is your core self. <b>Moon</b> is your emotions and what makes you feel safe. <b>Rising (Ascendant)</b> is the sign that was rising on the eastern horizon when you were born. It shapes your first impression and outward style.</p>
         <p><b>Houses</b> are the 12 areas of life (money, home, work, love and so on). This page uses <i>whole-sign houses</i>: one sign is your 1st house, the next sign is your 2nd, and so on. Use the switch at the top to choose which sign is the 1st house:</p>
-        <p><b>🌅 Rising</b> uses your Rising sign. It's the most personal and accurate option, but it needs your exact birth time.<br><b>☀️ Sun sign</b> uses your Sun sign ("solar houses"). This is how newspaper and app horoscopes for your sign work. Use it as a second view.</p>
+        <p><b>🌅 Rising</b> uses your Rising sign. It's the most personal and accurate option, but it needs your exact birth time.<br><b>☀️ Sun</b> uses your Sun sign ("solar houses"). This is how newspaper and app horoscopes for your sign work.<br><b>🌙 Moon</b> uses your Moon sign ("lunar houses"). It shows your emotional side of each event.<br><b>✨ Full</b> blends all three. Scores are the average of the three views, and each tab shows a Full reading card with where the views agree. When 2 or 3 views agree, that message is stronger.</p>
         <p><b>Transits</b> are today's planets making angles to your birth planets:</p>
         <p><span class="pill">☌ Conjunction 0°</span> merging, emphasis<br>
            <span class="pill">⚹ Sextile 60°</span> opportunity<br>
@@ -561,7 +582,7 @@ function aspVal(t,a){
 
 // ---------- Chart state ----------
 let houseBase="asc", weekSpan=1;
-try{ if(localStorage.getItem("horoscope-base")==="sun") houseBase="sun"; }catch(e){}
+try{ const v=localStorage.getItem("horoscope-base"); if(["sun","moon","all"].includes(v)) houseBase=v; }catch(e){}
 const upcomingMonday=()=>{const t=new Date(); const m=mondayOf(t); return t.getDay()===1?m:new Date(m.getFullYear(),m.getMonth(),m.getDate()+7);};
 let F=null, NAT=null, viewMs=null, weekSel=null, monthSel=null, yearSel=null;
 const mondayOf=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()-(x.getDay()+6)%7); return x;};
@@ -590,6 +611,12 @@ function areaSets(){
 }
 function scoresAt(jd,tr){
   tr=tr||positions(jd);
+  if(houseBase!=="all") return scoresOne(jd,tr);
+  const rs=LENS.map(([b])=>withBase(b,()=>scoresOne(jd,tr))), tot={}, sc={}; let all=0;
+  for(const k in rs[0].tot){ tot[k]=(rs[0].tot[k]+rs[1].tot[k]+rs[2].tot[k])/3; sc[k]=Math.max(1,Math.min(5,Math.round(3+tot[k]*.7))); all+=tot[k]; }
+  return {sc,tot,why:rs[0].why,all:all/4};
+}
+function scoresOne(jd,tr){
   const S=areaSets(), tot={}, why={};
   for(const k in S){tot[k]=0;why[k]=[];}
   tr.forEach(t=>NAT.pts.forEach(n=>{
@@ -802,6 +829,8 @@ function speechText(){
   else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),"Your theme of the year.",txt("yearTheme")];
   else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),"Planet journeys.",txt("moveList").replace(/←/g,"").replace(/→/g,""),"Your planets.",txt("planetList"),"Your 12 houses.",txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
+  const fullId={today:"fullDay",week:"fullWeek",month:"fullMonth",year:"fullYear",chart:"fullChart"}[tab];
+  if(houseBase==="all"&&fullId) t=[txt(fullId)].concat(t);
   return t.join("\n").replace(/℞/g," retrograde ").replace(/·/g,", ").replace(/–/g," to ")
     .replace(/[\u2600-\u27BF\u2B50\uFE0E\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g,"").replace(/\b(\d+)°(\d+)′/g,"$1 degrees $2").replace(/°/g," degrees");
 }
@@ -860,9 +889,8 @@ function renderWeekChips(){
 }
 function applyBase(){
   if(!NAT) return;
-  NAT.baseSign=houseBase==="sun"?signIdx(NAT.planets[0].lon):NAT.ascSign;
-  NAT.baseLon=houseBase==="sun"?NAT.planets[0].lon:NAT.asc;
-  $("bsA").textContent=SIGNS[NAT.ascSign]+" = 1st house"; $("bsS").textContent=SIGNS[signIdx(NAT.planets[0].lon)]+" = 1st house";
+  [NAT.baseSign,NAT.baseLon]=baseOf(houseBase==="all"?"asc":houseBase);
+  $("bsA").textContent=SIGNS[NAT.ascSign]; $("bsS").textContent=SIGNS[signIdx(NAT.planets[0].lon)]; $("bsM").textContent=SIGNS[signIdx(NAT.planets[1].lon)];
   document.querySelectorAll("#baseSw button").forEach(x=>x.classList.toggle("on",x.dataset.b===houseBase));
 }
 document.querySelectorAll("#baseSw button").forEach(b=>b.onclick=()=>{
@@ -1162,7 +1190,7 @@ let selHouse=null;
 function houseHtml(h,big){
   const si=(NAT.baseSign+h-1)%12, H=HOUSES[h-1], rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl);
   const inside=NAT.planets.filter(p=>house(p.lon)===h);
-  const tags=[]; if(house(NAT.asc)===h) tags.push("Ascendant"); if(houseBase==="sun"&&h===1) tags.push("your Sun sign"); if(house(NAT.mc)===h) tags.push("Midheaven");
+  const tags=[]; if(house(NAT.asc)===h) tags.push("Ascendant"); if(houseBase==="sun"&&h===1) tags.push("your Sun sign"); if(houseBase==="moon"&&h===1) tags.push("your Moon sign"); if(house(NAT.mc)===h) tags.push("Midheaven");
   let s=`<div class="hl"><div class="top"><div class="num">${h}</div><div><div class="nm">${ord(h)} house · ${H.n}</div>
     <div class="sg">${SG[si]} ${SIGNS[si]} · ruled by ${GLYPH[rl]} ${rl} (in your ${ord(house(rp.lon))})${tags.length?" · "+tags.join(", "):""}</div></div></div>
     <div class="kw"><b>Represents:</b> ${H.k}. ${big?H.d:""}</div>
@@ -1306,6 +1334,69 @@ function drawWheel(){
   $("wheel").onclick=e=>{const t=e.target.closest("[data-h]"); if(t){const h=+t.dataset.h; showHouse(selHouse===h?null:h); if(selHouse) $("houseInfo").scrollIntoView({behavior:"smooth",block:"nearest"});}};
   showHouse(selHouse);
 }
+
+// ---------- Full reading (Rising + Sun + Moon blended) ----------
+const LENS=[["asc","🌅","Rising"],["sun","☀️","Sun"],["moon","🌙","Moon"]];
+function baseOf(b){ return b==="sun"?[signIdx(NAT.planets[0].lon),NAT.planets[0].lon]:b==="moon"?[signIdx(NAT.planets[1].lon),NAT.planets[1].lon]:[NAT.ascSign,NAT.asc]; }
+function withBase(b,fn){ const s=NAT.baseSign,l=NAT.baseLon; [NAT.baseSign,NAT.baseLon]=baseOf(b); try{return fn();}finally{NAT.baseSign=s;NAT.baseLon=l;} }
+function lensHead(b){const L=LENS.find(x=>x[0]===b); return `<div class="lh">${L[1]} ${L[2]} view<small>· ${SIGNS[baseOf(b)[0]]} = 1st house</small></div>`;}
+function consensus(list,noun){
+  const c={}; list.forEach(x=>c[x]=(c[x]||0)+1); const top=Object.entries(c).sort((a,b)=>b[1]-a[1])[0];
+  return top[1]>=2?`<b>${top[1]===3?"All 3":"2 of 3"} views agree</b> on your ${noun}: <b>${top[0]}</b>.`:`The three views give different ${noun}s (${list.join(", ")}), so balance all of them.`;
+}
+const AREAS=["Work","Money","Love","Health"];
+const FULLHEAD=`<h2>✨ Full reading: Rising + Sun + Moon</h2>`;
+function fullDayHtml(){
+  const v=new Date(viewMs??Date.now()), jd=jdFromUTCms(new Date(v.getFullYear(),v.getMonth(),v.getDate(),12).getTime()), tr=positions(jd);
+  const bests=[], themes=[];
+  const h=LENS.map(([b])=>withBase(b,()=>{ const r=scoresOne(jd,tr), mh=house(tr[1].lon), sh=house(tr[0].lon), best=AREAS.slice().sort((x,y)=>r.tot[y]-r.tot[x])[0];
+    bests.push(best); themes.push(HOUSES[mh-1].n.toLowerCase());
+    return `<div class="lens">${lensHead(b)}🌙 Moon in your <b>${ord(mh)} house</b>: ${HSHORT[mh-1]}<br>☀️ Sun in your ${ord(sh)} house (${HOUSES[sh-1].n.toLowerCase()})<br>Strongest area: <b>${best}</b>${dotsHtml(r.sc[best])}</div>`;})).join("");
+  return FULLHEAD+`<p class="lead">${consensus(bests,"strongest area")} Today touches <b>${[...new Set(themes)].join(", ")}</b>. All scores on this page are the average of the three views.</p>`+h;
+}
+function fullWeekHtml(){
+  const arr=daysFrom(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate(),6), days=arr.slice(1,7).filter(x=>x.day.getDay()!==0);
+  const bests=[], bds=[];
+  const h=LENS.map(([b])=>withBase(b,()=>{ const sc=days.map(x=>({day:x.day,pos:x.pos,...scoresOne(x.jd,x.pos)}));
+    const tA=k=>sc.reduce((s,x)=>s+x.tot[k],0), best=AREAS.slice().sort((a,c)=>tA(c)-tA(a))[0];
+    const bd=sc.slice().sort((a,c)=>c.all-a.all)[0].day.toLocaleDateString(undefined,{weekday:"long"}), mh=[...new Set(sc.map(x=>house(x.pos[1].lon)))];
+    bests.push(best); bds.push(bd);
+    return `<div class="lens">${lensHead(b)}🌙 Moon moves through your <b>${mh.map(ord).join(" → ")}</b> houses (${mh.map(x=>HOUSES[x-1].n.toLowerCase()).join(", ")})<br>Strongest area: <b>${best}</b> · Best day: <b>${bd}</b></div>`;})).join("");
+  return FULLHEAD+`<p class="lead">${consensus(bests,"strongest area")} ${consensus(bds,"best day")}</p>`+h;
+}
+function fullMonthHtml(){
+  const y=monthSel.getFullYear(), m=monthSel.getMonth(), nd=new Date(y,m+1,0).getDate(), days=daysFrom(y,m,1,nd).slice(1,nd+1);
+  const bests=[], weak=[];
+  const h=LENS.map(([b])=>withBase(b,()=>{ const sc=days.map(x=>({day:x.day,...scoresOne(x.jd,x.pos)}));
+    const tA=k=>sc.reduce((s,x)=>s+x.tot[k],0), order=AREAS.slice().sort((a,c)=>tA(c)-tA(a));
+    const top=sc.slice().sort((a,c)=>c.all-a.all).slice(0,3).map(x=>x.day.getDate()).sort((a,c)=>a-c);
+    const h0=house(days[0].pos[0].lon), h1=house(days[nd-1].pos[0].lon);
+    bests.push(order[0]); weak.push(order[3]);
+    return `<div class="lens">${lensHead(b)}☀️ Sun lights up your <b>${ord(h0)}</b>${h1!==h0?` then <b>${ord(h1)}</b>`:""} house (${HOUSES[h0-1].n.toLowerCase()}${h1!==h0?" → "+HOUSES[h1-1].n.toLowerCase():""})<br>Strongest: <b>${order[0]}</b> · Weakest: ${order[3]} · Best days: <b>${top.join(", ")}</b></div>`;})).join("");
+  return FULLHEAD+`<p class="lead">${consensus(bests,"strongest area")} ${consensus(weak,"weakest area")}</p>`+h;
+}
+function fullYearHtml(){
+  const Y=yearSel, age=Y-NAT.by, samples=Array.from({length:12},(_,i)=>positions(jdFromUTCms(new Date(Y,i,15,12).getTime())));
+  const lords=[];
+  const h=LENS.map(([b])=>withBase(b,()=>{ const ph=age%12+1, lord=RULER[(NAT.baseSign+age)%12];
+    const jz=[...new Set(samples.map(p=>house(p[5].lon)))], sz=[...new Set(samples.map(p=>house(p[6].lon)))];
+    lords.push(lord);
+    return `<div class="lens">${lensHead(b)}🎂 From your birthday: <b>${ord(ph)} house</b> (${HOUSES[ph-1].n.toLowerCase()}) · year planet <b>${GLYPH[lord]} ${lord}</b><br>♃ Luck zone: your ${jz.map(ord).join(" then ")} (${jz.map(x=>HOUSES[x-1].n.toLowerCase()).join(", ")})<br>♄ Work-hard zone: your ${sz.map(ord).join(" then ")} (${sz.map(x=>HOUSES[x-1].n.toLowerCase()).join(", ")})</div>`;})).join("");
+  const uniq=[...new Set(lords)];
+  return FULLHEAD+`<p class="lead">${uniq.length===1?`All 3 views give the same year planet: <b>${GLYPH[uniq[0]]} ${uniq[0]}</b>. Its moves this year really matter.`:`Your year planets: <b>${lords.map((l,i)=>`${GLYPH[l]} ${l} (${LENS[i][2]})`).join(", ")}</b>. Watch what each of them does this year.`}</p>`+h;
+}
+function fullChartHtml(){
+  const pts=NAT.pts;
+  let same=0;
+  const rows=pts.map(p=>{ const hs=LENS.map(([b])=>withBase(b,()=>house(p.lon))); const eq=hs[0]===hs[1]&&hs[1]===hs[2]; if(eq) same++;
+    return `<tr class="${eq?"same":""}"><td>${p.g.length>3?p.g:""} ${p.k}</td>${hs.map(x=>`<td>${ord(x)}<small>${HOUSES[x-1].n}</small></td>`).join("")}</tr>`;}).join("");
+  return FULLHEAD+`<p class="lead">Where each of your planets falls in all three views. ${same?`<b>Green rows</b> land in the same house in all 3 views, which makes those placements extra strong.`:`Each planet lands in a different house per view, so each view shows a different side of you: outer life (Rising), core self (Sun) and emotions (Moon).`}</p>
+    <table class="tri"><thead><tr><th>Planet</th><th>🌅 Rising</th><th>☀️ Sun</th><th>🌙 Moon</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+const FULLFN={fullDay:fullDayHtml,fullWeek:fullWeekHtml,fullMonth:fullMonthHtml,fullYear:fullYearHtml,fullChart:fullChartHtml};
+function renderFull(id){ const el=$(id); if(!el) return; if(houseBase!=="all"||!NAT){el.classList.add("hidden");return;} el.innerHTML=FULLFN[id](); el.classList.remove("hidden"); }
+{ const wrap=(fn,id)=>function(){ const r=fn.apply(this,arguments); renderFull(id); return r; };
+  renderDay=wrap(renderDay,"fullDay"); renderWeek=wrap(renderWeek,"fullWeek"); renderMonth=wrap(renderMonth,"fullMonth"); renderYear=wrap(renderYear,"fullYear"); renderChart=wrap(renderChart,"fullChart"); }
 
 window.HT={scoresAt:jd=>scoresAt(jd),jdFromUTCms};
 const saved=load();
