@@ -139,6 +139,14 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .wd .tip{font-size:.82rem;color:var(--muted)}
 .wd .we{font-size:.8rem;color:var(--accent);font-weight:600;margin-top:2px}
 .wd .go{flex:none;align-self:center;color:var(--muted);font-size:1.2rem}
+.basesw{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin:0 0 8px}
+.basesw button{margin:0;padding:9px 6px;background:transparent;color:var(--muted);font-size:.92rem;line-height:1.2}
+.basesw button small{display:block;font-size:.72rem;font-weight:500;opacity:.85}
+.basesw button.on{background:var(--ink);color:var(--bg)}
+.span2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:-4px 0 14px}
+.span2 button{margin:0;padding:8px;font-size:.88rem;background:var(--soft);color:var(--ink)}
+.span2 button.on{background:var(--accent);color:var(--accent-ink)}
+.wsep{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);font-weight:700;margin:12px 0 2px}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -206,6 +214,10 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
   </div>
 
   <div id="out" class="hidden">
+    <div class="basesw" id="baseSw" role="group" aria-label="Read houses from">
+      <button data-b="asc" class="on">🌅 Rising<small id="bsA"></small></button>
+      <button data-b="sun">☀️ Sun sign<small id="bsS"></small></button>
+    </div>
     <div class="tabs">
       <button data-t="today" class="on">Day</button>
       <button data-t="week">Week</button>
@@ -260,11 +272,12 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
         <div class="lbl" id="weekLbl"></div>
         <button id="nextWeek" aria-label="Next week">›</button>
       </div>
-      <button id="thisWeekBtn" class="ghost hidden">↺ Back to this week</button>
+      <div class="span2" id="weekSpan"><button data-s="1" class="on">1 week</button><button data-s="2">2 weeks</button></div>
+      <button id="thisWeekBtn" class="ghost hidden">↺ Back to the upcoming week</button>
       <div class="card"><h2>Week forecast</h2><p class="lead" id="weekSummary"></p></div>
       <div class="card">
         <h2>Day by day</h2>
-        <p class="small" style="margin-top:-6px">Overall score, strongest life area, and where the Moon is in your chart each day. <b>Tap a day</b> to open its full reading.</p>
+        <p class="small" style="margin-top:-6px">Monday to Saturday. Overall score, strongest life area, and where the Moon is in your chart each day. <b>Tap a day</b> to open its full reading.</p>
         <div id="weekDays"></div>
       </div>
       <div class="card"><h2>Life areas this week</h2><div class="ga" id="weekAreas"></div></div>
@@ -354,7 +367,8 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
       <div class="card">
         <h2>How to read this</h2>
         <p><b>Sun</b> is your core self. <b>Moon</b> is your emotions and what makes you feel safe. <b>Rising (Ascendant)</b> is the sign that was rising on the eastern horizon when you were born. It shapes your first impression and outward style.</p>
-        <p><b>Houses</b> are the 12 areas of life (money, home, work, love and so on). This page uses <i>whole-sign houses</i>: your Rising sign is your 1st house, the next sign is your 2nd, and so on.</p>
+        <p><b>Houses</b> are the 12 areas of life (money, home, work, love and so on). This page uses <i>whole-sign houses</i>: one sign is your 1st house, the next sign is your 2nd, and so on. Use the switch at the top to choose which sign is the 1st house:</p>
+        <p><b>🌅 Rising</b> uses your Rising sign. It's the most personal and accurate option, but it needs your exact birth time.<br><b>☀️ Sun sign</b> uses your Sun sign ("solar houses"). This is how newspaper and app horoscopes for your sign work. Use it as a second view.</p>
         <p><b>Transits</b> are today's planets making angles to your birth planets:</p>
         <p><span class="pill">☌ Conjunction 0°</span> merging, emphasis<br>
            <span class="pill">⚹ Sextile 60°</span> opportunity<br>
@@ -528,10 +542,13 @@ function aspVal(t,a){
 }
 
 // ---------- Chart state ----------
+let houseBase="asc", weekSpan=1;
+try{ if(localStorage.getItem("horoscope-base")==="sun") houseBase="sun"; }catch(e){}
+const upcomingMonday=()=>{const t=new Date(); const m=mondayOf(t); return t.getDay()===1?m:new Date(m.getFullYear(),m.getMonth(),m.getDate()+7);};
 let F=null, NAT=null, viewMs=null, weekSel=null, monthSel=null, yearSel=null;
 const mondayOf=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()-(x.getDay()+6)%7); return x;};
-const house=lon=>(signIdx(lon)-NAT.ascSign+12)%12+1;
-const ruler=h=>RULER[(NAT.ascSign+h-1)%12];
+const house=lon=>(signIdx(lon)-NAT.baseSign+12)%12+1;
+const ruler=h=>RULER[(NAT.baseSign+h-1)%12];
 
 function buildNatal(f){
   const [Y,Mo,D]=f.date.split("-").map(Number), [h,mi]=f.time.split(":").map(Number);
@@ -750,9 +767,22 @@ $("prevDay").onclick=()=>setView((viewMs??Date.now())-DAY);
 $("nextDay").onclick=()=>setView((viewMs??Date.now())+DAY);
 $("todayBtn").onclick=()=>setView(null);
 $("viewDate").onchange=e=>{ if(!e.target.value) return; const [y,m,d]=e.target.value.split("-").map(Number); setView(new Date(y,m-1,d,12).getTime()); };
-$("prevWeek").onclick=()=>{weekSel=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()-7);renderWeek();};
-$("nextWeek").onclick=()=>{weekSel=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()+7);renderWeek();};
-$("thisWeekBtn").onclick=()=>{weekSel=mondayOf(new Date());renderWeek();};
+$("prevWeek").onclick=()=>{weekSel=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()-7*weekSpan);renderWeek();};
+$("nextWeek").onclick=()=>{weekSel=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()+7*weekSpan);renderWeek();};
+$("thisWeekBtn").onclick=()=>{weekSel=upcomingMonday();renderWeek();};
+document.querySelectorAll("#weekSpan button").forEach(b=>b.onclick=()=>{weekSpan=+b.dataset.s; document.querySelectorAll("#weekSpan button").forEach(x=>x.classList.toggle("on",x===b)); renderWeek();});
+function applyBase(){
+  if(!NAT) return;
+  NAT.baseSign=houseBase==="sun"?signIdx(NAT.planets[0].lon):NAT.ascSign;
+  NAT.baseLon=houseBase==="sun"?NAT.planets[0].lon:NAT.asc;
+  $("bsA").textContent=SIGNS[NAT.ascSign]+" = 1st house"; $("bsS").textContent=SIGNS[signIdx(NAT.planets[0].lon)]+" = 1st house";
+  document.querySelectorAll("#baseSw button").forEach(x=>x.classList.toggle("on",x.dataset.b===houseBase));
+}
+document.querySelectorAll("#baseSw button").forEach(b=>b.onclick=()=>{
+  houseBase=b.dataset.b; try{localStorage.setItem("horoscope-base",houseBase);}catch(e){}
+  stopTalk(); applyBase(); selHouse=null; renderChart(); renderDay();
+  if(tab==="week") renderWeek(); if(tab==="month") renderMonth(); if(tab==="year") renderYear();
+});
 $("prevMonth").onclick=()=>{monthSel=new Date(monthSel.getFullYear(),monthSel.getMonth()-1,1);renderMonth();};
 $("nextMonth").onclick=()=>{monthSel=new Date(monthSel.getFullYear(),monthSel.getMonth()+1,1);renderMonth();};
 $("prevYear").onclick=()=>{yearSel--;renderYear();};
@@ -760,7 +790,7 @@ $("nextYear").onclick=()=>{yearSel++;renderYear();};
 
 function start(f){
   F=f; NAT=buildNatal(f);
-  const n=new Date(); weekSel=mondayOf(n); monthSel=new Date(n.getFullYear(),n.getMonth(),1); yearSel=n.getFullYear();
+  const n=new Date(); weekSel=upcomingMonday(); applyBase(); monthSel=new Date(n.getFullYear(),n.getMonth(),1); yearSel=n.getFullYear();
   renderChart(); renderDay();
   if(tab==="month") renderMonth();
   if(tab==="year") renderYear();
@@ -854,43 +884,45 @@ function topAspects(now){
 // ---------- Week tab ----------
 function renderWeek(){
   if(!NAT) return;
-  const arr=daysFrom(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate(),7), days=arr.slice(1,8), end=days[6].day;
+  const n=7*weekSpan-1, arr=daysFrom(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate(),n);
+  const days=arr.slice(1,n+1).filter(x=>x.day.getDay()!==0), end=days[days.length-1].day;
   const fmt=x=>x.toLocaleDateString(undefined,{month:"short",day:"numeric"});
   $("weekLbl").textContent=`${fmt(days[0].day)} – ${fmt(end)}${end.getFullYear()!==new Date().getFullYear()?", "+end.getFullYear():""}`;
-  const thisWeek=ymd(mondayOf(new Date()))===ymd(weekSel);
-  $("thisWeekBtn").classList.toggle("hidden",thisWeek);
+  $("thisWeekBtn").classList.toggle("hidden",ymd(upcomingMonday())===ymd(weekSel));
   const S=areaSets(), sc=days.map(x=>({day:x.day,pos:x.pos,...scoresAt(x.jd,x.pos)}));
-  const ev=scanEvents(arr), todayY=ymd(new Date());
-  const rank=sc.slice().sort((a,b)=>b.all-a.all), bestD=rank[0], badD=rank[6];
+  const ev=scanEvents(arr).filter(e=>new Date(e.ms).getDay()!==0), todayY=ymd(new Date());
+  const rank=sc.slice().sort((a,b)=>b.all-a.all), bestD=rank[0], badD=rank[rank.length-1];
   const ovr=x=>Math.max(1,Math.min(5,Math.round(3+x.all*.9)));
-  $("weekDays").innerHTML=sc.map(x=>{
+  let html="";
+  sc.forEach((x,i)=>{
+    if(weekSpan>1&&x.day.getDay()===1) html+=`<div class="wsep">Week of ${fmt(x.day)}</div>`;
     const ml=x.pos[1].lon, ms=SIGNS[signIdx(ml)], h=house(ml);
     const best=Object.keys(x.sc).sort((a,b)=>x.tot[b]-x.tot[a])[0];
     const evs=ev.filter(e=>ymd(new Date(e.ms))===ymd(x.day));
     const cls=(ymd(x.day)===todayY?" today":"")+(x===bestD?" best":x===badD?" bad":"");
-    return `<div class="wd${cls}" data-ms="${x.day.getTime()}">
+    html+=`<div class="wd${cls}" data-ms="${x.day.getTime()}">
       <div class="d"><span>${x.day.toLocaleDateString(undefined,{weekday:"short"})}</span><b>${x.day.getDate()}</b>${x===bestD?'<span style="color:var(--good)">best</span>':x===badD?'<span style="color:var(--hard)">careful</span>':""}</div>
       <div class="t"><div class="row1">${dotsHtml(ovr(x))}<span class="tag">${S[best].ic} ${best}</span></div>
         <div class="mn">${SG[signIdx(ml)]} Moon in ${ms} · your ${ord(h)} house (${HOUSES[h-1].n.toLowerCase()})</div>
         <div class="tip">${MOON_SIGN_DAY[ms]}</div>
         ${evs.map(e=>`<div class="we">${e.ic} ${e.title}</div>`).join("")}</div>
       <div class="go">›</div></div>`;
-  }).join("");
+  });
+  $("weekDays").innerHTML=html;
   document.querySelectorAll("#weekDays .wd").forEach(w=>w.onclick=()=>{ setView(+w.dataset.ms+12*3600000); document.querySelector('.tabs button[data-t="today"]').click(); });
   $("weekAreas").innerHTML=Object.keys(S).map(k=>{
-    const avg=sc.reduce((s,x)=>s+x.sc[k],0)/7, s=Math.max(1,Math.min(5,Math.round(avg)));
-    const pk=sc.slice().sort((a,b)=>b.tot[k]-a.tot[k])[0].day.toLocaleDateString(undefined,{weekday:"long"});
+    const avg=sc.reduce((s,x)=>s+x.sc[k],0)/sc.length, s=Math.max(1,Math.min(5,Math.round(avg)));
+    const pk=sc.slice().sort((a,b)=>b.tot[k]-a.tot[k])[0].day.toLocaleDateString(undefined,{weekday:"long",month:weekSpan>1?"short":undefined,day:weekSpan>1?"numeric":undefined});
     return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(s)}<div class="why">${VERDICT[s]} Best day: ${pk}.</div>`;
   }).join("");
-  $("weekEvents").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">No major events this week. Steady days.</p>`;
+  $("weekEvents").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">No major events in these days. Steady days.</p>`;
   const totA=k=>sc.reduce((s,x)=>s+x.tot[k],0), areas=Object.keys(S).sort((a,b)=>totA(b)-totA(a));
   const mh=[...new Set(sc.map(x=>house(x.pos[1].lon)))];
-  const wd=x=>x.day.toLocaleDateString(undefined,{weekday:"long"});
-  let sum=`The Moon moves through your ${mh.map(ord).join(", ")} houses (${mh.map(h=>HOUSES[h-1].n.toLowerCase()).join(" → ")}), so that's where your attention goes this week. <b>Strongest area: ${areas[0]}.</b> Weakest: ${areas[3]}. <b>Best day: ${wd(bestD)}.</b> Be careful on ${wd(badD)}.`;
-  const big=ev.filter(e=>e.kind==="big"||e.type==="station"||(e.type==="ingress"&&e.p!=="Moon"));
-  if(big.length) sum+=` Watch for: ${big.slice(0,3).map(e=>`${e.title} (${new Date(e.ms).toLocaleDateString(undefined,{weekday:"short"})})`).join(", ")}.`;
-  const retro=sc[0].pos.filter(p=>p.retro).map(p=>p.k);
-  if(retro.includes("Mercury")) sum+=` Mercury is retrograde, so double-check tech, emails and plans.`;
+  const wd=x=>x.day.toLocaleDateString(undefined,{weekday:"long",month:weekSpan>1?"short":undefined,day:weekSpan>1?"numeric":undefined});
+  let sum=`${weekSpan>1?"Over these two weeks, the":"The"} Moon moves through your ${mh.map(ord).join(", ")} houses (${mh.map(h=>HOUSES[h-1].n.toLowerCase()).join(" → ")}), so that's where your attention goes. <b>Strongest area: ${areas[0]}.</b> Weakest: ${areas[3]}. <b>Best day: ${wd(bestD)}.</b> Be careful on ${wd(badD)}.`;
+  const big=ev.filter(e=>e.kind==="big"||e.type==="station"||e.type==="ingress");
+  if(big.length) sum+=` Watch for: ${big.slice(0,4).map(e=>`${e.title} (${new Date(e.ms).toLocaleDateString(undefined,{weekday:"short",day:"numeric"})})`).join(", ")}.`;
+  if(sc.some(x=>x.pos[2].retro)) sum+=` Mercury is retrograde for part of this time, so double-check tech, emails and plans.`;
   $("weekSummary").innerHTML=sum;
 }
 
@@ -968,7 +1000,7 @@ function renderYear(){
   const mName=i=>new Date(Y,i,1).toLocaleDateString(undefined,{month:"short"});
   $("yearBars").innerHTML=vals.map((v,i)=>`<div><i class="${order.slice(0,3).includes(i)?"top":order.slice(-2).includes(i)?"low":""}" style="height:${15+70*(v-mn)/((mx-mn)||1)}%"></i>${mName(i)[0]}</div>`).join("");
   // profection
-  const age=Y-NAT.by, h=age%12+1, sign=(NAT.ascSign+age)%12, lord=RULER[sign];
+  const age=Y-NAT.by, h=age%12+1, sign=(NAT.baseSign+age)%12, lord=RULER[sign];
   const prevH=(age-1+12)%12+1;
   const lordNat=NAT.planets.find(p=>p.k===lord);
   $("yearTheme").innerHTML=`<p style="margin:0"><b>From your birthday (${new Date(Y,NAT.bm,NAT.bd).toLocaleDateString(undefined,{month:"short",day:"numeric"})}), you turn ${age}.</b> That turns on your <b>${ord(h)} house: ${HOUSE_TXT[h-1]}</b>. Your <b>year planet is ${GLYPH[lord]} ${lord}</b> (${PL.find(p=>p.k===lord).m}), and its moves this year affect you most.</p>
@@ -1041,9 +1073,9 @@ const PFULL={
 const PVERB={Sun:"you shine and find purpose through",Moon:"you need emotional security through",Mercury:"your mind focuses on",Venus:"you find love, pleasure and money through",Mars:"you put your energy and fight into",Jupiter:"luck and growth come through",Saturn:"hard lessons, and later lasting success, come through",Uranus:"sudden changes and originality show up in",Neptune:"dreams and intuition (and sometimes confusion) show up in"};
 let selHouse=null;
 function houseHtml(h,big){
-  const si=(NAT.ascSign+h-1)%12, H=HOUSES[h-1], rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl);
+  const si=(NAT.baseSign+h-1)%12, H=HOUSES[h-1], rl=RULER[si], rp=NAT.planets.find(p=>p.k===rl);
   const inside=NAT.planets.filter(p=>house(p.lon)===h);
-  const tags=[]; if(h===1) tags.push("Ascendant"); if(house(NAT.mc)===h) tags.push("Midheaven");
+  const tags=[]; if(house(NAT.asc)===h) tags.push("Ascendant"); if(houseBase==="sun"&&h===1) tags.push("your Sun sign"); if(house(NAT.mc)===h) tags.push("Midheaven");
   let s=`<div class="hl"><div class="top"><div class="num">${h}</div><div><div class="nm">${ord(h)} house · ${H.n}</div>
     <div class="sg">${SG[si]} ${SIGNS[si]} · ruled by ${GLYPH[rl]} ${rl} (in your ${ord(house(rp.lon))})${tags.length?" · "+tags.join(", "):""}</div></div></div>
     <div class="kw"><b>Represents:</b> ${H.k}. ${big?H.d:""}</div>
@@ -1131,7 +1163,7 @@ document.querySelectorAll("#wheelMode button").forEach(b=>b.onclick=()=>{
 const HSHORT=["you, body, looks, first impressions","income, savings, possessions, values","talking, messages, learning, siblings, short trips","home, family, parents, roots","romance, fun, kids, hobbies, creativity","daily job, health, routines, coworkers","marriage, partners, clients, contracts","shared money, debts, taxes, intimacy, big changes","travel, study, beliefs, law, abroad","career, status, reputation, boss","friends, networks, groups, hopes","rest, secrets, spirituality, hidden things"];
 const PSHORT={Sun:"you, ego, energy, purpose",Moon:"feelings, needs, mom, home",Mercury:"mind, talking, tech, learning",Venus:"love, money, beauty, taste",Mars:"drive, action, anger, courage",Jupiter:"luck, growth, wisdom",Saturn:"duty, limits, hard work, time",Uranus:"change, freedom, surprises",Neptune:"dreams, intuition, spirituality",Ascendant:"first impression, style",Midheaven:"career goal, reputation"};
 function renderLegend(planets){
-  $("legH").innerHTML=Array.from({length:12},(_,i)=>{const h=i+1, si=(NAT.ascSign+i)%12;
+  $("legH").innerHTML=Array.from({length:12},(_,i)=>{const h=i+1, si=(NAT.baseSign+i)%12;
     return `<div class="it${selHouse===h?" sel":""}" data-lh="${h}"><div class="b">${h}</div><div class="tx"><b>${HOUSES[i].n} <i>${SG[si]}</i></b><span>${HSHORT[i]}</span></div></div>`;}).join("");
   const pts=wheelMode==="now"?planets:NAT.pts;
   $("legPT").textContent=wheelMode==="now"?"Planets now":"Planets";
@@ -1142,14 +1174,14 @@ function wheelPlanets(){ return wheelMode==="now"?positions(jdFromUTCms(Date.now
 
 // ---------- Wheel ----------
 function drawWheel(){
-  const asc=NAT.asc, cx=200, cy=200, R=197, rS=150, rC=46;
+  const asc=NAT.baseLon, cx=200, cy=200, R=197, rS=150, rC=46;
   const css=getComputedStyle(document.documentElement), c=n=>css.getPropertyValue(n).trim();
   const pt=(lon,r)=>{const a=(180+(lon-asc))*D2R; return [+(cx+r*Math.cos(a)).toFixed(1), +(cy-r*Math.sin(a)).toFixed(1)];};
   const sector=(l0,l1,r0,r1)=>{const [a,b]=pt(l0,r1),[e,f]=pt(l1,r1),[g,h]=pt(l1,r0),[i,j]=pt(l0,r0);
     return `M${a},${b} A${r1},${r1} 0 0 0 ${e},${f} L${g},${h} A${r0},${r0} 0 0 1 ${i},${j} Z`;};
   let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${c('--card')}" stroke="${c('--line')}"/>`;
   for(let i=0;i<12;i++){
-    const h=(i-NAT.ascSign+12)%12+1, col=c('--'+ELEM[i%4]);
+    const h=(i-NAT.baseSign+12)%12+1, col=c('--'+ELEM[i%4]);
     s+=`<path d="${sector(i*30,i*30+30,rS,R)}" fill="${col}" fill-opacity=".13" stroke="${c('--line')}"/>`;
     s+=`<path data-h="${h}" d="${sector(i*30,i*30+30,rC,rS)}" fill="${c('--accent')}" fill-opacity="0" stroke="${c('--line')}"><title>${ord(h)} house: ${HOUSES[h-1].n}</title></path>`;
     const [gx,gy]=pt(i*30+15,(R+rS)/2);
@@ -1157,10 +1189,10 @@ function drawWheel(){
         <text x="${gx}" y="${gy+10}" text-anchor="middle" dominant-baseline="central" font-size="8.5" font-weight="600" fill="${c('--ink')}" pointer-events="none">${SIGNS[i]}</text>`;
   }
   s+=`<circle cx="${cx}" cy="${cy}" r="${rC}" fill="${c('--soft')}" stroke="${c('--line')}" pointer-events="none"/>`;
-  for(let i=0;i<12;i++){const [hx,hy]=pt(i*30+15,33); const h=(i-NAT.ascSign+12)%12+1;
+  for(let i=0;i<12;i++){const [hx,hy]=pt(i*30+15,33); const h=(i-NAT.baseSign+12)%12+1;
     s+=`<text x="${hx}" y="${hy}" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="700" fill="${c('--accent')}" pointer-events="none">${h}</text>`;}
   // angles
-  [["ASC",asc],["MC",NAT.mc]].forEach(([l,lon])=>{const [a,b]=pt(lon,rC),[e,f]=pt(lon,rS),[tx,ty]=pt(lon,rC+16);
+  [["ASC",NAT.asc],["MC",NAT.mc]].forEach(([l,lon])=>{const [a,b]=pt(lon,rC),[e,f]=pt(lon,rS),[tx,ty]=pt(lon,rC+16);
     s+=`<line x1="${a}" y1="${b}" x2="${e}" y2="${f}" stroke="${c('--accent')}" stroke-width="2" stroke-dasharray="4 3" pointer-events="none"/>
         <text x="${tx}" y="${ty-5}" text-anchor="middle" font-size="9" font-weight="700" fill="${c('--accent')}" pointer-events="none">${l}</text>`;});
   // planets: stack crowded ones on inner levels so they stay in their own sign
