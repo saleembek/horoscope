@@ -124,6 +124,21 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .leg .tx span{color:var(--muted)}
 .leg .tx i{font-style:normal;color:var(--accent);font-weight:600}
 @media (min-width:700px){.leg .it{font-size:.8rem}}
+.wd{display:flex;gap:10px;padding:10px 8px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:10px}
+.wd:last-child{border-bottom:0}
+.wd.today{background:var(--soft);outline:2px solid var(--accent);outline-offset:-2px}
+.wd .d{width:44px;flex:none;text-align:center;line-height:1.15}
+.wd .d span{font-size:.7rem;color:var(--muted);text-transform:uppercase}
+.wd .d b{display:block;font-size:1.3rem}
+.wd.best .d b{color:var(--good)} .wd.bad .d b{color:var(--hard)}
+.wd .t{flex:1;min-width:0}
+.wd .row1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.wd .tag{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--soft);white-space:nowrap}
+.wd.today .tag{background:var(--card)}
+.wd .mn{font-size:.85rem;margin-top:4px}
+.wd .tip{font-size:.82rem;color:var(--muted)}
+.wd .we{font-size:.8rem;color:var(--accent);font-weight:600;margin-top:2px}
+.wd .go{flex:none;align-self:center;color:var(--muted);font-size:1.2rem}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -193,6 +208,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
   <div id="out" class="hidden">
     <div class="tabs">
       <button data-t="today" class="on">Day</button>
+      <button data-t="week">Week</button>
       <button data-t="month">Month</button>
       <button data-t="year">Year</button>
       <button data-t="chart">Chart</button>
@@ -235,6 +251,24 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
         <h2>Planets on this day</h2>
         <table id="nowTable"></table>
       </div>
+    </section>
+
+    <!-- WEEK -->
+    <section id="t-week" class="hidden">
+      <div class="card nav">
+        <button id="prevWeek" aria-label="Previous week">‹</button>
+        <div class="lbl" id="weekLbl"></div>
+        <button id="nextWeek" aria-label="Next week">›</button>
+      </div>
+      <button id="thisWeekBtn" class="ghost hidden">↺ Back to this week</button>
+      <div class="card"><h2>Week forecast</h2><p class="lead" id="weekSummary"></p></div>
+      <div class="card">
+        <h2>Day by day</h2>
+        <p class="small" style="margin-top:-6px">Overall score, strongest life area, and where the Moon is in your chart each day. <b>Tap a day</b> to open its full reading.</p>
+        <div id="weekDays"></div>
+      </div>
+      <div class="card"><h2>Life areas this week</h2><div class="ga" id="weekAreas"></div></div>
+      <div class="card"><h2>Key dates this week</h2><div id="weekEvents"></div></div>
     </section>
 
     <!-- MONTH -->
@@ -494,7 +528,8 @@ function aspVal(t,a){
 }
 
 // ---------- Chart state ----------
-let F=null, NAT=null, viewMs=null, monthSel=null, yearSel=null;
+let F=null, NAT=null, viewMs=null, weekSel=null, monthSel=null, yearSel=null;
+const mondayOf=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()-(x.getDay()+6)%7); return x;};
 const house=lon=>(signIdx(lon)-NAT.ascSign+12)%12+1;
 const ruler=h=>RULER[(NAT.ascSign+h-1)%12];
 
@@ -662,6 +697,9 @@ function speechText(){
   if(tab==="today") t=[txt("todayTitle"),txt("moonText"),txt("dailyNote"),"Day at a glance.",
       [...document.querySelectorAll("#glance .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
       "Best hours. "+txt("hoursText"),"Coming up. "+ev("#next30 .ev")];
+  else if(tab==="week") t=[txt("weekLbl")+".",txt("weekSummary"),"Day by day.",
+      [...document.querySelectorAll("#weekDays .wd")].map(w=>`${new Date(+w.dataset.ms).toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})}: ${w.querySelectorAll(".dots i.f").length} out of 5. Best for ${w.querySelector(".tag").innerText}. ${w.querySelector(".mn").innerText}. ${w.querySelector(".tip").innerText}`).join(" "),
+      [...document.querySelectorAll("#weekAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" ")];
   else if(tab==="month") t=[txt("monthLbl")+" forecast.",txt("monthSummary"),
       [...document.querySelectorAll("#monthAreas .lab")].map(l=>{const d=l.nextElementSibling, w=d.nextElementSibling; return `${l.innerText}: ${d.querySelectorAll("i.f").length} out of 5. ${w.innerText}`;}).join(" "),
       "Best days: "+txt("bestDays").replace(/\n/g,", "),"Careful days: "+txt("badDays").replace(/\n/g,", ")];
@@ -686,9 +724,10 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
   stopTalk();
   tab=b.dataset.t;
   document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));
-  ["today","month","year","chart","learn"].forEach(t=>$("t-"+t).classList.toggle("hidden",t!==tab));
+  ["today","week","month","year","chart","learn"].forEach(t=>$("t-"+t).classList.toggle("hidden",t!==tab));
   if(tab==="month") renderMonth();
   if(tab==="year") renderYear();
+  if(tab==="week") renderWeek();
   window.scrollTo({top:0,behavior:"smooth"});
 });
 $("edit").onclick=()=>{stopTalk();$("listen").classList.add("hidden");$("formCard").classList.remove("hidden");$("out").classList.add("hidden");window.scrollTo({top:0});};
@@ -711,6 +750,9 @@ $("prevDay").onclick=()=>setView((viewMs??Date.now())-DAY);
 $("nextDay").onclick=()=>setView((viewMs??Date.now())+DAY);
 $("todayBtn").onclick=()=>setView(null);
 $("viewDate").onchange=e=>{ if(!e.target.value) return; const [y,m,d]=e.target.value.split("-").map(Number); setView(new Date(y,m-1,d,12).getTime()); };
+$("prevWeek").onclick=()=>{weekSel=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()-7);renderWeek();};
+$("nextWeek").onclick=()=>{weekSel=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()+7);renderWeek();};
+$("thisWeekBtn").onclick=()=>{weekSel=mondayOf(new Date());renderWeek();};
 $("prevMonth").onclick=()=>{monthSel=new Date(monthSel.getFullYear(),monthSel.getMonth()-1,1);renderMonth();};
 $("nextMonth").onclick=()=>{monthSel=new Date(monthSel.getFullYear(),monthSel.getMonth()+1,1);renderMonth();};
 $("prevYear").onclick=()=>{yearSel--;renderYear();};
@@ -718,10 +760,11 @@ $("nextYear").onclick=()=>{yearSel++;renderYear();};
 
 function start(f){
   F=f; NAT=buildNatal(f);
-  const n=new Date(); monthSel=new Date(n.getFullYear(),n.getMonth(),1); yearSel=n.getFullYear();
+  const n=new Date(); weekSel=mondayOf(n); monthSel=new Date(n.getFullYear(),n.getMonth(),1); yearSel=n.getFullYear();
   renderChart(); renderDay();
   if(tab==="month") renderMonth();
   if(tab==="year") renderYear();
+  if(tab==="week") renderWeek();
   $("formCard").classList.add("hidden"); $("out").classList.remove("hidden"); $("listen").classList.remove("hidden");
   window.scrollTo({top:0});
 }
@@ -806,6 +849,49 @@ function topAspects(now){
   now.forEach(t=>NAT.pts.forEach(n=>{ const x=aspectOf(t.lon,n.lon,8); if(x) out.push({t,n,a:x.a,orb:x.orb}); }));
   const w={Sun:3,Moon:1,Mercury:2,Venus:2,Mars:2,Jupiter:4,Saturn:5,Uranus:5,Neptune:5};
   return out.sort((x,y)=>(x.orb-y.orb)-(w[x.t.k]-w[y.t.k])*0.3).slice(0,8);
+}
+
+// ---------- Week tab ----------
+function renderWeek(){
+  if(!NAT) return;
+  const arr=daysFrom(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate(),7), days=arr.slice(1,8), end=days[6].day;
+  const fmt=x=>x.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  $("weekLbl").textContent=`${fmt(days[0].day)} – ${fmt(end)}${end.getFullYear()!==new Date().getFullYear()?", "+end.getFullYear():""}`;
+  const thisWeek=ymd(mondayOf(new Date()))===ymd(weekSel);
+  $("thisWeekBtn").classList.toggle("hidden",thisWeek);
+  const S=areaSets(), sc=days.map(x=>({day:x.day,pos:x.pos,...scoresAt(x.jd,x.pos)}));
+  const ev=scanEvents(arr), todayY=ymd(new Date());
+  const rank=sc.slice().sort((a,b)=>b.all-a.all), bestD=rank[0], badD=rank[6];
+  const ovr=x=>Math.max(1,Math.min(5,Math.round(3+x.all*.9)));
+  $("weekDays").innerHTML=sc.map(x=>{
+    const ml=x.pos[1].lon, ms=SIGNS[signIdx(ml)], h=house(ml);
+    const best=Object.keys(x.sc).sort((a,b)=>x.tot[b]-x.tot[a])[0];
+    const evs=ev.filter(e=>ymd(new Date(e.ms))===ymd(x.day));
+    const cls=(ymd(x.day)===todayY?" today":"")+(x===bestD?" best":x===badD?" bad":"");
+    return `<div class="wd${cls}" data-ms="${x.day.getTime()}">
+      <div class="d"><span>${x.day.toLocaleDateString(undefined,{weekday:"short"})}</span><b>${x.day.getDate()}</b>${x===bestD?'<span style="color:var(--good)">best</span>':x===badD?'<span style="color:var(--hard)">careful</span>':""}</div>
+      <div class="t"><div class="row1">${dotsHtml(ovr(x))}<span class="tag">${S[best].ic} ${best}</span></div>
+        <div class="mn">${SG[signIdx(ml)]} Moon in ${ms} · your ${ord(h)} house (${HOUSES[h-1].n.toLowerCase()})</div>
+        <div class="tip">${MOON_SIGN_DAY[ms]}</div>
+        ${evs.map(e=>`<div class="we">${e.ic} ${e.title}</div>`).join("")}</div>
+      <div class="go">›</div></div>`;
+  }).join("");
+  document.querySelectorAll("#weekDays .wd").forEach(w=>w.onclick=()=>{ setView(+w.dataset.ms+12*3600000); document.querySelector('.tabs button[data-t="today"]').click(); });
+  $("weekAreas").innerHTML=Object.keys(S).map(k=>{
+    const avg=sc.reduce((s,x)=>s+x.sc[k],0)/7, s=Math.max(1,Math.min(5,Math.round(avg)));
+    const pk=sc.slice().sort((a,b)=>b.tot[k]-a.tot[k])[0].day.toLocaleDateString(undefined,{weekday:"long"});
+    return `<div class="lab">${S[k].ic} ${k}</div>${dotsHtml(s)}<div class="why">${VERDICT[s]} Best day: ${pk}.</div>`;
+  }).join("");
+  $("weekEvents").innerHTML=ev.length?ev.map(evHtml).join(""):`<p class="small">No major events this week. Steady days.</p>`;
+  const totA=k=>sc.reduce((s,x)=>s+x.tot[k],0), areas=Object.keys(S).sort((a,b)=>totA(b)-totA(a));
+  const mh=[...new Set(sc.map(x=>house(x.pos[1].lon)))];
+  const wd=x=>x.day.toLocaleDateString(undefined,{weekday:"long"});
+  let sum=`The Moon moves through your ${mh.map(ord).join(", ")} houses (${mh.map(h=>HOUSES[h-1].n.toLowerCase()).join(" → ")}), so that's where your attention goes this week. <b>Strongest area: ${areas[0]}.</b> Weakest: ${areas[3]}. <b>Best day: ${wd(bestD)}.</b> Be careful on ${wd(badD)}.`;
+  const big=ev.filter(e=>e.kind==="big"||e.type==="station"||(e.type==="ingress"&&e.p!=="Moon"));
+  if(big.length) sum+=` Watch for: ${big.slice(0,3).map(e=>`${e.title} (${new Date(e.ms).toLocaleDateString(undefined,{weekday:"short"})})`).join(", ")}.`;
+  const retro=sc[0].pos.filter(p=>p.retro).map(p=>p.k);
+  if(retro.includes("Mercury")) sum+=` Mercury is retrograde, so double-check tech, emails and plans.`;
+  $("weekSummary").innerHTML=sum;
 }
 
 // ---------- Month tab ----------
