@@ -155,6 +155,12 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
 .cres .o b{font-size:.95rem}
 .cres .o span{display:block;font-size:.78rem;color:var(--muted)}
 .cres .msg{padding:10px 12px;font-size:.85rem;color:var(--muted)}
+.wchips{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:-4px -16px 14px;padding:2px 16px 6px;scrollbar-width:none}
+.wchips::-webkit-scrollbar{display:none}
+.wchips button{flex:none;width:auto;margin:0;padding:7px 12px;border-radius:12px;background:var(--soft);color:var(--ink);font-size:.85rem;line-height:1.2;text-align:center}
+.wchips button small{display:block;font-size:.68rem;font-weight:500;color:var(--muted)}
+.wchips button.on{background:var(--accent);color:var(--accent-ink)}
+.wchips button.on small{color:var(--accent-ink);opacity:.85}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -284,7 +290,7 @@ td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertic
         <div class="lbl" id="weekLbl"></div>
         <button id="nextWeek" aria-label="Next week">›</button>
       </div>
-      <div class="span2" id="weekSpan"><button data-s="1" class="on">1 week</button><button data-s="2">2 weeks</button></div>
+      <div class="wchips" id="weekChips" role="tablist" aria-label="Pick a week"></div>
       <button id="thisWeekBtn" class="ghost hidden">↺ Back to the upcoming week</button>
       <div class="card"><h2>Week forecast</h2><p class="lead" id="weekSummary"></p></div>
       <div class="card">
@@ -843,7 +849,15 @@ $("viewDate").onchange=e=>{ if(!e.target.value) return; const [y,m,d]=e.target.v
 $("prevWeek").onclick=()=>{weekSel=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()-7*weekSpan);renderWeek();};
 $("nextWeek").onclick=()=>{weekSel=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()+7*weekSpan);renderWeek();};
 $("thisWeekBtn").onclick=()=>{weekSel=upcomingMonday();renderWeek();};
-document.querySelectorAll("#weekSpan button").forEach(b=>b.onclick=()=>{weekSpan=+b.dataset.s; document.querySelectorAll("#weekSpan button").forEach(x=>x.classList.toggle("on",x===b)); renderWeek();});
+function renderWeekChips(){
+  const base=upcomingMonday(), box=$("weekChips"); let h="";
+  for(let i=0;i<12;i++){ const m=new Date(base.getFullYear(),base.getMonth(),base.getDate()+7*i), sa=new Date(m.getFullYear(),m.getMonth(),m.getDate()+5);
+    const lbl=m.getMonth()===sa.getMonth()?`${m.toLocaleDateString(undefined,{month:"short"})} ${m.getDate()}–${sa.getDate()}`:`${m.toLocaleDateString(undefined,{month:"short",day:"numeric"})} – ${sa.toLocaleDateString(undefined,{month:"short",day:"numeric"})}`;
+    h+=`<button class="${ymd(m)===ymd(weekSel)?"on":""}" data-ms="${m.getTime()}"><small>Week ${i+1}</small>${lbl}</button>`; }
+  box.innerHTML=h;
+  box.querySelectorAll("button").forEach(b=>b.onclick=()=>{weekSel=new Date(+b.dataset.ms); renderWeek();});
+  const on=box.querySelector(".on"); if(on) box.scrollLeft=Math.max(0,on.getBoundingClientRect().left-box.getBoundingClientRect().left+box.scrollLeft-(box.clientWidth-on.offsetWidth)/2);
+}
 function applyBase(){
   if(!NAT) return;
   NAT.baseSign=houseBase==="sun"?signIdx(NAT.planets[0].lon):NAT.ascSign;
@@ -961,7 +975,7 @@ function renderWeek(){
   const days=arr.slice(1,n+1).filter(x=>x.day.getDay()!==0), end=days[days.length-1].day;
   const fmt=x=>x.toLocaleDateString(undefined,{month:"short",day:"numeric"});
   $("weekLbl").textContent=`${fmt(days[0].day)} – ${fmt(end)}${end.getFullYear()!==new Date().getFullYear()?", "+end.getFullYear():""}`;
-  $("thisWeekBtn").classList.toggle("hidden",ymd(upcomingMonday())===ymd(weekSel));
+  $("thisWeekBtn").classList.toggle("hidden",ymd(upcomingMonday())===ymd(weekSel)); renderWeekChips();
   const S=areaSets(), sc=days.map(x=>({day:x.day,pos:x.pos,...scoresAt(x.jd,x.pos)}));
   const ev=scanEvents(arr).filter(e=>new Date(e.ms).getDay()!==0), todayY=ymd(new Date());
   const rank=sc.slice().sort((a,b)=>b.all-a.all), bestD=rank[0], badD=rank[rank.length-1];
