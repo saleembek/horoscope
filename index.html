@@ -221,6 +221,22 @@ html[dir=rtl] .hl .kw,html[dir=rtl] .hl .rd,html[dir=rtl] .hl .pp{margin-left:0;
 html[dir=rtl] .asp{border-left:0;border-right:4px solid var(--line)}
 html[dir=rtl] .asp.easy{border-right-color:var(--good)} html[dir=rtl] .asp.hard{border-right-color:var(--hard)} html[dir=rtl] .asp.conj{border-right-color:var(--accent)}
 html[dir=rtl] .xl{text-underline-offset:5px}
+.shplay{display:flex;align-items:center;gap:10px;margin:10px 0 4px;direction:ltr}
+.shplay .pl{width:44px;height:44px;flex:none;margin:0;padding:0;border-radius:50%;font-size:1.1rem}
+.shplay input[type=range]{flex:1;padding:0;border:0;height:8px;border-radius:4px;background:var(--mid);-webkit-appearance:none;appearance:none;outline:none}
+.shplay input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--accent);border:3px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.shplay input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);border:3px solid var(--card)}
+.shplay .lbl2{min-width:96px;text-align:center;font-size:.85rem;font-weight:600}
+.shleg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:4px 0 6px}
+.shleg span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;background:var(--soft);font-size:.9rem}
+.shleg i,.jr .jh i{display:inline-block;width:10px;height:10px;border-radius:50%}
+.jr{padding:10px 4px;border-bottom:1px solid var(--line)}
+.jr:last-child{border-bottom:0}
+.jr .jh{display:flex;align-items:center;gap:7px}
+.jr .jh .dir{margin-inline-start:auto;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:99px}
+.jr .jh .dir.f{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.jr .jh .dir.b{background:color-mix(in srgb,var(--hard) 18%,transparent);color:var(--hard)}
+.jr .jp{font-size:.9rem;margin:3px 0 2px}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -355,6 +371,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
       </div>
       <div class="wchips" id="weekChips" role="tablist" aria-label="Pick a week"></div>
       <button id="thisWeekBtn" class="ghost hidden" data-ar="↺ العودة إلى الأسبوع القادم">↺ Back to the upcoming week</button>
+      <div class="card shcard" id="shWeek"></div>
       <div class="card full hidden" id="fullWeek"></div>
       <div class="card"><h2 data-ar="توقعات الأسبوع">Week forecast</h2><p class="lead" id="weekSummary"></p></div>
       <div class="card">
@@ -373,6 +390,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
         <div class="lbl" id="monthLbl"></div>
         <button id="nextMonth" aria-label="Next month">›</button>
       </div>
+<div class="card shcard" id="shMonth"></div>
 <div class="card full hidden" id="fullMonth"></div>
       <div class="card"><h2 data-ar="توقعات الشهر">Month forecast</h2><p class="lead" id="monthSummary"></p></div>
       <div class="card"><h2 data-ar="مجالات الحياة هذا الشهر">Life areas this month</h2><div class="ga" id="monthAreas"></div></div>
@@ -393,6 +411,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
         <button id="nextYear" aria-label="Next year">›</button>
       </div>
       <div class="chips" id="yearChips"></div>
+<div class="card shcard" id="shYear"></div>
 <div class="card full hidden" id="fullYear"></div>
       <div class="card"><h2 id="yearHead">Year forecast</h2><p class="lead" id="yearSummary"></p></div>
       <div class="card"><h2 data-ar="موضوع سنتك">Your theme of the year</h2><div id="yearTheme"></div></div>
@@ -895,6 +914,7 @@ function speechText(){
   else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),L("Your theme of the year.","موضوع سنتك."),txt("yearTheme")];
   else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),L("Planet journeys.","رحلات الكواكب."),txt("moveList").replace(/←/g,"").replace(/→/g,""),L("Your planets.","كواكبك."),txt("planetList"),L("Your 12 houses.","بيوتك الاثنا عشر."),txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
+  const shId={week:"shWeek",month:"shMonth",year:"shYear"}[tab]; if(shId&&$(shId+"-list")) t.splice(2,0,L("Planet shadows. ","ظلال الكواكب. ")+txt(shId+"-list"));
   const fullId={today:"fullDay",week:"fullWeek",month:"fullMonth",year:"fullYear",chart:"fullChart"}[tab];
   if(houseBase==="all"&&fullId) t=[txt(fullId)].concat(t);
   return t.join("\n").replace(/℞/g,L(" retrograde "," متراجع ")).replace(/·/g,"، ").replace(/–/g,L(" to "," إلى "))
@@ -1788,7 +1808,7 @@ function renderSheet(){
   const key=xHist[xHist.length-1]; if(!key) return;
   const [t,a,b2,c]=key.split(":");
   let r;
-  try{ r=t==="p"?explainPlanet(a):t==="s"?explainSign(+a):t==="h"?explainHouse(+a):explainAspect(a,b2,c); }catch(e){ r={head:{ic:"?",t:L("Sorry","عذراً"),sub:""},body:`<p>${L("Couldn't load this explanation.","تعذّر تحميل هذا الشرح.")}</p>`}; }
+  try{ r=t==="p"?explainPlanet(a):t==="s"?explainSign(+a):t==="h"?explainHouse(+a):t==="j"?explainJourney(a,b2,c):explainAspect(a,b2,c); }catch(e){ r={head:{ic:"?",t:L("Sorry","عذراً"),sub:""},body:`<p>${L("Couldn't load this explanation.","تعذّر تحميل هذا الشرح.")}</p>`}; }
   $("sIc").innerHTML=r.head.ic; $("sTitle").textContent=r.head.t; $("sSub").textContent=r.head.sub;
   $("sBody").innerHTML=r.body; $("sBody").scrollTop=0;
   $("sBack").classList.toggle("hidden",xHist.length<2);
@@ -1844,6 +1864,143 @@ function renderGuide(){
 }
 
 { const _rc=renderChart; renderChart=function(){ const r=_rc.apply(this,arguments); renderGuide(); return r; }; }
+
+// ---------- Planet shadows: where planets go during a week / month / year ----------
+const PCOL={Sun:"#f59e0b",Moon:"#94a3b8",Mercury:"#10b981",Venus:"#ec4899",Mars:"#ef4444",Jupiter:"#8b5cf6",Saturn:"#a16207",Uranus:"#06b6d4",Neptune:"#3b82f6"};
+const LANE={Moon:150,Sun:140,Mercury:130,Venus:120,Mars:110,Jupiter:100,Saturn:90,Uranus:80,Neptune:70};
+const SHST={};
+const wrap180=d=>{d=((d+540)%360)-180; return d;};
+function shadowData(t0,t1,kind){
+  const step=kind==="year"?1:0.25, n=Math.round((t1-t0)/DAY/step), samples=[];
+  for(let i=0;i<=n;i++){ const ms=t0+i*step*DAY; samples.push({ms,pos:positions(jdFromUTCms(ms))}); }
+  return {kind,t0,t1,step,samples};
+}
+function journey(D,j){
+  const S=D.samples, k=PL[j].k, lons=S.map(s=>s.pos[j].lon), u=[lons[0]];
+  for(let i=1;i<lons.length;i++) u.push(u[i-1]+wrap180(lons[i]-lons[i-1]));
+  let dist=0; for(let i=1;i<u.length;i++) dist+=Math.abs(u[i]-u[i-1]);
+  const last=lons.length-1, ing=[], st=[], houses=[], contacts=[];
+  for(let i=1;i<=last;i++){
+    if(signIdx(lons[i])!==signIdx(lons[i-1])) ing.push({ms:S[i].ms,sign:signIdx(lons[i]),h:house(lons[i])});
+    if(k!=="Sun"&&k!=="Moon"&&S[i].pos[j].retro!==S[i-1].pos[j].retro) st.push({ms:S[i].ms,retro:S[i].pos[j].retro});
+  }
+  lons.forEach(l=>{const h=house(l); if(houses[houses.length-1]!==h&&!(k==="Moon"&&D.kind!=="week"&&houses.includes(h))) houses.push(h);});
+  const moonRing=k==="Moon"&&D.kind!=="week";
+  if(!moonRing){
+    const FAST=["Sun","Mercury","Venus","Moon"], big=D.kind==="year"&&FAST.includes(k);
+    NAT.pts.forEach(n=>{
+      if(["Uranus","Neptune"].includes(n.k)&&!["Jupiter","Saturn"].includes(k)) return;
+      if((big||k==="Moon")&&!["Sun","Moon","Venus","Mars","Ascendant","Midheaven"].includes(n.k)) return;
+      ASP.forEach(a=>{
+        if((big||k==="Moon")&&a.a===60) return;
+        const orb=lons.map(l=>Math.abs(sep(l,n.lon)-a.a)), thr=k==="Moon"?2:1;
+        for(let i=1;i<last;i++) if(orb[i]<=orb[i-1]&&orb[i]<orb[i+1]&&orb[i]<thr) contacts.push({ms:S[i].ms,n,a});
+        if(orb[0]<0.6&&orb[0]<orb[1]) contacts.push({ms:S[0].ms,n,a});
+      });
+    });
+    contacts.sort((x,y)=>x.ms-y.ms);
+  }
+  return {k,j,g:PL[j].g,lons,u,dist,net:u[last]-u[0],s0:signIdx(lons[0]),s1:signIdx(lons[last]),h0:house(lons[0]),h1:house(lons[last]),ing,st,houses,contacts,laps:Math.floor(dist/360),moonRing,retro0:S[0].pos[j].retro};
+}
+const fdS=(ms,kind)=>new Date(ms).toLocaleDateString(LOC(),kind==="week"?{weekday:"short",day:"numeric"}:{month:"short",day:"numeric"});
+function shadowSvg(id,D,J){
+  const cx=200, cy=200, R=197, rS=160, rC=50, base=NAT.baseLon;
+  const css=getComputedStyle(document.documentElement), c=n=>css.getPropertyValue(n).trim();
+  const pt=(lon,r)=>{const a=(180+(lon-base))*D2R; return [+(cx+r*Math.cos(a)).toFixed(1), +(cy-r*Math.sin(a)).toFixed(1)];};
+  const sector=(l0,l1,r0,r1)=>{const [a,b]=pt(l0,r1),[e,f]=pt(l1,r1),[g,h]=pt(l1,r0),[i,j]=pt(l0,r0); return `M${a},${b} A${r1},${r1} 0 0 0 ${e},${f} L${g},${h} A${r0},${r0} 0 0 1 ${i},${j} Z`;};
+  const cnt=Array(13).fill(0); J.forEach(x=>{ if(!x.moonRing) x.houses.forEach(h=>cnt[h]++); });
+  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${c('--card')}" stroke="${c('--line')}"/>`;
+  for(let i=0;i<12;i++){
+    const h=(i-NAT.baseSign+12)%12+1, col=c('--'+ELEM[i%4]);
+    s+=`<path d="${sector(i*30,i*30+30,rS,R)}" fill="${col}" fill-opacity=".13" stroke="${c('--line')}" data-x="s:${i}"/>`;
+    s+=`<path d="${sector(i*30,i*30+30,rC,rS)}" fill="${c('--accent')}" fill-opacity="${Math.min(.32,cnt[h]*.05)}" stroke="${c('--line')}" data-x="h:${h}"/>`;
+    const [gx,gy]=pt(i*30+15,(R+rS)/2);
+    s+=`<text x="${gx}" y="${gy-6}" text-anchor="middle" dominant-baseline="central" font-size="13" fill="${col}" pointer-events="none">${SG[i]}</text><text x="${gx}" y="${gy+8}" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="600" fill="${c('--ink')}" pointer-events="none">${SIGNS[i]}</text>`;
+  }
+  s+=`<circle cx="${cx}" cy="${cy}" r="${rC}" fill="${c('--soft')}" stroke="${c('--line')}" pointer-events="none"/>`;
+  for(let i=0;i<12;i++){const [hx,hy]=pt(i*30+15,36), h=(i-NAT.baseSign+12)%12+1; s+=`<text x="${hx}" y="${hy}" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="${c('--accent')}" pointer-events="none">${h}</text>`;}
+  J.forEach(x=>{
+    const col=PCOL[x.k], r=LANE[x.k], key=`j:${x.k}:${D.t0}:${D.t1}`;
+    if(x.moonRing){
+      s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${col}" stroke-opacity=".35" stroke-width="7" data-x="${key}"/>`;
+    } else {
+      let d=""; x.lons.forEach((l,i)=>{ const rr=r-(D.samples[i].pos[x.j].retro?4:0); const [px,py]=pt(l,rr); d+=(i?"L":"M")+px+","+py; });
+      s+=`<path d="${d}" fill="none" stroke="${col}" stroke-opacity=".38" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" data-x="${key}"/>`;
+    }
+    const [ax,ay]=pt(x.lons[0],r), [bx,by]=pt(x.lons[x.lons.length-1],r);
+    if(Math.abs(x.net)>2||x.moonRing||x.dist>4) s+=`<circle cx="${bx}" cy="${by}" r="6.5" fill="${c('--card')}" stroke="${col}" stroke-width="1.6" stroke-dasharray="2.5 2" data-x="${key}"/><text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="${col}" pointer-events="none">${x.g}</text>`;
+    s+=`<circle cx="${ax}" cy="${ay}" r="6.5" fill="${col}" data-x="${key}"/><text x="${ax}" y="${ay}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#fff" pointer-events="none">${x.g}</text>`;
+  });
+  [["ASC",NAT.asc],["MC",NAT.mc]].forEach(([l,lon])=>{const [a,b]=pt(lon,rC),[e,f]=pt(lon,rS); s+=`<line x1="${a}" y1="${b}" x2="${e}" y2="${f}" stroke="${c('--accent')}" stroke-width="1.2" stroke-dasharray="3 3" opacity=".6" pointer-events="none"/>`;});
+  s+=`<g id="${id}-now"></g>`;
+  return s;
+}
+function shadowNow(id){
+  const st=SHST[id]; if(!st) return; const {D,J}=st, k=+$(id+"-rng").value, S=D.samples[k];
+  const cx=200, cy=200, base=NAT.baseLon, pt=(lon,r)=>{const a=(180+(lon-base))*D2R; return [+(cx+r*Math.cos(a)).toFixed(1), +(cy-r*Math.sin(a)).toFixed(1)];};
+  const ink=getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
+  $(id+"-now").innerHTML=J.map(x=>{const [px,py]=pt(S.pos[x.j].lon,LANE[x.k]-(S.pos[x.j].retro?4:0)); return `<circle cx="${px}" cy="${py}" r="4.2" fill="${PCOL[x.k]}" stroke="${ink}" stroke-width="1.6" pointer-events="none"/>`;}).join("");
+  const d=new Date(S.ms);
+  $(id+"-lbl").textContent=d.toLocaleDateString(LOC(),D.kind==="year"?{month:"short",day:"numeric"}:{weekday:"short",month:"short",day:"numeric"})+(D.kind==="week"?" "+d.toLocaleTimeString(LOC(),{hour:"numeric"}):"");
+}
+function journeyLine(x,kind){
+  const parts=[];
+  if(x.moonRing) parts.push(L(`circles the whole wheel ${x.laps>1?x.laps+" times":"once"} (≈${Math.round(x.dist)}°), touching every house`,`يدور حول الدائرة كلها ${x.laps>1?x.laps+" مرات":"مرة واحدة"} (≈${Math.round(x.dist)}°) ويمرّ بكل البيوت`));
+  else parts.push(x.dist<3?L(`barely moves (${x.dist.toFixed(1)}°): its influence stays put`,`بالكاد يتحرك (${x.dist.toFixed(1)}°): تأثيره ثابت في مكانه`):L(`travels ${Math.round(x.dist)}°`,`يقطع ${Math.round(x.dist)}°`));
+  if(!x.moonRing&&x.ing.length) parts.push(L("enters ","يدخل ")+x.ing.slice(0,4).map(e=>`${SG[e.sign]} ${SIGNS[e.sign]} (${hh(e.h)}${L(", ","، ")}${fdS(e.ms,kind)})`).join(L(", ","، ")));
+  x.st.forEach(e=>parts.push(`↻ ${e.retro?L("turns backward ℞","يبدأ التراجع ℞"):L("turns forward","يعود للأمام")} ${fdS(e.ms,kind)}`));
+  if(x.contacts.length){ const cs=x.contacts.slice(0,5).map(c=>`${c.a.g} ${L("your","")} ${c.n.k} (${fdS(c.ms,kind)})`.replace("  "," ")); parts.push(L("touches ","يلامس ")+cs.join(L(", ","، "))+(x.contacts.length>5?L(` +${x.contacts.length-5} more`,` +${x.contacts.length-5} أخرى`):"")); }
+  return parts.join(" · ");
+}
+function renderShadow(id,t0,t1,kind){
+  const box=$(id); if(!box||!NAT) return;
+  if(SHST[id]&&SHST[id].timer){ cancelAnimationFrame(SHST[id].timer); }
+  const D=shadowData(t0,t1,kind), J=PL.map((p,j)=>journey(D,j));
+  SHST[id]={D,J,timer:null};
+  const per={week:L("this week","هذا الأسبوع"),month:L("this month","هذا الشهر"),year:L("this year","هذه السنة")}[kind];
+  let now=0; const nowMs=Date.now(); if(nowMs>t0&&nowMs<t1) now=Math.round((nowMs-t0)/DAY/D.step);
+  box.innerHTML=`<h2>🌗 ${L("Planet shadows","ظلال الكواكب")}</h2>
+    <p class="small" style="margin-top:-6px">${L(`Where each planet goes ${per}. <b>● solid</b> = start, <b>◌ ghost</b> = end, the <b>shadow</b> between = the path it covers (it folds back when the planet goes backward ℞). Shaded houses = visited. <b>Tap any shadow</b> for its journey.`,`أين يذهب كل كوكب ${per}. <b>● المصمت</b> = البداية، <b>◌ الشبح</b> = النهاية، و<b>الظل</b> بينهما = المسار الذي يقطعه (ينطوي للخلف حين يتراجع الكوكب ℞). البيوت المظللة = التي يزورها. <b>اضغط على أي ظل</b> لترى رحلته.`)}</p>
+    <svg viewBox="0 0 400 400" width="100%" style="max-width:480px;display:block;margin:0 auto;touch-action:manipulation" role="img" aria-label="${L("Planet shadows wheel","دائرة ظلال الكواكب")}">${shadowSvg(id,D,J)}</svg>
+    <div class="shplay"><button class="pl" id="${id}-play" aria-label="${L("Play","تشغيل")}">▶</button><input type="range" id="${id}-rng" min="0" max="${D.samples.length-1}" value="${now}" aria-label="${L("Move through time","تحرّك عبر الزمن")}"><span id="${id}-lbl" class="lbl2"></span></div>
+    <div class="shleg">${J.map(x=>`<span data-x="j:${x.k}:${t0}:${t1}"><i style="background:${PCOL[x.k]}"></i>${x.g}</span>`).join("")}</div>
+    <h3>${L("Along the way","على طول الطريق")}</h3>
+    <div id="${id}-list">${J.map(x=>`<div class="jr" data-x="j:${x.k}:${t0}:${t1}"><div class="jh"><i style="background:${PCOL[x.k]}"></i><b>${x.g} ${x.k}</b>${x.st.length?`<span class="dir b">↻ ${L("changes direction","يغيّر اتجاهه")}</span>`:x.retro0&&!x.moonRing?`<span class="dir b">${L("← backward ℞","→ للخلف ℞")}</span>`:`<span class="dir f">${L("→ forward","← للأمام")}</span>`}</div>
+      <div class="jp">${x.moonRing?L("all 12 houses","كل البيوت الاثني عشر"):`${SG[x.s0]} ${SIGNS[x.s0]} · ${hh(x.h0)} ${x.dist>=300?`<b>${L("→ full circle →","← دورة كاملة ←")}</b> ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:x.s0!==x.s1||x.h0!==x.h1?`<b>${L("→","←")}</b> ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:L("(stays)","(يبقى)")}`}</div>
+      <div class="small">${journeyLine(x,kind)}</div></div>`).join("")}</div>`;
+  const rng=$(id+"-rng"), btn=$(id+"-play");
+  rng.oninput=()=>shadowNow(id);
+  btn.onclick=()=>{
+    const stt=SHST[id];
+    if(stt.timer){ cancelAnimationFrame(stt.timer); stt.timer=null; btn.textContent="▶"; return; }
+    if(+rng.value>=+rng.max) rng.value=0;
+    btn.textContent="⏸"; const from=+rng.value, max=+rng.max, dur=Math.max(800,6000*(max-from)/max), tStart=performance.now();
+    const tick=t=>{ const f=Math.min(1,(t-tStart)/dur); rng.value=Math.round(from+(max-from)*f); shadowNow(id);
+      if(f<1){ stt.timer=requestAnimationFrame(tick); } else { stt.timer=null; btn.textContent="▶"; } };
+    stt.timer=requestAnimationFrame(tick);
+  };
+  shadowNow(id);
+}
+function explainJourney(k,t0,t1){
+  t0=+t0; t1=+t1; const span=(t1-t0)/DAY, kind=span<=8?"week":span<=32?"month":"year";
+  const D=shadowData(t0,t1,kind), j=PL.findIndex(p=>p.k===k), x=journey(D,j), P=PLANETDATA[k];
+  const r0=fdS(t0,kind==="week"?"month":kind), r1=fdS(t1-DAY/2,kind==="week"?"month":kind);
+  const head={ic:x.g, t:L(`${k}'s journey`,`رحلة ${k}`), sub:`${r0} – ${r1}`};
+  let b=section(L("The path","المسار"),`<p class="formula">${x.moonRing?L("All 12 houses","كل البيوت الاثني عشر"):`${xs(x.s0)} · ${xh(x.h0)} <b>${L("→","←")}</b> ${xs(x.s1)} · ${xh(x.h1)}`}</p><p>${journeyLine(x,kind)}.</p>`);
+  const hs=x.moonRing?[...Array(12).keys()].map(i=>i+1):x.houses;
+  b+=section(L("Houses it visits","البيوت التي يزورها"),ul(hs.map(h=>`${xh(h)} (${hn(h)}): ${HSHORT[h-1]}`)));
+  b+=section(L("What it means for you","ماذا يعني لك"),`<p>${L(`${k} brings <b>${TONE[k]||P.short}</b> to ${hs.length>1?"these areas":"this area"}: ${hs.slice(0,4).map(h=>hn(h)).join(", ")}.`,`${k} يجلب <b>${TONE[k]||P.short}</b> إلى ${hs.length>1?"هذه المجالات":"هذا المجال"}: ${hs.slice(0,4).map(h=>hn(h)).join("، ")}.`)} ${x.st.length?L("It changes direction in this period: slow down, review and redo around those dates before you push forward.","يغيّر اتجاهه في هذه الفترة: تمهّل وراجع وأعد العمل حول هذه التواريخ قبل أن تندفع للأمام."):x.retro0?L("It's moving backward the whole time: a period for review, not launches.","يتحرك للخلف طوال الفترة: وقت للمراجعة لا للإطلاق."):""} ${x.dist<3&&!x.moonRing?L("It hardly moves, so its theme is a steady background all period.","بالكاد يتحرك، فموضوعه خلفية ثابتة طوال الفترة."):""}</p>`);
+  if(x.contacts.length) b+=section(L("Meets your birth planets","يلتقي بكواكب ولادتك"),ul(x.contacts.map(cc=>`<b>${fdS(cc.ms,kind==="week"?"month":kind)}</b> · ${cc.a.g} ${cc.a.n} ${L("with your","مع")} ${xp(cc.n.k)}: ${interp(k,cc.a,cc.n)}`)));
+  b+=section(L("Advice for this period","نصائح لهذه الفترة"),ul(P.adv));
+  const w=W(); b+=section(L("Wear & carry","ماذا تلبس وتحمل"),wearBox([[w.day,P.day],[w.colors,P.color],[w.stones,P.stone]])+WEAR_NOTE());
+  b+=section(L("Connected to","مرتبط بـ"),`<div class="chipsx">${xp(k)}${[...new Set([x.s0,x.s1,...x.ing.map(e=>e.sign)])].map(xs).join("")}${hs.slice(0,6).map(xh).join("")}</div>`);
+  return {head,body:b};
+}
+{ const wrapS=(fn,after)=>function(){ const r=fn.apply(this,arguments); try{after();}catch(e){console.error(e);} return r; };
+  renderWeek=wrapS(renderWeek,()=>{ const t0=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()).getTime(); renderShadow("shWeek",t0,t0+6*DAY,"week"); });
+  renderMonth=wrapS(renderMonth,()=>{ const y=monthSel.getFullYear(), m=monthSel.getMonth(); renderShadow("shMonth",new Date(y,m,1).getTime(),new Date(y,m+1,1).getTime(),"month"); });
+  renderYear=wrapS(renderYear,()=>{ renderShadow("shYear",new Date(yearSel,0,1).getTime(),new Date(yearSel+1,0,1).getTime(),"year"); });
+}
 
 // ---------- Arabic content ----------
 const SIGNS_AR=["الحمل","الثور","الجوزاء","السرطان","الأسد","العذراء","الميزان","العقرب","القوس","الجدي","الدلو","الحوت"];
