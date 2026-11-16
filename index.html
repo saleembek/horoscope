@@ -237,6 +237,13 @@ html[dir=rtl] .xl{text-underline-offset:5px}
 .jr .jh .dir.f{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
 .jr .jh .dir.b{background:color-mix(in srgb,var(--hard) 18%,transparent);color:var(--hard)}
 .jr .jp{font-size:.9rem;margin:3px 0 2px}
+.decbox{border-top:1px dashed var(--line);margin-top:10px;padding-top:4px}
+.decr{padding:8px 0;border-bottom:1px solid var(--line)}
+.decr:last-of-type{border-bottom:0}
+.decv{margin-top:4px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:.8rem}
+.decv em{font-style:normal;color:var(--muted)}
+.decv span{display:inline-flex;align-items:center;gap:4px;background:var(--soft);border-radius:99px;padding:2px 9px}
+.decv span i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -331,6 +338,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
         <button id="nextDay" aria-label="Next day">›</button>
       </div>
       <button id="todayBtn" class="ghost hidden" data-ar="↺ العودة إلى اليوم">↺ Back to today</button>
+      <div class="card shcard" id="shDay"></div>
       <div class="card full hidden" id="fullDay"></div>
       <div class="card">
         <div class="flex">
@@ -914,7 +922,7 @@ function speechText(){
   else if(tab==="year") t=[txt("yearHead")+".",txt("yearSummary"),L("Your theme of the year.","موضوع سنتك."),txt("yearTheme")];
   else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),L("Planet journeys.","رحلات الكواكب."),txt("moveList").replace(/←/g,"").replace(/→/g,""),L("Your planets.","كواكبك."),txt("planetList"),L("Your 12 houses.","بيوتك الاثنا عشر."),txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
-  const shId={week:"shWeek",month:"shMonth",year:"shYear"}[tab]; if(shId&&$(shId+"-list")) t.splice(2,0,L("Planet shadows. ","ظلال الكواكب. ")+txt(shId+"-list"));
+  const shId={today:"shDay",week:"shWeek",month:"shMonth",year:"shYear"}[tab]; if(shId&&$(shId+"-list")) t.splice(2,0,L("Planet shadows. ","ظلال الكواكب. ")+txt(shId+"-list"));
   const fullId={today:"fullDay",week:"fullWeek",month:"fullMonth",year:"fullYear",chart:"fullChart"}[tab];
   if(houseBase==="all"&&fullId) t=[txt(fullId)].concat(t);
   return t.join("\n").replace(/℞/g,L(" retrograde "," متراجع ")).replace(/·/g,"، ").replace(/–/g,L(" to "," إلى "))
@@ -1739,6 +1747,7 @@ function explainPlanet(k){
     if(rules.length) mine+=`<p>${L(`It ${MODERN[k]!=null?"co-rules (modern)":"rules"} ${rules.map(i=>`${xs(i)} (your ${xh((i-NAT.baseSign+12)%12+1)}: ${hn((i-NAT.baseSign+12)%12+1)})`).join(" and ")}. So ${k} also manages those areas, and what happens to ${k} affects them too.`,`${MODERN[k]!=null?"يشارك في حكم (حديثاً)":"يحكم"} ${rules.map(i=>`${xs(i)} (${xyh((i-NAT.baseSign+12)%12+1)}: ${hn((i-NAT.baseSign+12)%12+1)})`).join(" و")}. إذن ${k} يدير هذه المجالات أيضاً، وما يحدث لـ${k} يؤثر عليها.`)}</p>`;
   }
   if(houseBase==="all") mine+=`<p class="small">${L("House in each view:","البيت في كل رؤية:")} ${lensHouses(np.lon)}</p>`;
+  mine+=decanP(np.lon);
   b+=section(L("In your chart","في خريطتك"),mine);
   const asp=natalAspects().filter(x=>x.a.k===k||x.b.k===k);
   if(asp.length) b+=section(L("Talks with your other planets (aspects)","حواره مع كواكبك الأخرى (الجوانب)"),ul(asp.map(x=>{const o=x.a.k===k?x.b:x.a; const kind=x.asp.t==="easy"?L("easy flow, natural talent","تدفق سهل وموهبة طبيعية"):x.asp.t==="hard"?L("tension that pushes growth","توتر يدفع للنمو"):L("merged energies","طاقات مندمجة"); return `${x.asp.g} <b>${x.asp.n}</b> ${L("with","مع")} ${xp(o.k)}: ${kind} ${L("between","بين")} ${P.short} ${L("and","و")} ${(PLANETDATA[o.k]||{short:o.m}).short}. <small>(${L("orb","الفارق")} ${x.orb.toFixed(1)}°)</small>`;})));
@@ -1863,7 +1872,43 @@ function renderGuide(){
   <p class="small">Tip: <b>tap any planet, sign, house number or aspect anywhere in the app</b> to open its full explanation, then keep tapping the links to follow the dots.</p>`;
 }
 
-{ const _rc=renderChart; renderChart=function(){ const r=_rc.apply(this,arguments); renderGuide(); return r; }; }
+{ const _rc=renderChart; renderChart=function(){ const r=_rc.apply(this,arguments); renderGuide(); try{ $("big3Text").insertAdjacentHTML("beforeend",`<div class="decbox" style="margin-top:10px"><h3 style="margin-top:0">🔟 ${L("Your decans","أوجهك (الديكانات)")}</h3>${DECPTS().map(([k,g,lon])=>{const dc=decanOf(lon); return `<div class="decr" data-x="p:${k}"><div><b>${g} ${k==="Ascendant"?L("Rising","الطالع"):k}:</b> ${decanLabel(dc)}</div><div class="small">${decanMeaning(dc)}</div></div>`;}).join("")}</div>`); }catch(e){} return r; }; }
+
+// ---------- Decans (10° thirds of each sign) ----------
+const ORDW=n=>L(["1st","2nd","3rd"][n],["الأول","الثاني","الثالث"][n]);
+function decanOf(lon){ const s=signIdx(lon), d=Math.floor((norm(lon)%30)/10), sub=(s+4*d)%12; return {s,d,sub,ruler:RULER[sub],start:s*30+d*10}; }
+function decanLabel(dc){ return L(`${SG[dc.s]} ${SIGNS[dc.s]} · ${ORDW(dc.d)} decan (${dc.d*10}°–${dc.d*10+10}°)`,`${SG[dc.s]} ${SIGNS[dc.s]} · الوجه ${ORDW(dc.d)} (${dc.d*10}°–${dc.d*10+10}°)`); }
+function decanMeaning(dc){
+  const a=SIGNS[dc.s], b=SIGNS[dc.sub];
+  return dc.d===0?L(`the pure ${a} decan: a double dose of ${SIGN_KW[a]}. Sub-ruler: ${dc.ruler}.`,`الوجه الخالص من ${a}: جرعة مضاعفة من ${SIGN_KW[a]}. الحاكم الفرعي: ${dc.ruler}.`)
+    :L(`${a} (${SIGN_KW[a]}) with ${art(b)} ${b} touch: ${SIGN_KW[b]}. Sub-ruler: ${dc.ruler}.`,`${a} (${SIGN_KW[a]}) بلمسة من ${b}: ${SIGN_KW[b]}. الحاكم الفرعي: ${dc.ruler}.`);
+}
+function decanP(lon){ const dc=decanOf(lon); return `<p class="small"><b>${L("Decan:","الوجه:")}</b> ${decanLabel(dc)}: ${decanMeaning(dc)}</p>`; }
+const DECPTS=()=>[["Sun","☉"+V,NAT.planets[0].lon],["Moon","☽"+V,NAT.planets[1].lon],["Ascendant","AC",NAT.asc]];
+function decanSection(D,J,kind){
+  const t0=D.samples[0].ms, tl=D.samples[D.samples.length-1].ms;
+  const fmt=ms=>kind==="day"?new Date(ms).toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"}):fdS(ms,kind==="week"?"month":kind);
+  const rows=DECPTS().map(([k,g,lon])=>{
+    const dc=decanOf(lon), visits=[];
+    J.forEach(x=>{
+      const segs=[]; let cur=null;
+      x.lons.forEach((l,i)=>{ const ins=norm(l-dc.start)<10, ms=D.samples[i].ms; if(ins){ if(!cur) cur={a:ms,b:ms}; else cur.b=ms; } else if(cur){ segs.push(cur); cur=null; } });
+      if(cur) segs.push(cur);
+      if(!segs.length) return;
+      let t;
+      if(segs.length===1&&segs[0].a===t0&&segs[0].b===tl) t=L("the whole period","طوال الفترة");
+      else if(segs.length>3) t=L(`${segs.length} times (first ${fmt(segs[0].a)})`,`${segs.length} مرات (الأولى ${fmt(segs[0].a)})`);
+      else t=segs.map(sg=>fmt(sg.a)===fmt(sg.b)?fmt(sg.a):`${fmt(sg.a)} → ${fmt(sg.b)}`).join(L(", ","، "));
+      visits.push(`<span data-x="j:${x.k}:${D.t0}:${D.t1}"><i style="background:${PCOL[x.k]}"></i>${x.g} ${x.k}: ${t}</span>`);
+    });
+    return `<div class="decr" data-x="p:${k}"><div><b>${g} ${k==="Ascendant"?L("Rising","الطالع"):k}:</b> ${decanLabel(dc)}</div><div class="small">${decanMeaning(dc)}</div>
+      <div class="decv">${visits.length?`<em>${L("Passing through it:","يمرّ فيه:")}</em> ${visits.join("")}`:`<em>${L("No planets pass through it in this period: a quiet time for this part of you.","لا كواكب تمرّ فيه في هذه الفترة: وقت هادئ لهذا الجزء منك.")}</em>`}</div></div>`;
+  }).join("");
+  const sd=decanOf(D.samples[Math.floor(D.samples.length/2)].pos[0].lon);
+  return `<h3>🔟 ${L("Your decans","أوجهك (الديكانات)")}</h3>
+    <p class="small" style="margin-top:-2px">${L("Each sign has 3 decans of 10°. Your exact decan fine-tunes your sign. Planets passing through it hit the most personal spot.","لكل برج 3 أوجه، كل منها 10°. وجهك الدقيق يضبط برجك بدقة، والكواكب التي تمرّ فيه تلامس أكثر نقطة شخصية لديك.")}</p>${rows}
+    ${kind==="year"?"":`<p class="small"><b>${L("Season decan:","وجه الموسم:")}</b> ${L("the Sun is in","الشمس في")} ${decanLabel(sd)}: ${decanMeaning(sd)}</p>`}`;
+}
 
 // ---------- Planet shadows: where planets go during a week / month / year ----------
 const PCOL={Sun:"#f59e0b",Moon:"#94a3b8",Mercury:"#10b981",Venus:"#ec4899",Mars:"#ef4444",Jupiter:"#8b5cf6",Saturn:"#a16207",Uranus:"#06b6d4",Neptune:"#3b82f6"};
@@ -1871,7 +1916,7 @@ const LANE={Moon:150,Sun:140,Mercury:130,Venus:120,Mars:110,Jupiter:100,Saturn:9
 const SHST={};
 const wrap180=d=>{d=((d+540)%360)-180; return d;};
 function shadowData(t0,t1,kind){
-  const step=kind==="year"?1:0.25, n=Math.round((t1-t0)/DAY/step), samples=[];
+  const step=kind==="year"?1:kind==="day"?1/24:0.25, n=Math.round((t1-t0)/DAY/step), samples=[];
   for(let i=0;i<=n;i++){ const ms=t0+i*step*DAY; samples.push({ms,pos:positions(jdFromUTCms(ms))}); }
   return {kind,t0,t1,step,samples};
 }
@@ -1884,8 +1929,8 @@ function journey(D,j){
     if(signIdx(lons[i])!==signIdx(lons[i-1])) ing.push({ms:S[i].ms,sign:signIdx(lons[i]),h:house(lons[i])});
     if(k!=="Sun"&&k!=="Moon"&&S[i].pos[j].retro!==S[i-1].pos[j].retro) st.push({ms:S[i].ms,retro:S[i].pos[j].retro});
   }
-  lons.forEach(l=>{const h=house(l); if(houses[houses.length-1]!==h&&!(k==="Moon"&&D.kind!=="week"&&houses.includes(h))) houses.push(h);});
-  const moonRing=k==="Moon"&&D.kind!=="week";
+  lons.forEach(l=>{const h=house(l); if(houses[houses.length-1]!==h&&!(k==="Moon"&&(D.kind==="month"||D.kind==="year")&&houses.includes(h))) houses.push(h);});
+  const moonRing=k==="Moon"&&(D.kind==="month"||D.kind==="year");
   if(!moonRing){
     const FAST=["Sun","Mercury","Venus","Moon"], big=D.kind==="year"&&FAST.includes(k);
     NAT.pts.forEach(n=>{
@@ -1902,7 +1947,7 @@ function journey(D,j){
   }
   return {k,j,g:PL[j].g,lons,u,dist,net:u[last]-u[0],s0:signIdx(lons[0]),s1:signIdx(lons[last]),h0:house(lons[0]),h1:house(lons[last]),ing,st,houses,contacts,laps:Math.floor(dist/360),moonRing,retro0:S[0].pos[j].retro};
 }
-const fdS=(ms,kind)=>new Date(ms).toLocaleDateString(LOC(),kind==="week"?{weekday:"short",day:"numeric"}:{month:"short",day:"numeric"});
+const fdS=(ms,kind)=>kind==="day"?new Date(ms).toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"}):new Date(ms).toLocaleDateString(LOC(),kind==="week"?{weekday:"short",day:"numeric"}:{month:"short",day:"numeric"});
 function shadowSvg(id,D,J){
   const cx=200, cy=200, R=197, rS=160, rC=50, base=NAT.baseLon;
   const css=getComputedStyle(document.documentElement), c=n=>css.getPropertyValue(n).trim();
@@ -1941,7 +1986,7 @@ function shadowNow(id){
   const ink=getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
   $(id+"-now").innerHTML=J.map(x=>{const [px,py]=pt(S.pos[x.j].lon,LANE[x.k]-(S.pos[x.j].retro?4:0)); return `<circle cx="${px}" cy="${py}" r="4.2" fill="${PCOL[x.k]}" stroke="${ink}" stroke-width="1.6" pointer-events="none"/>`;}).join("");
   const d=new Date(S.ms);
-  $(id+"-lbl").textContent=d.toLocaleDateString(LOC(),D.kind==="year"?{month:"short",day:"numeric"}:{weekday:"short",month:"short",day:"numeric"})+(D.kind==="week"?" "+d.toLocaleTimeString(LOC(),{hour:"numeric"}):"");
+  $(id+"-lbl").textContent=D.kind==="day"?d.toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"}):d.toLocaleDateString(LOC(),D.kind==="year"?{month:"short",day:"numeric"}:{weekday:"short",month:"short",day:"numeric"})+(D.kind==="week"?" "+d.toLocaleTimeString(LOC(),{hour:"numeric"}):"");
 }
 function journeyLine(x,kind){
   const parts=[];
@@ -1957,13 +2002,14 @@ function renderShadow(id,t0,t1,kind){
   if(SHST[id]&&SHST[id].timer){ cancelAnimationFrame(SHST[id].timer); }
   const D=shadowData(t0,t1,kind), J=PL.map((p,j)=>journey(D,j));
   SHST[id]={D,J,timer:null};
-  const per={week:L("this week","هذا الأسبوع"),month:L("this month","هذا الشهر"),year:L("this year","هذه السنة")}[kind];
+  const per={day:L("on this day","في هذا اليوم"),week:L("this week","هذا الأسبوع"),month:L("this month","هذا الشهر"),year:L("this year","هذه السنة")}[kind];
   let now=0; const nowMs=Date.now(); if(nowMs>t0&&nowMs<t1) now=Math.round((nowMs-t0)/DAY/D.step);
   box.innerHTML=`<h2>🌗 ${L("Planet shadows","ظلال الكواكب")}</h2>
     <p class="small" style="margin-top:-6px">${L(`Where each planet goes ${per}. <b>● solid</b> = start, <b>◌ ghost</b> = end, the <b>shadow</b> between = the path it covers (it folds back when the planet goes backward ℞). Shaded houses = visited. <b>Tap any shadow</b> for its journey.`,`أين يذهب كل كوكب ${per}. <b>● المصمت</b> = البداية، <b>◌ الشبح</b> = النهاية، و<b>الظل</b> بينهما = المسار الذي يقطعه (ينطوي للخلف حين يتراجع الكوكب ℞). البيوت المظللة = التي يزورها. <b>اضغط على أي ظل</b> لترى رحلته.`)}</p>
     <svg viewBox="0 0 400 400" width="100%" style="max-width:480px;display:block;margin:0 auto;touch-action:manipulation" role="img" aria-label="${L("Planet shadows wheel","دائرة ظلال الكواكب")}">${shadowSvg(id,D,J)}</svg>
     <div class="shplay"><button class="pl" id="${id}-play" aria-label="${L("Play","تشغيل")}">▶</button><input type="range" id="${id}-rng" min="0" max="${D.samples.length-1}" value="${now}" aria-label="${L("Move through time","تحرّك عبر الزمن")}"><span id="${id}-lbl" class="lbl2"></span></div>
     <div class="shleg">${J.map(x=>`<span data-x="j:${x.k}:${t0}:${t1}"><i style="background:${PCOL[x.k]}"></i>${x.g}</span>`).join("")}</div>
+    <div class="decbox">${decanSection(D,J,kind)}</div>
     <h3>${L("Along the way","على طول الطريق")}</h3>
     <div id="${id}-list">${J.map(x=>`<div class="jr" data-x="j:${x.k}:${t0}:${t1}"><div class="jh"><i style="background:${PCOL[x.k]}"></i><b>${x.g} ${x.k}</b>${x.st.length?`<span class="dir b">↻ ${L("changes direction","يغيّر اتجاهه")}</span>`:x.retro0&&!x.moonRing?`<span class="dir b">${L("← backward ℞","→ للخلف ℞")}</span>`:`<span class="dir f">${L("→ forward","← للأمام")}</span>`}</div>
       <div class="jp">${x.moonRing?L("all 12 houses","كل البيوت الاثني عشر"):`${SG[x.s0]} ${SIGNS[x.s0]} · ${hh(x.h0)} ${x.dist>=300?`<b>${L("→ full circle →","← دورة كاملة ←")}</b> ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:x.s0!==x.s1||x.h0!==x.h1?`<b>${L("→","←")}</b> ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:L("(stays)","(يبقى)")}`}</div>
@@ -1982,21 +2028,22 @@ function renderShadow(id,t0,t1,kind){
   shadowNow(id);
 }
 function explainJourney(k,t0,t1){
-  t0=+t0; t1=+t1; const span=(t1-t0)/DAY, kind=span<=8?"week":span<=32?"month":"year";
+  t0=+t0; t1=+t1; const span=(t1-t0)/DAY, kind=span<=1.5?"day":span<=8?"week":span<=32?"month":"year";
   const D=shadowData(t0,t1,kind), j=PL.findIndex(p=>p.k===k), x=journey(D,j), P=PLANETDATA[k];
-  const r0=fdS(t0,kind==="week"?"month":kind), r1=fdS(t1-DAY/2,kind==="week"?"month":kind);
-  const head={ic:x.g, t:L(`${k}'s journey`,`رحلة ${k}`), sub:`${r0} – ${r1}`};
+  const fk=kind==="week"||kind==="day"?"month":kind, r0=fdS(t0,fk), r1=fdS(t1-DAY/2,fk);
+  const head={ic:x.g, t:L(`${k}'s journey`,`رحلة ${k}`), sub:kind==="day"?r0:`${r0} – ${r1}`};
   let b=section(L("The path","المسار"),`<p class="formula">${x.moonRing?L("All 12 houses","كل البيوت الاثني عشر"):`${xs(x.s0)} · ${xh(x.h0)} <b>${L("→","←")}</b> ${xs(x.s1)} · ${xh(x.h1)}`}</p><p>${journeyLine(x,kind)}.</p>`);
   const hs=x.moonRing?[...Array(12).keys()].map(i=>i+1):x.houses;
   b+=section(L("Houses it visits","البيوت التي يزورها"),ul(hs.map(h=>`${xh(h)} (${hn(h)}): ${HSHORT[h-1]}`)));
   b+=section(L("What it means for you","ماذا يعني لك"),`<p>${L(`${k} brings <b>${TONE[k]||P.short}</b> to ${hs.length>1?"these areas":"this area"}: ${hs.slice(0,4).map(h=>hn(h)).join(", ")}.`,`${k} يجلب <b>${TONE[k]||P.short}</b> إلى ${hs.length>1?"هذه المجالات":"هذا المجال"}: ${hs.slice(0,4).map(h=>hn(h)).join("، ")}.`)} ${x.st.length?L("It changes direction in this period: slow down, review and redo around those dates before you push forward.","يغيّر اتجاهه في هذه الفترة: تمهّل وراجع وأعد العمل حول هذه التواريخ قبل أن تندفع للأمام."):x.retro0?L("It's moving backward the whole time: a period for review, not launches.","يتحرك للخلف طوال الفترة: وقت للمراجعة لا للإطلاق."):""} ${x.dist<3&&!x.moonRing?L("It hardly moves, so its theme is a steady background all period.","بالكاد يتحرك، فموضوعه خلفية ثابتة طوال الفترة."):""}</p>`);
-  if(x.contacts.length) b+=section(L("Meets your birth planets","يلتقي بكواكب ولادتك"),ul(x.contacts.map(cc=>`<b>${fdS(cc.ms,kind==="week"?"month":kind)}</b> · ${cc.a.g} ${cc.a.n} ${L("with your","مع")} ${xp(cc.n.k)}: ${interp(k,cc.a,cc.n)}`)));
+  if(x.contacts.length) b+=section(L("Meets your birth planets","يلتقي بكواكب ولادتك"),ul(x.contacts.map(cc=>`<b>${fdS(cc.ms,kind==="week"?"month":kind)}${kind==="day"?"":""}</b> · ${cc.a.g} ${cc.a.n} ${L("with your","مع")} ${xp(cc.n.k)}: ${interp(k,cc.a,cc.n)}`)));
   b+=section(L("Advice for this period","نصائح لهذه الفترة"),ul(P.adv));
   const w=W(); b+=section(L("Wear & carry","ماذا تلبس وتحمل"),wearBox([[w.day,P.day],[w.colors,P.color],[w.stones,P.stone]])+WEAR_NOTE());
   b+=section(L("Connected to","مرتبط بـ"),`<div class="chipsx">${xp(k)}${[...new Set([x.s0,x.s1,...x.ing.map(e=>e.sign)])].map(xs).join("")}${hs.slice(0,6).map(xh).join("")}</div>`);
   return {head,body:b};
 }
 { const wrapS=(fn,after)=>function(){ const r=fn.apply(this,arguments); try{after();}catch(e){console.error(e);} return r; };
+  renderDay=wrapS(renderDay,()=>{ const v=new Date(viewMs??Date.now()), t0=new Date(v.getFullYear(),v.getMonth(),v.getDate()).getTime(); renderShadow("shDay",t0,t0+DAY,"day"); });
   renderWeek=wrapS(renderWeek,()=>{ const t0=new Date(weekSel.getFullYear(),weekSel.getMonth(),weekSel.getDate()).getTime(); renderShadow("shWeek",t0,t0+6*DAY,"week"); });
   renderMonth=wrapS(renderMonth,()=>{ const y=monthSel.getFullYear(), m=monthSel.getMonth(); renderShadow("shMonth",new Date(y,m,1).getTime(),new Date(y,m+1,1).getTime(),"month"); });
   renderYear=wrapS(renderYear,()=>{ renderShadow("shYear",new Date(yearSel,0,1).getTime(),new Date(yearSel+1,0,1).getTime(),"year"); });
