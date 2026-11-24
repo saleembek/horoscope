@@ -251,6 +251,26 @@ html[dir=rtl] .xl{text-underline-offset:5px}
 .h3{font-size:.78em;font-weight:600;color:var(--muted);white-space:nowrap}
 .shead .tt span.h3,.tt b .h3{display:inline}
 .fullnote{margin:-2px 2px 8px;padding:8px 10px;border-radius:10px;background:var(--soft)}
+.pred{border:2px solid #8b5cf6;background:linear-gradient(180deg,color-mix(in srgb,#8b5cf6 9%,var(--card)),var(--card))}
+.pr{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;background:var(--card)}
+.pr .prh{display:flex;align-items:center;gap:7px}
+.pr .prh i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.pr .prh .st{margin-inline-start:auto;font-size:.75rem;font-weight:700}
+.pr p{margin:6px 0 4px;font-size:.93rem}
+.pr ul{margin:2px 0 4px;padding-inline-start:18px;font-size:.85rem}
+.pr li{margin:3px 0}
+.pr .da{display:flex;flex-direction:column;gap:2px;font-size:.82rem;color:var(--muted)}
+.lw{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lw>div{background:var(--soft);border-radius:12px;padding:8px 10px;font-size:.85rem}
+.lw>div>div{margin:4px 0}
+.lw small{display:block;color:var(--muted);font-size:.75rem}
+.lw .g{color:var(--good)} .lw .w{color:var(--hard)}
+.la{padding:8px 10px;margin:6px 0;border-radius:10px;border-inline-start:4px solid var(--line);background:var(--soft)}
+.la.o0{border-inline-start-color:var(--good)} .la.o1{border-inline-start-color:#7ccf9f} .la.o2{border-inline-start-color:var(--air)} .la.o3{border-inline-start-color:var(--hard)}
+.la .ol{font-size:.75rem;font-weight:700;margin-inline-start:6px}
+.la p{margin:4px 0 2px;font-size:.9rem}
+.la small{color:var(--muted)}
+.pbp summary{cursor:pointer;font-weight:700;margin:14px 0 6px;color:var(--accent)}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -346,6 +366,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
         <button id="nextDay" aria-label="Next day">›</button>
       </div>
       <button id="todayBtn" class="ghost hidden" data-ar="↺ العودة إلى اليوم">↺ Back to today</button>
+      <div class="card pred" id="pdDay"></div>
       <div class="card decread" id="drDay"></div>
       <div class="card shcard" id="shDay"></div>
       <div class="card full hidden" id="fullDay"></div>
@@ -388,6 +409,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
       </div>
       <div class="wchips" id="weekChips" role="tablist" aria-label="Pick a week"></div>
       <button id="thisWeekBtn" class="ghost hidden" data-ar="↺ العودة إلى الأسبوع القادم">↺ Back to the upcoming week</button>
+      <div class="card pred" id="pdWeek"></div>
       <div class="card decread" id="drWeek"></div>
       <div class="card shcard" id="shWeek"></div>
       <div class="card full hidden" id="fullWeek"></div>
@@ -408,6 +430,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
         <div class="lbl" id="monthLbl"></div>
         <button id="nextMonth" aria-label="Next month">›</button>
       </div>
+<div class="card pred" id="pdMonth"></div>
 <div class="card decread" id="drMonth"></div>
 <div class="card shcard" id="shMonth"></div>
 <div class="card full hidden" id="fullMonth"></div>
@@ -430,6 +453,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
         <button id="nextYear" aria-label="Next year">›</button>
       </div>
       <div class="chips" id="yearChips"></div>
+<div class="card pred" id="pdYear"></div>
 <div class="card decread" id="drYear"></div>
 <div class="card shcard" id="shYear"></div>
 <div class="card full hidden" id="fullYear"></div>
@@ -756,8 +780,8 @@ function hourly(y,m,d,sky){
   const out=[];
   for(let h=6;h<=23;h++){
     const jd=jdFromUTCms(new Date(y,m,d,h,30).getTime()), ml=moonLon(jd);
-    let v=0, best=null;
-    const add=(n,val,label)=>{ v+=val; if(!best||Math.abs(val)>Math.abs(best.val)) best={val,label}; };
+    let v=0, best=null, pos=null, neg=null;
+    const add=(n,val,label)=>{ v+=val; if(!best||Math.abs(val)>Math.abs(best.val)) best={val,label}; if(val>0&&(!pos||val>pos.val)) pos={val,label}; if(val<0&&(!neg||val<neg.val)) neg={val,label}; };
     NAT.pts.forEach(n=>{ const x=aspectOf(ml,n.lon,4); if(!x) return;
       let val=x.a.t==="conj"?NATURE[n.k]:(x.a.t==="easy"?1:-1);
       if(x.a.t==="easy"&&["Venus","Jupiter","Sun"].includes(n.k)) val*=1.3;
@@ -766,7 +790,7 @@ function hourly(y,m,d,sky){
     sky.forEach(p=>{ if(p.k==="Moon") return; const x=aspectOf(ml,p.lon,4); if(!x) return;
       const val=.6*(x.a.t==="conj"?NATURE[p.k]:aspVal(p.k,x.a));
       add(p,val,L(`Moon ${x.a.n.toLowerCase()} ${p.k} in the sky`,`القمر ${x.a.n.toLowerCase()} مع ${p.k} في السماء`)); });
-    out.push({h,v,best});
+    out.push({h,v,best,pos,neg});
   }
   return out;
 }
@@ -943,6 +967,7 @@ function speechText(){
   else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),L("Planet journeys.","رحلات الكواكب."),txt("moveList").replace(/←/g,"").replace(/→/g,""),L("Your planets.","كواكبك."),txt("planetList"),L("Your 12 houses.","بيوتك الاثنا عشر."),txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
   const drId={today:"drDay",week:"drWeek",month:"drMonth",year:"drYear"}[tab]; if(drId&&$(drId)) t.splice(1,0,txt(drId));
+  const pdId={today:"pdDay",week:"pdWeek",month:"pdMonth",year:"pdYear"}[tab]; if(pdId&&$(pdId)) t.splice(1,0,txt(pdId));
   const shId={today:"shDay",week:"shWeek",month:"shMonth",year:"shYear"}[tab]; if(shId&&$(shId+"-list")) t.splice(2,0,L("Planet shadows. ","ظلال الكواكب. ")+txt(shId+"-list"));
   const fullId={today:"fullDay",week:"fullWeek",month:"fullMonth",year:"fullYear",chart:"fullChart"}[tab];
   if(houseBase==="all"&&fullId) t=[txt(fullId)].concat(t);
@@ -1940,6 +1965,137 @@ function decanSection(D,J,kind){
     ${kind==="year"?"":`<p class="small"><b>${L("Season decan:","وجه الموسم:")}</b> ${L("the Sun is in","الشمس في")} ${decanLabel(sd)}: ${decanMeaning(sd)}</p>`}`;
 }
 
+// ---------- Predictions ----------
+const HEV_EN=[
+ {a:"self & body",x:"a fresh start, a new look, people noticing you more, or a health reminder"},
+ {a:"money",x:"a payment, a raise talk, a purchase decision, or a bill that needs attention"},
+ {a:"messages & local life",x:"important calls and emails, paperwork, a short trip, news from a sibling or neighbor"},
+ {a:"home & family",x:"family news, home repairs or a move, time with parents, or old memories surfacing"},
+ {a:"love & fun",x:"a date or flirt, a creative idea, fun plans, or something about kids"},
+ {a:"daily work & health",x:"a busy workload, a new routine, a coworker issue, or a body signal to look after"},
+ {a:"partner & clients",x:"a key talk with your partner, a client deal, a contract, or someone challenging you one-to-one"},
+ {a:"shared money & deep change",x:"debts, taxes or loans, a deep emotional talk, or letting something go"},
+ {a:"study, travel & beliefs",x:"a trip or travel plan, a course or certification, legal papers, or a new outlook"},
+ {a:"career & reputation",x:"a task from your boss, a promotion talk, being seen in public, or a career decision"},
+ {a:"friends & goals",x:"an invite, a group project, a networking contact, or a new long-term goal"},
+ {a:"inner world",x:"needing rest, private matters, intuition and dreams, or quiet behind-the-scenes work"}];
+const HEV_AR=[
+ {a:"ذاتك وجسدك",x:"بداية جديدة، إطلالة جديدة، انتباه الناس لك أكثر، أو تنبيه صحي"},
+ {a:"المال",x:"دفعة مالية، حديث عن زيادة، قرار شراء، أو فاتورة تحتاج انتباهاً"},
+ {a:"الرسائل ومحيطك القريب",x:"مكالمات وإيميلات مهمة، أوراق، رحلة قصيرة، أخبار من أخ أو جار"},
+ {a:"البيت والعائلة",x:"أخبار عائلية، تصليحات أو انتقال، وقت مع الوالدين، أو ذكريات قديمة تطفو"},
+ {a:"الحب والمرح",x:"موعد أو مغازلة، فكرة إبداعية، خطط ممتعة، أو أمر يخص الأطفال"},
+ {a:"العمل اليومي والصحة",x:"ضغط عمل، روتين جديد، مسألة مع زميل، أو إشارة من جسدك للعناية به"},
+ {a:"الشريك والعملاء",x:"حديث مهم مع شريكك، صفقة مع عميل، عقد، أو شخص يتحداك وجهاً لوجه"},
+ {a:"المال المشترك والتحوّل العميق",x:"ديون أو ضرائب أو قروض، حديث عاطفي عميق، أو ترك شيء خلفك"},
+ {a:"الدراسة والسفر والمعتقدات",x:"رحلة أو خطة سفر، دورة أو شهادة، أوراق قانونية، أو نظرة جديدة"},
+ {a:"المهنة والسمعة",x:"مهمة من مديرك، حديث عن ترقية، ظهور أمام الناس، أو قرار مهني"},
+ {a:"الأصدقاء والأهداف",x:"دعوة، مشروع جماعي، معرفة جديدة في شبكتك، أو هدف بعيد جديد"},
+ {a:"العالم الداخلي",x:"حاجة للراحة، أمور خاصة، حدس وأحلام، أو عمل هادئ خلف الكواليس"}];
+const PEF_EN={
+ Sun:{f:"The spotlight lands on your",r:"The spotlight lands on your",do:"Show up and lead.",av:"Ego clashes."},
+ Moon:{f:"Your feelings stir around your",r:"Your feelings stir around your",do:"Follow your gut.",av:"Reacting while upset."},
+ Mercury:{f:"Calls, messages and paperwork pile up in your",r:"Mix-ups, old messages and tech glitches come back in your",do:"Write it down and double-check.",av:"Signing or sending in a rush."},
+ Venus:{f:"Luck, love and money flow into your",r:"An ex, an old purchase or an old value returns to your",do:"Say yes to invites; treat yourself smartly.",av:"Overspending."},
+ Mars:{f:"Fire, pressure and action hit your",r:"Old fights and stalled projects resurface in your",do:"Take bold action on one thing.",av:"Fights and rushing (accidents)."},
+ Jupiter:{f:"Big doors open in your",r:"Growth slows down for a review in your",do:"Say yes to growth.",av:"Overpromising."},
+ Saturn:{f:"Tests, duties and hard lessons land in your",r:"Unfinished duties come back for a redo in your",do:"Be patient and disciplined.",av:"Shortcuts."},
+ Uranus:{f:"Sudden surprises and changes shake up your",r:"Restless pressure for change builds in your",do:"Stay flexible; back up your data.",av:"Burning bridges."},
+ Neptune:{f:"Dreams, inspiration and some confusion fill your",r:"Illusions clear up in your",do:"Trust intuition, verify facts.",av:"Escaping or being fooled."}};
+const PEF_AR={
+ Sun:{f:"تُسلَّط الأضواء على",r:"تُسلَّط الأضواء على",do:"اظهر وقُد.",av:"صدامات الأنا."},
+ Moon:{f:"تتحرك مشاعرك حول",r:"تتحرك مشاعرك حول",do:"اتبع حدسك.",av:"ردّ الفعل وأنت منزعج."},
+ Mercury:{f:"تتكدّس المكالمات والرسائل والأوراق في",r:"تعود الأخطاء والرسائل القديمة والأعطال التقنية في",do:"اكتبها وراجعها مرتين.",av:"التوقيع أو الإرسال على عجل."},
+ Venus:{f:"يتدفق الحظ والحب والمال إلى",r:"يعود شخص قديم أو مشتريات أو قيم قديمة إلى",do:"قل نعم للدعوات، ودلّل نفسك بذكاء.",av:"الإسراف."},
+ Mars:{f:"تضرب النار والضغط والحركة",r:"تعود خلافات قديمة ومشاريع متوقفة في",do:"خذ خطوة جريئة في أمر واحد.",av:"الشجار والاستعجال (الحوادث)."},
+ Jupiter:{f:"تُفتح أبواب كبيرة في",r:"يتباطأ النمو للمراجعة في",do:"قل نعم للنمو.",av:"الوعود المبالغ فيها."},
+ Saturn:{f:"تنزل الاختبارات والواجبات والدروس الصعبة في",r:"تعود الواجبات غير المنتهية لإعادتها في",do:"كن صبوراً ومنضبطاً.",av:"الطرق المختصرة."},
+ Uranus:{f:"تهزّ المفاجآت والتغييرات المفاجئة",r:"يتراكم ضغط داخلي للتغيير في",do:"ابقَ مرناً واعمل نسخة احتياطية لبياناتك.",av:"حرق الجسور."},
+ Neptune:{f:"تملأ الأحلام والإلهام وبعض الالتباس",r:"تنكشف الأوهام في",do:"ثق بحدسك وتحقّق من الحقائق.",av:"الهروب أو الانخداع."}};
+const NEX_EN={Sun:"your confidence, your boss or a father figure",Moon:"your mood, family or home",Mercury:"a talk, a contract or your devices",Venus:"your partner, money or a pleasure",Mars:"your energy, a rival or a project",Jupiter:"an opportunity, a trip or a mentor",Saturn:"a duty, a boss or a long-term plan",Uranus:"a sudden change",Neptune:"a dream or a confusing situation",Ascendant:"your body, health or image",Midheaven:"your career or reputation"};
+const NEX_AR={Sun:"ثقتك بنفسك أو مديرك أو شخصية أبوية",Moon:"مزاجك أو عائلتك أو بيتك",Mercury:"حديث أو عقد أو أجهزتك",Venus:"شريكك أو المال أو متعة ما",Mars:"طاقتك أو منافس أو مشروع",Jupiter:"فرصة أو رحلة أو مرشد",Saturn:"واجب أو مدير أو خطة طويلة",Uranus:"تغيير مفاجئ",Neptune:"حلم أو موقف مُربك",Ascendant:"جسدك أو صحتك أو صورتك",Midheaven:"مهنتك أو سمعتك"};
+const AREA6=[["Work","💼",[6,10],["Sun","Saturn","Mercury","Midheaven"]],["Money","💰",[2,8],["Venus","Jupiter"]],["Love","❤️",[5,7],["Venus","Moon","Mars"]],["Health","🌿",[1,6],["Ascendant","Mars","Sun"]],["Family","🏠",[4],["Moon"]],["Travel","✈️",[3,9],["Jupiter","Mercury"]]];
+const AREA_AR={Work:"العمل",Money:"المال",Love:"الحب",Health:"الصحة",Family:"العائلة",Travel:"السفر"};
+const AREA_PRED={
+ Work:{en:["A strong window: push for the raise, the new role or the big project.","Steady progress: a good time to finish tasks and get noticed.","Busy and uneven: prioritize, double-check and don't overcommit.","Pressure at work: stay calm, document everything and avoid open conflict."],ar:["نافذة قوية: اطلب الزيادة أو الدور الجديد أو المشروع الكبير.","تقدّم ثابت: وقت جيد لإنهاء المهام ولفت الانتباه.","مزدحم ومتقلب: رتّب أولوياتك وراجع مرتين ولا تلتزم بأكثر من طاقتك.","ضغط في العمل: ابقَ هادئاً ووثّق كل شيء وتجنّب الصدام العلني."]},
+ Money:{en:["Money luck: a good time to ask, invest wisely or close a deal.","Stable money: small gains, sensible purchases go well.","Mixed money: watch spending and read the fine print.","Tight money: delay big purchases, pay what's due, avoid lending."],ar:["حظ مالي: وقت جيد للطلب أو الاستثمار بحكمة أو إغلاق صفقة.","مال مستقر: مكاسب صغيرة والمشتريات المعقولة تنجح.","مال متقلب: راقب الإنفاق واقرأ التفاصيل الصغيرة.","مال ضيق: أجّل المشتريات الكبيرة وسدّد المستحق وتجنّب الإقراض."]},
+ Love:{en:["Romance is lit: say what you feel, plan the date, open your heart.","Warm and easy: good moments with your partner or someone new.","Mixed signals: talk clearly and don't read too much into things.","Tension in love: avoid jealousy and big decisions; give space."],ar:["الرومانسية مشتعلة: قل ما تشعر به وخطّط للموعد وافتح قلبك.","دافئ وسهل: لحظات جميلة مع شريكك أو شخص جديد.","إشارات مختلطة: تحدّث بوضوح ولا تحمّل الأمور أكثر مما هي.","توتر في الحب: تجنّب الغيرة والقرارات الكبيرة وأعطِ مساحة."]},
+ Health:{en:["High energy: great for starting a fitness habit or a fresh look.","Good energy: keep your routine and sleep well.","Up-and-down energy: rest more and don't skip meals.","Low energy or stress: slow down, sleep, and watch for strain or accidents."],ar:["طاقة عالية: رائع لبدء عادة رياضية أو إطلالة جديدة.","طاقة جيدة: حافظ على روتينك ونم جيداً.","طاقة متقلبة: ارتح أكثر ولا تفوّت الوجبات.","طاقة منخفضة أو توتر: تمهّل ونم وانتبه للإجهاد والحوادث."]},
+ Family:{en:["Happy family vibes: gatherings, good news or home upgrades.","Calm at home: a good time to reconnect.","Mixed at home: small frictions; listen more than you talk.","Family stress: be patient; avoid old arguments."],ar:["أجواء عائلية سعيدة: لقاءات أو أخبار حلوة أو تحسينات في البيت.","هدوء في البيت: وقت جيد لإعادة التواصل.","تقلب في البيت: احتكاكات صغيرة، استمع أكثر مما تتكلم.","ضغط عائلي: كن صبوراً وتجنّب الخلافات القديمة."]},
+ Travel:{en:["Great for trips, courses and big plans: book it.","Good for short trips and learning.","Plan carefully: delays or changes are possible.","Avoid big trips if you can; double-check bookings and papers."],ar:["رائع للسفر والدورات والخطط الكبيرة: احجز.","جيد للرحلات القصيرة والتعلّم.","خطّط بعناية: تأخيرات أو تغييرات محتملة.","تجنّب السفرات الكبيرة إن أمكن، وراجع الحجوزات والأوراق."]}};
+const OUTL=()=>L(["Great","Good","Mixed","Challenging"],["ممتاز","جيد","مختلط","صعب"]);
+const STR=s=>s>=2.2?["🔴",L("Strong","قوي")]:s>=1.2?["🟠",L("Medium","متوسط")]:["🟢",L("Mild","خفيف")];
+function predictAll(D,J,kind){
+  const HEV=L(HEV_EN,HEV_AR), PEF=L(PEF_EN,PEF_AR), NEX=L(NEX_EN,NEX_AR);
+  const fmt=ms=>kind==="day"?new Date(ms).toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"}):new Date(ms).toLocaleDateString(LOC(),{weekday:"short",month:"short",day:"numeric"});
+  if(!NAT.decS) NAT.decS=decStarts();
+  const items=J.map(x=>{
+    const cnt={}; x.lons.forEach(l=>{const h=house(l); cnt[h]=(cnt[h]||0)+1;}); const mh=+Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
+    const rf=D.samples.filter(s=>s.pos[x.j].retro).length/D.samples.length, retro=rf>0.5;
+    const pe=PEF[x.k], ev=HEV[mh-1];
+    const cw=c=>(c.a.t==="conj"?1.3:c.a.t==="hard"?1:.6)+(["Sun","Moon","Ascendant","Midheaven"].includes(c.n.k)?.3:0);
+    const top=x.contacts.map((c,i)=>({c,i})).sort((a,b)=>cw(b.c)-cw(a.c)||a.i-b.i).slice(0,3).map(o=>o.c).sort((a,b)=>a.ms-b.ms);
+    const inDec=NAT.decS.some(d=>x.lons.some(l=>norm(l-d.start)<10));
+    let score=(["Jupiter","Saturn","Uranus","Neptune"].includes(x.k)?0.8:0)+x.contacts.reduce((s,c)=>s+(c.a.t==="easy"?.6:1),0)*0.6+x.st.length*1.2+(x.ing.length&&!x.moonRing?0.5:0)+(inDec&&!x.moonRing?1:0);
+    score*=WT[x.k]||1; if(x.moonRing) score=0.6;
+    let t;
+    if(x.moonRing) t=L(`Your moods move through every area of life ${kind==="year"?"each month":"this month"}. Emotional peaks come with the New and Full Moons in the key dates list.`,`مزاجك يمرّ بكل مجالات الحياة ${kind==="year"?"كل شهر":"هذا الشهر"}. ذروات المشاعر تأتي مع القمر الجديد والبدر في قائمة التواريخ المهمة.`);
+    else if(x.houses.length>3) t=L(`${x.k} moves through several areas ${kind==="year"?"this year":"in this period"}. Its longest stay: ${retro?pe.r:pe.f} ${ev.a}. Expect ${ev.x}.`,`${x.k} يمرّ بعدة مجالات ${kind==="year"?"هذه السنة":"في هذه الفترة"}. أطول إقامة: ${retro?pe.r:pe.f} ${ev.a}. توقّع ${ev.x}.`);
+    else t=L(`${retro?pe.r:pe.f} ${ev.a}: expect ${ev.x}.`,`${retro?pe.r:pe.f} ${ev.a}: توقّع ${ev.x}.`);
+    const extra=[];
+    if(!x.moonRing&&x.houses.length>3) extra.push(L("Also visits: ","يزور أيضاً: ")+[...new Set(x.houses)].filter(h=>h!==mh).map(h=>HEV[h-1].a).join(L(", ","، "))+".");
+    else if(!x.moonRing&&x.ing.length){ const e=x.ing[0], h2=house(e.sign*30+1); if(h2!==mh) extra.push(L(`From ${fmt(e.ms)} the focus moves to your ${HEV[h2-1].a}: ${HEV[h2-1].x}.`,`من ${fmt(e.ms)} ينتقل التركيز إلى ${HEV[h2-1].a}: ${HEV[h2-1].x}.`)); }
+    x.st.forEach(e=>extra.push(`↻ ${fmt(e.ms)}: `+(e.retro?L("it turns backward. Delays, redos and second thoughts start.","يبدأ التراجع: تأخيرات وإعادة عمل وتردد."):L("it turns forward. Green light: things move again.","يعود للأمام: ضوء أخضر والأمور تتحرك من جديد."))));
+    top.forEach(c=>extra.push(`📅 ${fmt(c.ms)}: `+(c.a.t==="hard"?L(`friction around ${NEX[c.n.k]}. Stay cool.`,`احتكاك حول ${NEX[c.n.k]}. ابقَ هادئاً.`):c.a.t==="easy"?L(`a lucky push for ${NEX[c.n.k]}. Use it.`,`دفعة حظ في ${NEX[c.n.k]}. استفد منها.`):L(`a turning point for ${NEX[c.n.k]}.`,`نقطة تحوّل في ${NEX[c.n.k]}.`))));
+    if(inDec&&!x.moonRing) extra.push(L("🎯 It passes through one of your decans: this one is personal.","🎯 يمرّ في أحد أوجهك: هذا شخصي جداً."));
+    return {x,mh,score,retro,t,extra,top};
+  });
+  // life areas
+  const areas=AREA6.map(([k,ic,hs,nat])=>{
+    let v=0; const why=[];
+    items.forEach(it=>{ const x=it.x; if(x.moonRing&&!(kind==="day"||kind==="week")) return;
+      if(hs.includes(it.mh)){ const nv=(NATURE[x.k]||0)-(it.retro?.3:0); v+=nv; why.push({w:Math.abs(nv)+.2,t:L(`${x.g} ${x.k} in your ${ord(it.mh)} house`,`${x.g} ${x.k} في ${yh(it.mh)}`)}); }
+      x.contacts.forEach(c=>{ if(!nat.includes(c.n.k)) return; const cv=c.a.t==="conj"?(NATURE[x.k]||0):c.a.t==="easy"?.8:-.8; v+=cv*.6; why.push({w:Math.abs(cv)*.6,t:`${x.g} ${x.k} ${c.a.g} ${L("your","")} ${c.n.k} (${fmt(c.ms)})`.replace("  "," ")}); });
+    });
+    const o=v>0.8?0:v>0.2?1:v>-0.3?2:3;
+    return {k,ic,o,txt:L(AREA_PRED[k].en[o],AREA_PRED[k].ar[o]),why:why.sort((a,b)=>b.w-a.w).slice(0,2).map(w=>w.t)};
+  });
+  // lucky & warning dates
+  let lucky=[], warn=[];
+  if(kind==="day"){
+    const v=new Date(D.t0), hrs=hourly(v.getFullYear(),v.getMonth(),v.getDate(),D.samples[12].pos);
+    const s=hrs.slice().sort((a,b)=>b.v-a.v); lucky=s.filter(h=>h.v>.3).slice(0,3).sort((a,b)=>a.h-b.h).map(h=>({d:fmtH(h.h),r:h.pos?h.pos.label:""})); warn=s.reverse().filter(h=>h.v<-.3).slice(0,3).sort((a,b)=>a.h-b.h).map(h=>({d:fmtH(h.h),r:h.neg?h.neg.label:""}));
+  } else {
+    const byDay={}; D.samples.forEach(s=>{ const k=ymd(new Date(s.ms)), dh=Math.abs(new Date(s.ms).getHours()-12); if(!byDay[k]||dh<byDay[k].dh) byDay[k]={s,dh}; });
+    const days=Object.values(byDay).map(o=>o.s);
+    const sc=days.map(s=>({ms:s.ms,all:scoresAt(jdFromUTCms(s.ms),s.pos).all}));
+    const n=kind==="year"?[6,5]:kind==="month"?[4,3]:[2,2];
+    const reason=(ms,good)=>{ const day=ymd(new Date(ms)); const cs=[]; J.forEach(x=>x.contacts.forEach(c=>{ if(ymd(new Date(c.ms))===day&&(good?c.a.t!=="hard":c.a.t!=="easy")) cs.push(`${x.g} ${c.a.g} ${c.n.k}`); })); return cs.slice(0,2).join(L(", ","، ")); };
+    const sorted=sc.slice().sort((a,b)=>b.all-a.all);
+    lucky=sorted.slice(0,n[0]).sort((a,b)=>a.ms-b.ms).map(s=>({d:fmt(s.ms),r:reason(s.ms,true)}));
+    warn=sorted.slice(-n[1]).sort((a,b)=>a.ms-b.ms).map(s=>({d:fmt(s.ms),r:reason(s.ms,false)}));
+  }
+  return {items,areas,lucky,warn};
+}
+function predictHtml(D,J,kind){
+  const P=predictAll(D,J,kind), per={day:L("today","اليوم"),week:L("this week","هذا الأسبوع"),month:L("this month","هذا الشهر"),year:L("this year","هذه السنة")}[kind];
+  const PEF=L(PEF_EN,PEF_AR), key=x=>`j:${x.k}:${D.t0}:${D.t1}`;
+  const ranked=P.items.filter(i=>!i.x.moonRing).sort((a,b)=>b.score-a.score);
+  const card=(it,full)=>{ const [ic,lab]=STR(it.score), x=it.x;
+    return `<div class="pr" data-x="${key(x)}"><div class="prh"><i style="background:${PCOL[x.k]}"></i><b>${x.g} ${x.k}</b><span class="st">${ic} ${lab}</span></div>
+      <p>${it.t}</p>${it.extra.length?`<ul>${it.extra.slice(0,full?6:3).map(e=>`<li>${e}</li>`).join("")}</ul>`:""}
+      <div class="da"><span>✅ <b>${L("Do:","افعل:")}</b> ${PEF[x.k].do}</span><span>⛔ <b>${L("Avoid:","تجنّب:")}</b> ${PEF[x.k].av}</span></div></div>`; };
+  const OL=OUTL();
+  return `<h2>🔮 ${L("Predictions","التوقعات")}</h2><p class="small" style="margin-top:-6px">${L(`What's likely to happen ${per}, from your exact chart. Strongest first. Astrology shows likely themes and timing, so use it as a guide.`,`ما الذي يُرجَّح أن يحدث ${per} بناءً على خريطتك الدقيقة، الأقوى أولاً. التنجيم يُظهر المواضيع والتوقيت المحتمل، فاستخدمه كدليل.`)}</p>
+   <h3>⭐ ${L("Top 3","الأهم 3")}</h3>${ranked.slice(0,3).map(i=>card(i,false)).join("")}
+   <h3>📅 ${L("Lucky & warning","أوقات الحظ والحذر")} ${kind==="day"?L("hours","الساعات"):L("dates","التواريخ")}</h3>
+   <div class="lw"><div><b class="g">🍀 ${L("Lucky","حظ")}</b>${P.lucky.length?P.lucky.map(l=>`<div><b>${l.d}</b>${l.r?` <small>${l.r}</small>`:""}</div>`).join(""):`<div class="small">${L("No standout lucky time.","لا وقت حظ بارز.")}</div>`}</div>
+     <div><b class="w">⚠️ ${L("Careful","حذر")}</b>${P.warn.length?P.warn.map(l=>`<div><b>${l.d}</b>${l.r?` <small>${l.r}</small>`:""}</div>`).join(""):`<div class="small">${L("No standout risky time.","لا وقت خطر بارز.")}</div>`}</div></div>
+   <h3>🧭 ${L("Life areas","مجالات الحياة")}</h3>
+   ${P.areas.map(a=>`<div class="la o${a.o}"><div><b>${a.ic} ${L(a.k,AREA_AR[a.k])}</b> <span class="ol">${OL[a.o]}</span></div><p>${a.txt}</p>${a.why.length?`<small>${L("Because:","السبب:")} ${a.why.join(L("; ","؛ "))}</small>`:""}</div>`).join("")}
+   <details class="pbp"><summary>🪐 ${L("Planet by planet","كوكباً بكوكب")} (${P.items.length}) · ${L("tap to open","اضغط للفتح")}</summary>${P.items.slice().sort((a,b)=>b.score-a.score).map(i=>card(i,true)).join("")}</details>`;
+}
+
 // ---------- Exact (decan-based) reading ----------
 function decStarts(){ return DECPTS().map(([k,g,lon])=>({k,start:decanOf(lon).start})); }
 function decanReading(D,J,kind){
@@ -2091,6 +2247,7 @@ function renderShadow(id,t0,t1,kind){
     stt.timer=requestAnimationFrame(tick);
   };
   const dr={shDay:"drDay",shWeek:"drWeek",shMonth:"drMonth",shYear:"drYear"}[id]; if(dr&&$(dr)) $(dr).innerHTML=decanReading(D,J,kind);
+  const pd={shDay:"pdDay",shWeek:"pdWeek",shMonth:"pdMonth",shYear:"pdYear"}[id]; if(pd&&$(pd)) $(pd).innerHTML=predictHtml(D,J,kind);
   shadowNow(id);
 }
 function explainJourney(k,t0,t1){
