@@ -288,6 +288,9 @@ html[dir=rtl] .xl{text-underline-offset:5px}
 .tl .tlb p{margin:3px 0;font-size:.86rem}
 .tl .da{display:flex;flex-direction:column;gap:1px;font-size:.8rem;color:var(--muted)}
 .tl.big .tlt{color:var(--hard)}
+.bvn{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+.bvn>div{background:var(--soft);border-radius:10px;padding:7px 9px;font-size:.82rem}
+.bvn small{color:var(--muted)}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -2039,11 +2042,23 @@ function timelineHtml(D,J,kind){
         body+=`<p>⏳ ${L(`Stays ${durTxt(nc.jd-jd)}, until ${fdl(nc.jd)}, then ${back?"slips back to":"moves on to"} your ${ord(nh)} house (${HEV[nh-1].a}).`,`يبقى ${durTxt(nc.jd-jd)} حتى ${fdl(nc.jd)}، ثم ${back?"يعود إلى":"ينتقل إلى"} ${yh(nh)} (${HEV[nh-1].a}).`)}</p>`; }
       body+=`<div class="da"><span>✅ ${PEF[x.k].do}</span><span>⛔ ${PEF[x.k].av}</span></div>`;
     } else if(o.f==="turn"){
-      const x=o.x, jd=jdFromUTCms(o.ms), h=house(lonOf(x.k,jd)), ns=nextStation(x.k,jd,o.e.retro); key=`j:${x.k}:${D.t0}:${D.t1}`; ic="↻";
+      const x=o.x, jd=jdFromUTCms(o.ms), lonN=lonOf(x.k,jd), sN=signIdx(lonN), h=house(lonN), ns=nextStation(x.k,jd,o.e.retro), nc=nextChange(x.k,jd+1e-4,sN);
+      let ps=null; for(let t=1;t<=420;t++){ if(retroAt(x.k,jd-t)===o.e.retro){ ps=jd-t+1; break; } }
+      key=`j:${x.k}:${D.t0}:${D.t1}`; ic="↻";
       title=o.e.retro?L(`${x.k} turns backward ℞`,`${x.k} يبدأ التراجع ℞`):L(`${x.k} turns forward`,`${x.k} يعود للأمام`);
-      body=o.e.retro?`<p>${L(`Delays, redos and second thoughts start in your ${HEV[h-1].a}. ${HEV[h-1].x} may need a second look.`,`تبدأ التأخيرات وإعادة العمل والتردد في ${HEV[h-1].a}. قد يحتاج ${HEV[h-1].x} إلى نظرة ثانية.`)}</p>`
-        :`<p>${L(`Green light again in your ${HEV[h-1].a}: stuck things start moving. Good time to restart and sign.`,`ضوء أخضر من جديد في ${HEV[h-1].a}: الأمور العالقة تبدأ بالتحرك. وقت جيد لإعادة الانطلاق والتوقيع.`)}</p>`;
-      if(ns) body+=`<p>⏳ ${o.e.retro?L(`Backward until ${fdl(ns)} (${durTxt(ns-jd)}).`,`متراجع حتى ${fdl(ns)} (${durTxt(ns-jd)}).`):L(`Forward until its next backward turn on ${fdl(ns)}.`,`يتحرك للأمام حتى تراجعه القادم في ${fdl(ns)}.`)}</p>`;
+      body=`<p>📍 <b>${L("Now:","الآن:")}</b> ${SG[sN]} ${SIGNS[sN]} ${fmtDeg(lonN).split(" ")[0]} · ${L(`your ${ord(h)} house`,yh(h))} (${HEV[h-1].a})</p>`;
+      if(!o.e.retro){
+        body+=`<div class="bvn"><div><b>🔙 ${L("Before","قبل")}</b>${ps?` <small>${L("backward since","متراجع منذ")} ${fdl(ps)}</small>`:""}<br>${L(`Review and redo in your ${HEV[h-1].a}: delays, second thoughts, old matters came back.`,`مراجعة وإعادة عمل في ${HEV[h-1].a}: تأخيرات وتردد وعودة أمور قديمة.`)}</div>
+          <div><b>⏩ ${L("Now","الآن")}</b><br>${L(`Forward again in the same house: ${HEV[h-1].x} starts moving and you can act on what you reviewed.`,`للأمام من جديد في البيت نفسه: ${HEV[h-1].x} تبدأ بالتحرك، ويمكنك التصرف بناءً على ما راجعته.`)}</div></div>`;
+        if(nc){ const nh=house(nc.sign*30+1); body+=`<p>➡️ <b>${L("Next stop:","المحطة التالية:")}</b> ${SG[nc.sign]} ${SIGNS[nc.sign]} · ${L(`your ${ord(nh)} house`,yh(nh))} (${HEV[nh-1].a}) ${L("on","في")} ${fdl(nc.jd)} (${L("in ","بعد ")+durTxt(nc.jd-jd)}). ${L("Then expect","بعدها توقّع")} ${HEV[nh-1].x}.</p>`; }
+        if(ns) body+=`<p class="small">⏳ ${L(`Forward until its next backward turn on ${fdl(ns)}.`,`للأمام حتى تراجعه القادم في ${fdl(ns)}.`)}</p>`;
+      } else {
+        body+=`<div class="bvn"><div><b>⏩ ${L("Before","قبل")}</b>${ps?` <small>${L("forward since","للأمام منذ")} ${fdl(ps)}</small>`:""}<br>${L(`Progress in your ${HEV[h-1].a}: things were moving ahead.`,`تقدّم في ${HEV[h-1].a}: الأمور كانت تسير للأمام.`)}</div>
+          <div><b>🔙 ${L("Now","الآن")}</b><br>${L(`Backward in the same house: ${HEV[h-1].x} may need a second look. Review, fix and redo.`,`للخلف في البيت نفسه: قد يحتاج ${HEV[h-1].x} إلى نظرة ثانية. راجع وأصلح وأعد.`)}</div></div>`;
+        if(nc&&(!ns||nc.jd<ns)){ const nh=house(nc.sign*30+1); body+=`<p>⬅️ <b>${L("Slips back:","يعود للخلف:")}</b> ${L(`into ${SIGNS[nc.sign]} · your ${ord(nh)} house (${HEV[nh-1].a}) on ${fdl(nc.jd)}: old ${HEV[nh-1].a} matters come back for a redo.`,`إلى ${SIGNS[nc.sign]} · ${yh(nh)} (${HEV[nh-1].a}) في ${fdl(nc.jd)}: أمور قديمة في ${HEV[nh-1].a} تعود للمراجعة.`)}</p>`; }
+        else body+=`<p>📌 ${L(`It stays in your ${ord(h)} house for the whole backward phase.`,`يبقى في ${yh(h)} طوال فترة التراجع.`)}</p>`;
+        if(ns) body+=`<p class="small">⏳ ${L(`Backward until ${fdl(ns)} (${durTxt(ns-jd)}).`,`متراجع حتى ${fdl(ns)} (${durTxt(ns-jd)}).`)}</p>`;
+      }
       body+=`<div class="da"><span>✅ ${o.e.retro?L("Review, back up, renegotiate.","راجع، اعمل نسخاً احتياطية، أعد التفاوض."):L("Launch, sign, move ahead.","أطلق، وقّع، تقدّم.")}</span><span>⛔ ${o.e.retro?L("Brand-new launches and big signings.","الإطلاقات الجديدة والتوقيعات الكبيرة."):PEF[x.k].av}</span></div>`;
     } else if(o.f==="hit"){
       const x=o.x, c=o.c; key=`j:${x.k}:${D.t0}:${D.t1}`; ic=c.a.g;
