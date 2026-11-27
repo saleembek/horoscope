@@ -271,6 +271,23 @@ html[dir=rtl] .xl{text-underline-offset:5px}
 .la p{margin:4px 0 2px;font-size:.9rem}
 .la small{color:var(--muted)}
 .pbp summary{cursor:pointer;font-weight:700;margin:14px 0 6px;color:var(--accent)}
+.tlcard{border:2px solid #f59e0b;background:linear-gradient(180deg,color-mix(in srgb,#f59e0b 8%,var(--card)),var(--card))}
+.tlf{display:flex;gap:6px;overflow-x:auto;margin:4px -4px 8px;padding:2px 4px;scrollbar-width:none}
+.tlf::-webkit-scrollbar{display:none}
+.tlf button{flex:none;width:auto;margin:0;padding:6px 11px;border-radius:99px;font-size:.82rem;background:var(--soft);color:var(--ink)}
+.tlf button.on{background:#f59e0b;color:#1d1a2b}
+.tlf small{opacity:.7;font-weight:600}
+.tll{position:relative;padding-inline-start:4px}
+.tlm{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;font-weight:800;color:#b45309;margin:14px 0 4px}
+.tl{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.tl:last-child{border-bottom:0}
+.tl .tld{width:78px;flex:none;font-size:.78rem;line-height:1.25}
+.tl .tld span{display:block;margin-top:2px}
+.tl .tlb{flex:1;min-width:0}
+.tl .tlt{font-weight:700;font-size:.93rem}
+.tl .tlb p{margin:3px 0;font-size:.86rem}
+.tl .da{display:flex;flex-direction:column;gap:1px;font-size:.8rem;color:var(--muted)}
+.tl.big .tlt{color:var(--hard)}
 .foot{font-size:.78rem;color:var(--muted);text-align:center;margin-top:18px}
 .nav{display:flex;gap:8px;align-items:center;padding:10px}
 .nav button{width:52px;flex:none;margin:0;padding:8px 0;font-size:1.5rem;line-height:1}
@@ -367,6 +384,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
       </div>
       <button id="todayBtn" class="ghost hidden" data-ar="↺ العودة إلى اليوم">↺ Back to today</button>
       <div class="card pred" id="pdDay"></div>
+      <div class="card tlcard" id="tlDay"></div>
       <div class="card decread" id="drDay"></div>
       <div class="card shcard" id="shDay"></div>
       <div class="card full hidden" id="fullDay"></div>
@@ -410,6 +428,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
       <div class="wchips" id="weekChips" role="tablist" aria-label="Pick a week"></div>
       <button id="thisWeekBtn" class="ghost hidden" data-ar="↺ العودة إلى الأسبوع القادم">↺ Back to the upcoming week</button>
       <div class="card pred" id="pdWeek"></div>
+      <div class="card tlcard" id="tlWeek"></div>
       <div class="card decread" id="drWeek"></div>
       <div class="card shcard" id="shWeek"></div>
       <div class="card full hidden" id="fullWeek"></div>
@@ -431,6 +450,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
         <button id="nextMonth" aria-label="Next month">›</button>
       </div>
 <div class="card pred" id="pdMonth"></div>
+<div class="card tlcard" id="tlMonth"></div>
 <div class="card decread" id="drMonth"></div>
 <div class="card shcard" id="shMonth"></div>
 <div class="card full hidden" id="fullMonth"></div>
@@ -454,6 +474,7 @@ html[dir=rtl] .xl{text-underline-offset:5px}
       </div>
       <div class="chips" id="yearChips"></div>
 <div class="card pred" id="pdYear"></div>
+<div class="card tlcard" id="tlYear"></div>
 <div class="card decread" id="drYear"></div>
 <div class="card shcard" id="shYear"></div>
 <div class="card full hidden" id="fullYear"></div>
@@ -967,6 +988,7 @@ function speechText(){
   else if(tab==="chart") t=[txt("chartTitle")+".",txt("big3Text"),L("Planet journeys.","رحلات الكواكب."),txt("moveList").replace(/←/g,"").replace(/→/g,""),L("Your planets.","كواكبك."),txt("planetList"),L("Your 12 houses.","بيوتك الاثنا عشر."),txt("houseList")];
   else t=[...document.querySelectorAll("#t-learn p, #t-learn li")].map(e=>e.innerText);
   const drId={today:"drDay",week:"drWeek",month:"drMonth",year:"drYear"}[tab]; if(drId&&$(drId)) t.splice(1,0,txt(drId));
+  const tlId={today:"tlDay",week:"tlWeek",month:"tlMonth",year:"tlYear"}[tab]; if(tlId&&$(tlId)) t.splice(1,0,[...document.querySelectorAll("#"+tlId+" .tl")].filter(e=>e.style.display!=="none").slice(0,12).map(e=>e.innerText).join(". "));
   const pdId={today:"pdDay",week:"pdWeek",month:"pdMonth",year:"pdYear"}[tab]; if(pdId&&$(pdId)) t.splice(1,0,txt(pdId));
   const shId={today:"shDay",week:"shWeek",month:"shMonth",year:"shYear"}[tab]; if(shId&&$(shId+"-list")) t.splice(2,0,L("Planet shadows. ","ظلال الكواكب. ")+txt(shId+"-list"));
   const fullId={today:"fullDay",week:"fullWeek",month:"fullMonth",year:"fullYear",chart:"fullChart"}[tab];
@@ -1965,6 +1987,85 @@ function decanSection(D,J,kind){
     ${kind==="year"?"":`<p class="small"><b>${L("Season decan:","وجه الموسم:")}</b> ${L("the Sun is in","الشمس في")} ${decanLabel(sd)}: ${decanMeaning(sd)}</p>`}`;
 }
 
+// ---------- Important days timeline ----------
+function nextChange(k,jd,sign){
+  const step=k==="Moon"?1/24:["Sun","Mercury","Venus"].includes(k)?0.25:1, max=(MAXD[k]||400)*1.6;
+  for(let t=step;t<=max;t+=step){ const s=signIdx(lonOf(k,jd+t)); if(s!==sign) return {jd:jd+t,sign:s}; }
+  return null;
+}
+function exactIngress(k,ms,sign,stepD){ let lo=jdFromUTCms(ms)-stepD, hi=jdFromUTCms(ms); for(let i=0;i<22;i++){ const m=(lo+hi)/2; if(signIdx(lonOf(k,m))===sign) hi=m; else lo=m; } return msFromJd(hi); }
+function exactHit(k,ms,n,a,stepD){ let lo=jdFromUTCms(ms)-stepD, hi=jdFromUTCms(ms)+stepD; const f=j=>Math.abs(sep(lonOf(k,j),n.lon)-a.a); for(let i=0;i<40;i++){ const m1=lo+(hi-lo)/3, m2=hi-(hi-lo)/3; if(f(m1)<f(m2)) hi=m2; else lo=m1; } return msFromJd((lo+hi)/2); }
+function nextStation(k,jd,retro){ for(let t=1;t<=420;t++){ if(retroAt(k,jd+t)!==retro) return jd+t; } return null; }
+function timelineHtml(D,J,kind){
+  const HEV=L(HEV_EN,HEV_AR), PEF=L(PEF_EN,PEF_AR), NEX=L(NEX_EN,NEX_AR);
+  const big4=["Sun","Moon","Ascendant","Midheaven"], SLOW=["Jupiter","Saturn","Uranus","Neptune"];
+  const fd=ms=>{ const d=new Date(ms); return kind==="day"?d.toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"}):d.toLocaleDateString(LOC(),{weekday:"short",month:"short",day:"numeric"})+(kind==="week"?" · "+d.toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"}):""); };
+  const fdl=jd=>new Date(msFromJd(jd)).toLocaleDateString(LOC(),{month:"short",day:"numeric",year:"numeric"});
+  const ev=[];
+  J.forEach(x=>{
+    const skipMoon=x.k==="Moon"&&(kind==="month"||kind==="year");
+    if(!skipMoon) x.ing.forEach(e=>ev.push({ms:exactIngress(x.k,e.ms,e.sign,D.step),f:"move",x,e,w:SLOW.includes(x.k)?3:x.k==="Moon"?1:2}));
+    x.st.forEach(e=>ev.push({ms:e.ms,f:"turn",x,e,w:SLOW.includes(x.k)?3:2.5}));
+    x.contacts.forEach(c=>{
+      if(kind==="month"&&x.k==="Moon") return;
+      if(kind==="year"&&!(["Mars",...SLOW].includes(x.k)&&big4.includes(c.n.k)&&c.a.a!==60)) return;
+      const w=(SLOW.includes(x.k)?2:1)+(big4.includes(c.n.k)?.6:0)+(c.a.t==="easy"?0:.4);
+      ev.push({ms:exactHit(x.k,c.ms,c.n,c.a,D.step),f:"hit",x,c,w});
+    });
+  });
+  // Moon phases and eclipses from the samples
+  const S=D.samples;
+  for(let i=1;i<S.length;i++){
+    const eA=norm(S[i-1].pos[1].lon-S[i-1].pos[0].lon), eB=norm(S[i].pos[1].lon-S[i].pos[0].lon);
+    [[0,eA>270&&eB<90],[180,eA<180&&eB>=180]].forEach(([tg,hit])=>{ if(!hit) return;
+      const jd=refinePhase(jdFromUTCms(S[i-1].ms),jdFromUTCms(S[i].ms),tg), ml=moonLon(jd), nd=nodeLon(jd), dn=Math.min(sep(ml,nd),sep(ml,nd+180));
+      const ecl=tg===0?dn<15.4:dn<11.8; if(kind==="year"&&!ecl) return;
+      ev.push({ms:msFromJd(jd),f:"moon",full:tg===180,ecl,lon:ml,w:ecl?3:1.5});
+    });
+  }
+  ev.sort((a,b)=>a.ms-b.ms);
+  const lvl=w=>w>=2.8?["big","🔴"]:w>=1.8?["med","🟠"]:["low","🟢"];
+  let lastHead="";
+  const items=ev.map(o=>{
+    let head="", ic="", title="", body="", key="";
+    if(kind==="year"){ const m=new Date(o.ms).toLocaleDateString(LOC(),{month:"long"}); if(m!==lastHead){ head=`<div class="tlm">${m}</div>`; lastHead=m; } }
+    if(o.f==="move"){
+      const x=o.x, jd=jdFromUTCms(o.ms), retro=retroAt(x.k,jd), prev=retro?(o.e.sign+1)%12:(o.e.sign+11)%12, hOld=house(prev*30+1), hNew=o.e.h;
+      const nc=nextChange(x.k,jd+1e-4,o.e.sign); key=`j:${x.k}:${D.t0}:${D.t1}`; ic=x.g;
+      title=L(`${x.k} enters ${SIGNS[o.e.sign]} · your ${ord(hNew)} house`,`${x.k} يدخل ${SIGNS[o.e.sign]} · ${yh(hNew)}`);
+      body=`<p>➡️ ${L("Enters:","يدخل:")} ${retro?PEF[x.k].r:PEF[x.k].f} ${HEV[hNew-1].a}. ${L("Expect","توقّع")} ${HEV[hNew-1].x}.</p>`;
+      body+=`<p>⬅️ ${L(`Leaves your ${ord(hOld)} house (${HEV[hOld-1].a}): that chapter winds down.`,`يغادر ${yh(hOld)} (${HEV[hOld-1].a}): ذلك الفصل يقترب من نهايته.`)}</p>`;
+      if(nc){ const nh=house(nc.sign*30+1), back=(nc.sign-o.e.sign+12)%12!==1;
+        body+=`<p>⏳ ${L(`Stays ${durTxt(nc.jd-jd)}, until ${fdl(nc.jd)}, then ${back?"slips back to":"moves on to"} your ${ord(nh)} house (${HEV[nh-1].a}).`,`يبقى ${durTxt(nc.jd-jd)} حتى ${fdl(nc.jd)}، ثم ${back?"يعود إلى":"ينتقل إلى"} ${yh(nh)} (${HEV[nh-1].a}).`)}</p>`; }
+      body+=`<div class="da"><span>✅ ${PEF[x.k].do}</span><span>⛔ ${PEF[x.k].av}</span></div>`;
+    } else if(o.f==="turn"){
+      const x=o.x, jd=jdFromUTCms(o.ms), h=house(lonOf(x.k,jd)), ns=nextStation(x.k,jd,o.e.retro); key=`j:${x.k}:${D.t0}:${D.t1}`; ic="↻";
+      title=o.e.retro?L(`${x.k} turns backward ℞`,`${x.k} يبدأ التراجع ℞`):L(`${x.k} turns forward`,`${x.k} يعود للأمام`);
+      body=o.e.retro?`<p>${L(`Delays, redos and second thoughts start in your ${HEV[h-1].a}. ${HEV[h-1].x} may need a second look.`,`تبدأ التأخيرات وإعادة العمل والتردد في ${HEV[h-1].a}. قد يحتاج ${HEV[h-1].x} إلى نظرة ثانية.`)}</p>`
+        :`<p>${L(`Green light again in your ${HEV[h-1].a}: stuck things start moving. Good time to restart and sign.`,`ضوء أخضر من جديد في ${HEV[h-1].a}: الأمور العالقة تبدأ بالتحرك. وقت جيد لإعادة الانطلاق والتوقيع.`)}</p>`;
+      if(ns) body+=`<p>⏳ ${o.e.retro?L(`Backward until ${fdl(ns)} (${durTxt(ns-jd)}).`,`متراجع حتى ${fdl(ns)} (${durTxt(ns-jd)}).`):L(`Forward until its next backward turn on ${fdl(ns)}.`,`يتحرك للأمام حتى تراجعه القادم في ${fdl(ns)}.`)}</p>`;
+      body+=`<div class="da"><span>✅ ${o.e.retro?L("Review, back up, renegotiate.","راجع، اعمل نسخاً احتياطية، أعد التفاوض."):L("Launch, sign, move ahead.","أطلق، وقّع، تقدّم.")}</span><span>⛔ ${o.e.retro?L("Brand-new launches and big signings.","الإطلاقات الجديدة والتوقيعات الكبيرة."):PEF[x.k].av}</span></div>`;
+    } else if(o.f==="hit"){
+      const x=o.x, c=o.c; key=`j:${x.k}:${D.t0}:${D.t1}`; ic=c.a.g;
+      title=L(`${x.k} ${c.a.n.toLowerCase()} your ${c.n.k}`,`${x.k} ${c.a.n.toLowerCase()} مع ${c.n.k} لديك`);
+      const pr=c.a.t==="hard"?L(`Friction around ${NEX[c.n.k]}. Stay cool and don't force it.`,`احتكاك حول ${NEX[c.n.k]}. ابقَ هادئاً ولا تفرض الأمور.`):c.a.t==="easy"?L(`A lucky push for ${NEX[c.n.k]}. Act on it.`,`دفعة حظ في ${NEX[c.n.k]}. تحرّك بناءً عليها.`):L(`A turning point for ${NEX[c.n.k]}. Something new starts.`,`نقطة تحوّل في ${NEX[c.n.k]}. شيء جديد يبدأ.`);
+      body=`<p>${pr}</p><p class="small">${interp(x.k,c.a,c.n)}</p>`;
+    } else {
+      const s=signIdx(o.lon), h=house(o.lon); ic=o.full?"🌕":"🌑"; key=`h:${h}`;
+      title=(o.ecl?(o.full?L("Lunar eclipse","خسوف القمر"):L("Solar eclipse","كسوف الشمس")):(o.full?L("Full Moon","البدر"):L("New Moon","القمر الجديد")))+` · ${SIGNS[s]} · ${L(`your ${ord(h)} house`,yh(h))}`;
+      body=`<p>${o.full?L(`Results and emotions peak in your ${HEV[h-1].a}: ${HEV[h-1].x}. Finish and let go.`,`تبلغ النتائج والمشاعر ذروتها في ${HEV[h-1].a}: ${HEV[h-1].x}. أنهِ واترك.`):L(`Plant a seed in your ${HEV[h-1].a}: start something about ${HEV[h-1].x}.`,`ازرع بذرة في ${HEV[h-1].a}: ابدأ شيئاً يخص ${HEV[h-1].x}.`)}${o.ecl?L(" Eclipse: a turning point that can unfold over 6 months."," كسوف/خسوف: نقطة تحوّل قد تمتد آثارها 6 أشهر."):""}</p>`;
+    }
+    const [lc,li]=lvl(o.w);
+    return head+`<div class="tl ${lc} f-${o.f}" data-x="${key}"><div class="tld"><b>${fd(o.ms)}</b><span>${li}</span></div><div class="tlb"><div class="tlt">${ic} ${title}</div>${body}</div></div>`;
+  });
+  const per={day:L("today","اليوم"),week:L("this week","هذا الأسبوع"),month:L("this month","هذا الشهر"),year:L("this year","هذه السنة")}[kind];
+  const cnt=f=>ev.filter(o=>f==="all"||o.f===f).length;
+  const chips=[["all",L("All","الكل")],["move",L("Moves","التنقلات")],["turn",L("Direction","الاتجاه")],["hit",L("Hits on you","إصابات لك")],["moon",L("Moon","القمر")]].filter(([f])=>cnt(f)).map(([f,n],i)=>`<button class="${i?"":"on"}" data-f="${f}">${n} <small>${cnt(f)}</small></button>`).join("");
+  return `<h2>🗓️ ${L("Important days","الأيام المهمة")}</h2><p class="small" style="margin-top:-6px">${L(`Everything that happens ${per}, in date order: when planets enter and leave your houses (and how long they stay), direction changes, exact hits on your chart, and Moon phases. Each one with its impact and prediction.`,`كل ما يحدث ${per} بترتيب التاريخ: متى تدخل الكواكب بيوتك وتغادرها (وكم تبقى)، تغيّرات الاتجاه، الإصابات الدقيقة لخريطتك، وأطوار القمر. ومع كل واحد تأثيره وتوقعه.`)}</p>
+   ${ev.length?`<div class="tlf">${chips}</div><div class="tll">${items.join("")}</div>`:`<p class="small">${L("No major events in this period.","لا أحداث كبيرة في هذه الفترة.")}</p>`}`;
+}
+function bindTl(id){ const box=$(id); if(!box) return; box.querySelectorAll(".tlf button").forEach(b=>b.onclick=e=>{ e.stopPropagation(); box.querySelectorAll(".tlf button").forEach(x=>x.classList.toggle("on",x===b)); const f=b.dataset.f; box.querySelectorAll(".tl").forEach(t=>t.style.display=f==="all"||t.classList.contains("f-"+f)?"":"none"); box.querySelectorAll(".tlm").forEach(m=>m.style.display=f==="all"?"":"none"); }); }
+
 // ---------- Predictions ----------
 const HEV_EN=[
  {a:"self & body",x:"a fresh start, a new look, people noticing you more, or a health reminder"},
@@ -2248,6 +2349,7 @@ function renderShadow(id,t0,t1,kind){
   };
   const dr={shDay:"drDay",shWeek:"drWeek",shMonth:"drMonth",shYear:"drYear"}[id]; if(dr&&$(dr)) $(dr).innerHTML=decanReading(D,J,kind);
   const pd={shDay:"pdDay",shWeek:"pdWeek",shMonth:"pdMonth",shYear:"pdYear"}[id]; if(pd&&$(pd)) $(pd).innerHTML=predictHtml(D,J,kind);
+  const tlid={shDay:"tlDay",shWeek:"tlWeek",shMonth:"tlMonth",shYear:"tlYear"}[id]; if(tlid&&$(tlid)){ $(tlid).innerHTML=timelineHtml(D,J,kind); bindTl(tlid); }
   shadowNow(id);
 }
 function explainJourney(k,t0,t1){
