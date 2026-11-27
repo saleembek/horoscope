@@ -2016,14 +2016,14 @@ function timelineHtml(D,J,kind){
       ev.push({ms:exactHit(x.k,c.ms,c.n,c.a,D.step),f:"hit",x,c,w});
     });
   });
-  // Moon phases and eclipses from the samples
-  const S=D.samples;
+  // Moon cycle: born (new), growing (first quarter), peak (full), waning (last quarter), cycle end (balsamic)
+  const S=D.samples, PH=kind==="year"?[0,180]:[0,90,180,270,315];
   for(let i=1;i<S.length;i++){
     const eA=norm(S[i-1].pos[1].lon-S[i-1].pos[0].lon), eB=norm(S[i].pos[1].lon-S[i].pos[0].lon);
-    [[0,eA>270&&eB<90],[180,eA<180&&eB>=180]].forEach(([tg,hit])=>{ if(!hit) return;
+    PH.forEach(tg=>{ const a=wrap180(eA-tg), b=wrap180(eB-tg); if(!(a<0&&b>=0&&b-a<120)) return;
       const jd=refinePhase(jdFromUTCms(S[i-1].ms),jdFromUTCms(S[i].ms),tg), ml=moonLon(jd), nd=nodeLon(jd), dn=Math.min(sep(ml,nd),sep(ml,nd+180));
-      const ecl=tg===0?dn<15.4:dn<11.8; if(kind==="year"&&!ecl) return;
-      ev.push({ms:msFromJd(jd),f:"moon",full:tg===180,ecl,lon:ml,w:ecl?3:1.5});
+      const ecl=tg===0?dn<15.4:tg===180?dn<11.8:false;
+      ev.push({ms:msFromJd(jd),f:"moon",ph:tg,ecl,lon:ml,jd,w:ecl?3:(tg===0||tg===180)?1.8:1.2});
     });
   }
   ev.sort((a,b)=>a.ms-b.ms);
@@ -2066,9 +2066,21 @@ function timelineHtml(D,J,kind){
       const pr=c.a.t==="hard"?L(`Friction around ${NEX[c.n.k]}. Stay cool and don't force it.`,`احتكاك حول ${NEX[c.n.k]}. ابقَ هادئاً ولا تفرض الأمور.`):c.a.t==="easy"?L(`A lucky push for ${NEX[c.n.k]}. Act on it.`,`دفعة حظ في ${NEX[c.n.k]}. تحرّك بناءً عليها.`):L(`A turning point for ${NEX[c.n.k]}. Something new starts.`,`نقطة تحوّل في ${NEX[c.n.k]}. شيء جديد يبدأ.`);
       body=`<p>${pr}</p><p class="small">${interp(x.k,c.a,c.n)}</p>`;
     } else {
-      const s=signIdx(o.lon), h=house(o.lon); ic=o.full?"🌕":"🌑"; key=`h:${h}`;
-      title=(o.ecl?(o.full?L("Lunar eclipse","خسوف القمر"):L("Solar eclipse","كسوف الشمس")):(o.full?L("Full Moon","البدر"):L("New Moon","القمر الجديد")))+` · ${SIGNS[s]} · ${L(`your ${ord(h)} house`,yh(h))}`;
-      body=`<p>${o.full?L(`Results and emotions peak in your ${HEV[h-1].a}: ${HEV[h-1].x}. Finish and let go.`,`تبلغ النتائج والمشاعر ذروتها في ${HEV[h-1].a}: ${HEV[h-1].x}. أنهِ واترك.`):L(`Plant a seed in your ${HEV[h-1].a}: start something about ${HEV[h-1].x}.`,`ازرع بذرة في ${HEV[h-1].a}: ابدأ شيئاً يخص ${HEV[h-1].x}.`)}${o.ecl?L(" Eclipse: a turning point that can unfold over 6 months."," كسوف/خسوف: نقطة تحوّل قد تمتد آثارها 6 أشهر."):""}</p>`;
+      const sg=signIdx(o.lon), h=house(o.lon), ha=HEV[h-1].a, hx=HEV[h-1].x; key=`h:${h}`;
+      const el=norm(moonLon(o.jd)-sunLon(o.jd)), nj=refinePhase(o.jd-el/12.19-1.5,o.jd-el/12.19+1.5,0), nl=moonLon(nj), nh=house(nl), nd=new Date(msFromJd(nj)).toLocaleDateString(LOC(),{month:"short",day:"numeric"});
+      const born=L(`This cycle was born on ${nd} in ${SIGNS[signIdx(nl)]}, your ${ord(nh)} house (${HEV[nh-1].a}).`,`وُلدت هذه الدورة في ${nd} في ${SIGNS[signIdx(nl)]}، ${yh(nh)} (${HEV[nh-1].a}).`);
+      const where=`${SIGNS[sg]} · ${L(`your ${ord(h)} house`,yh(h))}`;
+      if(o.ph===0){ ic="🌑"; title=(o.ecl?L("Solar eclipse: the Moon is born","كسوف الشمس: القمر يولد"):L("New Moon: the Moon is born","القمر الجديد: القمر يولد"))+" · "+where;
+        body=`<p>🌱 ${L(`A new 29-day cycle starts in your ${ha}. Plant the seed: start something about ${hx}.`,`تبدأ دورة جديدة من 29 يوماً في ${ha}. ازرع البذرة: ابدأ شيئاً يخص ${hx}.`)}</p><p class="small">${L("Impact: energy is low but fresh. Set intentions, begin quietly; results show at the Full Moon in about 2 weeks.","التأثير: الطاقة منخفضة لكنها جديدة. ضع نواياك وابدأ بهدوء، والنتائج تظهر مع البدر بعد نحو أسبوعين.")}${o.ecl?L(" Eclipse: a big new chapter that unfolds over 6 months."," كسوف: فصل جديد كبير يتكشّف خلال 6 أشهر."):""}</p>`; }
+      else if(o.ph===90){ ic="🌓"; title=L("First Quarter: the Moon grows","التربيع الأول: القمر ينمو")+" · "+where;
+        body=`<p>💪 ${L(`First test of what you started. Take action and push through obstacles. The push comes through your ${ha}: ${hx}.`,`أول اختبار لما بدأته. تحرّك وتجاوز العقبات. الدفعة تأتي من ${ha}: ${hx}.`)}</p><p class="small">${born}</p>`; }
+      else if(o.ph===180){ ic="🌕"; title=(o.ecl?L("Lunar eclipse: middle of the cycle","خسوف القمر: منتصف الدورة"):L("Full Moon: middle and peak of the cycle","البدر: منتصف الدورة وذروتها"))+" · "+where;
+        body=`<p>✨ ${L(`Results and emotions peak in your ${ha}: ${hx}. What you started shows results now. Celebrate, finish, let go.`,`تبلغ النتائج والمشاعر ذروتها في ${ha}: ${hx}. ما بدأته يُظهر نتائجه الآن. احتفل، أنهِ، واترك.`)}</p><p class="small">${born}${o.ecl?L(" Eclipse: a turning point; something ends or comes to light."," خسوف: نقطة تحوّل؛ شيء ينتهي أو ينكشف."):""}</p>`; }
+      else if(o.ph===270){ ic="🌗"; title=L("Last Quarter: the Moon wanes","التربيع الأخير: القمر يتناقص")+" · "+where;
+        body=`<p>🧹 ${L(`Clear out what didn't work in this cycle. Let go through your ${ha}: ${hx}.`,`تخلّص مما لم ينجح في هذه الدورة. اترك عبر ${ha}: ${hx}.`)}</p><p class="small">${born}</p>`; }
+      else { ic="🌘"; const nx=refinePhase(o.jd+1.5,o.jd+6.5,0), nxd=new Date(msFromJd(nx)).toLocaleDateString(LOC(),{weekday:"short",month:"short",day:"numeric"}), nxh=house(moonLon(nx));
+        title=L("Cycle ends: dark Moon","نهاية الدورة: القمر المظلم")+" · "+where;
+        body=`<p>😴 ${L(`The end of this Moon's life. Rest, reflect and don't start new things. Recharge until the next birth on ${nxd} (New Moon in your ${ord(nxh)} house: ${HEV[nxh-1].a}).`,`نهاية حياة هذا القمر. استرح وتأمّل ولا تبدأ أشياء جديدة. اشحن طاقتك حتى الولادة القادمة في ${nxd} (قمر جديد في ${yh(nxh)}: ${HEV[nxh-1].a}).`)}</p><p class="small">${born}</p>`; }
     }
     const [lc,li]=lvl(o.w);
     return head+`<div class="tl ${lc} f-${o.f}" data-x="${key}"><div class="tld"><b>${fd(o.ms)}</b><span>${li}</span></div><div class="tlb"><div class="tlt">${ic} ${title}</div>${body}</div></div>`;
