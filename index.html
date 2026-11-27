@@ -2006,8 +2006,7 @@ function timelineHtml(D,J,kind){
   const fdl=jd=>new Date(msFromJd(jd)).toLocaleDateString(LOC(),{month:"short",day:"numeric",year:"numeric"});
   const ev=[];
   J.forEach(x=>{
-    const skipMoon=x.k==="Moon"&&(kind==="month"||kind==="year");
-    if(!skipMoon) x.ing.forEach(e=>ev.push({ms:exactIngress(x.k,e.ms,e.sign,D.step),f:"move",x,e,w:SLOW.includes(x.k)?3:x.k==="Moon"?1:2}));
+    x.ing.forEach(e=>ev.push({ms:exactIngress(x.k,e.ms,e.sign,D.step),f:x.k==="Moon"?"mmove":"move",x,e,w:SLOW.includes(x.k)?3:x.k==="Moon"?1:2}));
     x.st.forEach(e=>ev.push({ms:e.ms,f:"turn",x,e,w:SLOW.includes(x.k)?3:2.5}));
     x.contacts.forEach(c=>{
       if(kind==="month"&&x.k==="Moon") return;
@@ -2032,11 +2031,12 @@ function timelineHtml(D,J,kind){
   const items=ev.map(o=>{
     let head="", ic="", title="", body="", key="";
     if(kind==="year"){ const m=new Date(o.ms).toLocaleDateString(LOC(),{month:"long"}); if(m!==lastHead){ head=`<div class="tlm">${m}</div>`; lastHead=m; } }
-    if(o.f==="move"){
+    if(o.f==="move"||o.f==="mmove"){
       const x=o.x, jd=jdFromUTCms(o.ms), retro=retroAt(x.k,jd), prev=retro?(o.e.sign+1)%12:(o.e.sign+11)%12, hOld=house(prev*30+1), hNew=o.e.h;
       const nc=nextChange(x.k,jd+1e-4,o.e.sign); key=`j:${x.k}:${D.t0}:${D.t1}`; ic=x.g;
       title=L(`${x.k} enters ${SIGNS[o.e.sign]} · your ${ord(hNew)} house`,`${x.k} يدخل ${SIGNS[o.e.sign]} · ${yh(hNew)}`);
       body=`<p>➡️ ${L("Enters:","يدخل:")} ${retro?PEF[x.k].r:PEF[x.k].f} ${HEV[hNew-1].a}. ${L("Expect","توقّع")} ${HEV[hNew-1].x}.</p>`;
+      if(x.k==="Moon") body+=`<p>🌙 ${L(`Mood for these days (Moon in ${SIGNS[o.e.sign]}): ${MOON_SIGN_DAY[SIGNS[o.e.sign]]}`,`مزاج هذه الأيام (القمر في ${SIGNS[o.e.sign]}): ${MOON_SIGN_DAY[SIGNS[o.e.sign]]}`)}</p>`;
       body+=`<p>⬅️ ${L(`Leaves your ${ord(hOld)} house (${HEV[hOld-1].a}): that chapter winds down.`,`يغادر ${yh(hOld)} (${HEV[hOld-1].a}): ذلك الفصل يقترب من نهايته.`)}</p>`;
       if(nc){ const nh=house(nc.sign*30+1), back=(nc.sign-o.e.sign+12)%12!==1;
         body+=`<p>⏳ ${L(`Stays ${durTxt(nc.jd-jd)}, until ${fdl(nc.jd)}, then ${back?"slips back to":"moves on to"} your ${ord(nh)} house (${HEV[nh-1].a}).`,`يبقى ${durTxt(nc.jd-jd)} حتى ${fdl(nc.jd)}، ثم ${back?"يعود إلى":"ينتقل إلى"} ${yh(nh)} (${HEV[nh-1].a}).`)}</p>`; }
@@ -2083,15 +2083,15 @@ function timelineHtml(D,J,kind){
         body=`<p>😴 ${L(`The end of this Moon's life. Rest, reflect and don't start new things. Recharge until the next birth on ${nxd} (New Moon in your ${ord(nxh)} house: ${HEV[nxh-1].a}).`,`نهاية حياة هذا القمر. استرح وتأمّل ولا تبدأ أشياء جديدة. اشحن طاقتك حتى الولادة القادمة في ${nxd} (قمر جديد في ${yh(nxh)}: ${HEV[nxh-1].a}).`)}</p><p class="small">${born}</p>`; }
     }
     const [lc,li]=lvl(o.w);
-    return head+`<div class="tl ${lc} f-${o.f}" data-x="${key}"><div class="tld"><b>${fd(o.ms)}</b><span>${li}</span></div><div class="tlb"><div class="tlt">${ic} ${title}</div>${body}</div></div>`;
+    return head+`<div class="tl ${lc} f-${o.f}" data-x="${key}"${kind==="year"&&o.f==="mmove"?' style="display:none"':""}><div class="tld"><b>${fd(o.ms)}</b><span>${li}</span></div><div class="tlb"><div class="tlt">${ic} ${title}</div>${body}</div></div>`;
   });
   const per={day:L("today","اليوم"),week:L("this week","هذا الأسبوع"),month:L("this month","هذا الشهر"),year:L("this year","هذه السنة")}[kind];
-  const cnt=f=>ev.filter(o=>f==="all"||o.f===f).length;
-  const chips=[["all",L("All","الكل")],["move",L("Moves","التنقلات")],["turn",L("Direction","الاتجاه")],["hit",L("Hits on you","إصابات لك")],["moon",L("Moon","القمر")]].filter(([f])=>cnt(f)).map(([f,n],i)=>`<button class="${i?"":"on"}" data-f="${f}">${n} <small>${cnt(f)}</small></button>`).join("");
+  const cnt=f=>ev.filter(o=>f==="all"?!(kind==="year"&&o.f==="mmove"):o.f===f).length;
+  const chips=[["all",L("All","الكل")],["move",L("Planet moves","تنقلات الكواكب")],["mmove",L("🌙 Moon houses","🌙 بيوت القمر")],["turn",L("Direction","الاتجاه")],["hit",L("Hits on you","إصابات لك")],["moon",L("Moon phases","أطوار القمر")]].filter(([f])=>cnt(f)).map(([f,n],i)=>`<button class="${i?"":"on"}" data-f="${f}">${n} <small>${cnt(f)}</small></button>`).join("");
   return `<h2>🗓️ ${L("Important days","الأيام المهمة")}</h2><p class="small" style="margin-top:-6px">${L(`Everything that happens ${per}, in date order: when planets enter and leave your houses (and how long they stay), direction changes, exact hits on your chart, and Moon phases. Each one with its impact and prediction.`,`كل ما يحدث ${per} بترتيب التاريخ: متى تدخل الكواكب بيوتك وتغادرها (وكم تبقى)، تغيّرات الاتجاه، الإصابات الدقيقة لخريطتك، وأطوار القمر. ومع كل واحد تأثيره وتوقعه.`)}</p>
-   ${ev.length?`<div class="tlf">${chips}</div><div class="tll">${items.join("")}</div>`:`<p class="small">${L("No major events in this period.","لا أحداث كبيرة في هذه الفترة.")}</p>`}`;
+   ${ev.length?`<div class="tlf">${chips}</div><div class="tll" data-kind="${kind}">${items.join("")}</div>`:`<p class="small">${L("No major events in this period.","لا أحداث كبيرة في هذه الفترة.")}</p>`}`;
 }
-function bindTl(id){ const box=$(id); if(!box) return; box.querySelectorAll(".tlf button").forEach(b=>b.onclick=e=>{ e.stopPropagation(); box.querySelectorAll(".tlf button").forEach(x=>x.classList.toggle("on",x===b)); const f=b.dataset.f; box.querySelectorAll(".tl").forEach(t=>t.style.display=f==="all"||t.classList.contains("f-"+f)?"":"none"); box.querySelectorAll(".tlm").forEach(m=>m.style.display=f==="all"?"":"none"); }); }
+function bindTl(id){ const box=$(id); if(!box) return; box.querySelectorAll(".tlf button").forEach(b=>b.onclick=e=>{ e.stopPropagation(); box.querySelectorAll(".tlf button").forEach(x=>x.classList.toggle("on",x===b)); const f=b.dataset.f, yr=box.querySelector(".tll").dataset.kind==="year"; box.querySelectorAll(".tl").forEach(t=>t.style.display=(f==="all"&&!(yr&&t.classList.contains("f-mmove")))||t.classList.contains("f-"+f)?"":"none"); box.querySelectorAll(".tlm").forEach(m=>m.style.display=f==="all"?"":"none"); }); }
 
 // ---------- Predictions ----------
 const HEV_EN=[
@@ -2339,7 +2339,8 @@ function shadowNow(id){
 }
 function journeyLine(x,kind){
   const parts=[];
-  if(x.moonRing) parts.push(L(`circles the whole wheel ${x.laps>1?x.laps+" times":"once"} (≈${Math.round(x.dist)}°), touching every house`,`يدور حول الدائرة كلها ${x.laps>1?x.laps+" مرات":"مرة واحدة"} (≈${Math.round(x.dist)}°) ويمرّ بكل البيوت`));
+  if(x.moonRing){ parts.push(L(`circles the whole wheel ${x.laps>1?x.laps+" times":"once"} (≈${Math.round(x.dist)}°)`,`يدور حول الدائرة كلها ${x.laps>1?x.laps+" مرات":"مرة واحدة"} (≈${Math.round(x.dist)}°)`));
+    const lim=kind==="year"?14:40; parts.push(L("house by house: ","بيتاً بيتاً: ")+x.ing.slice(0,lim).map(e=>`${SG[e.sign]} ${ord0(e.h)} ${fdS(exactIngress("Moon",e.ms,e.sign,kind==="year"?1:kind==="day"?1/24:0.25),"month")}`).join(" → ")+(x.ing.length>lim?L(` … (+${x.ing.length-lim} more in 🗓️ Important days → 🌙 Moon houses)`,` … (+${x.ing.length-lim} أخرى في 🗓️ الأيام المهمة ← 🌙 بيوت القمر)`):"")); }
   else parts.push(x.dist<3?L(`barely moves (${x.dist.toFixed(1)}°): its influence stays put`,`بالكاد يتحرك (${x.dist.toFixed(1)}°): تأثيره ثابت في مكانه`):L(`travels ${Math.round(x.dist)}°`,`يقطع ${Math.round(x.dist)}°`));
   if(!x.moonRing&&x.ing.length) parts.push(L("enters ","يدخل ")+x.ing.slice(0,4).map(e=>`${SG[e.sign]} ${SIGNS[e.sign]} (${hh(e.h)}${L(", ","، ")}${fdS(e.ms,kind)})`).join(L(", ","، ")));
   x.st.forEach(e=>parts.push(`↻ ${e.retro?L("turns backward ℞","يبدأ التراجع ℞"):L("turns forward","يعود للأمام")} ${fdS(e.ms,kind)}`));
@@ -2361,7 +2362,7 @@ function renderShadow(id,t0,t1,kind){
     <div class="decbox">${decanSection(D,J,kind)}</div>
     <h3>${L("Along the way","على طول الطريق")}</h3>
     <div id="${id}-list">${J.map(x=>`<div class="jr" data-x="j:${x.k}:${t0}:${t1}"><div class="jh"><i style="background:${PCOL[x.k]}"></i><b>${x.g} ${x.k}</b>${x.st.length?`<span class="dir b">↻ ${L("changes direction","يغيّر اتجاهه")}</span>`:x.retro0&&!x.moonRing?`<span class="dir b">${L("← backward ℞","→ للخلف ℞")}</span>`:`<span class="dir f">${L("→ forward","← للأمام")}</span>`}</div>
-      <div class="jp">${x.moonRing?L("all 12 houses","كل البيوت الاثني عشر"):`${SG[x.s0]} ${SIGNS[x.s0]} · ${hh(x.h0)} ${x.dist>=300?`<b>${L("→ full circle →","← دورة كاملة ←")}</b> ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:x.s0!==x.s1||x.h0!==x.h1?`<b>${L("→","←")}</b> ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:L("(stays)","(يبقى)")}`}</div>
+      <div class="jp">${x.moonRing?`${SG[x.s0]} ${SIGNS[x.s0]} · ${hh(x.h0)} → … → ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:`${SG[x.s0]} ${SIGNS[x.s0]} · ${hh(x.h0)} ${x.dist>=300?`<b>${L("→ full circle →","← دورة كاملة ←")}</b> ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:x.s0!==x.s1||x.h0!==x.h1?`<b>${L("→","←")}</b> ${SG[x.s1]} ${SIGNS[x.s1]} · ${hh(x.h1)}`:L("(stays)","(يبقى)")}`}</div>
       <div class="small">${journeyLine(x,kind)}</div></div>`).join("")}</div>`;
   const rng=$(id+"-rng"), btn=$(id+"-play");
   rng.oninput=()=>shadowNow(id);
