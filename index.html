@@ -1991,6 +1991,22 @@ function decanSection(D,J,kind){
 }
 
 // ---------- Important days timeline ----------
+const STN_EN={
+ Mercury:{r:"Mercury backward: messages, tech, travel plans and paperwork go haywire. Old contacts reappear",d:"Mercury forward: messages, deals and tech flow again. Decisions you held back can be made",e:"talks, documents and devices"},
+ Venus:{r:"Venus backward: love and money get re-evaluated, exes or old purchases come back",d:"Venus forward: love and money decisions are safe again. Relationships and spending feel lighter",e:"love, beauty and spending"},
+ Mars:{r:"Mars backward: energy stalls, old fights return and projects pause",d:"Mars forward: drive and courage return. Push stalled projects ahead",e:"action, effort and conflict"},
+ Jupiter:{r:"Jupiter backward: growth turns inward. Review plans, beliefs and big promises",d:"Jupiter forward: opportunities open outward again. Expansion and luck pick up",e:"growth, luck and opportunities"},
+ Saturn:{r:"Saturn backward: duties, debts and commitments are under review. Old responsibilities come back to be fixed",d:"Saturn forward: the hard work starts paying off. Commitments, plans and structures firm up, so build again",e:"duty, discipline and long-term results"},
+ Uranus:{r:"Uranus backward: a restless urge for change builds inside you. Rethink what you want to break free from",d:"Uranus forward: change breaks out into the open. Sudden news, new freedom, surprise shifts",e:"sudden change and freedom"},
+ Neptune:{r:"Neptune backward: illusions dissolve. You see clearly what was foggy",d:"Neptune forward: dreams, inspiration and intuition flow outward again. Be careful: the fog can return, so check facts",e:"dreams, intuition and confusion"}};
+const STN_AR={
+ Mercury:{r:"عطارد متراجع: الرسائل والتقنية وخطط السفر والأوراق تضطرب. ويعود أشخاص قدامى",d:"عطارد للأمام: الرسائل والصفقات والتقنية تتدفق من جديد. ويمكن اتخاذ القرارات المؤجلة",e:"الكلام والوثائق والأجهزة"},
+ Venus:{r:"الزهرة متراجعة: الحب والمال يخضعان لإعادة تقييم، ويعود حبيب سابق أو مشتريات قديمة",d:"الزهرة للأمام: قرارات الحب والمال آمنة من جديد. العلاقات والإنفاق أخف",e:"الحب والجمال والإنفاق"},
+ Mars:{r:"المريخ متراجع: الطاقة تتوقف، وتعود خلافات قديمة، والمشاريع تتجمّد",d:"المريخ للأمام: الاندفاع والشجاعة يعودان. ادفع المشاريع المتوقفة للأمام",e:"الفعل والجهد والصراع"},
+ Jupiter:{r:"المشتري متراجع: النمو يتجه للداخل. راجع الخطط والمعتقدات والوعود الكبيرة",d:"المشتري للأمام: الفرص تنفتح للخارج من جديد. التوسع والحظ يزيدان",e:"النمو والحظ والفرص"},
+ Saturn:{r:"زحل متراجع: الواجبات والديون والالتزامات تحت المراجعة. وتعود مسؤوليات قديمة لإصلاحها",d:"زحل للأمام: العمل الشاق يبدأ يؤتي ثماره. الالتزامات والخطط والبُنى تترسخ، فابنِ من جديد",e:"الواجب والانضباط والنتائج طويلة المدى"},
+ Uranus:{r:"أورانوس متراجع: رغبة قلقة في التغيير تتراكم داخلك. أعد التفكير فيما تريد التحرر منه",d:"أورانوس للأمام: التغيير ينفجر للعلن. أخبار مفاجئة، حرية جديدة، تحولات غير متوقعة",e:"التغيير المفاجئ والحرية"},
+ Neptune:{r:"نبتون متراجع: الأوهام تذوب. ترى بوضوح ما كان ضبابياً",d:"نبتون للأمام: الأحلام والإلهام والحدس تتدفق للخارج من جديد. انتبه: قد يعود الضباب، فتحقّق من الحقائق",e:"الأحلام والحدس والالتباس"}};
 function nextChange(k,jd,sign){
   const step=k==="Moon"?1/24:["Sun","Mercury","Venus"].includes(k)?0.25:1, max=(MAXD[k]||400)*1.6;
   for(let t=step;t<=max;t+=step){ const s=signIdx(lonOf(k,jd+t)); if(s!==sign) return {jd:jd+t,sign:s}; }
@@ -2046,15 +2062,17 @@ function timelineHtml(D,J,kind){
       let ps=null; for(let t=1;t<=420;t++){ if(retroAt(x.k,jd-t)===o.e.retro){ ps=jd-t+1; break; } }
       key=`j:${x.k}:${D.t0}:${D.t1}`; ic="↻";
       title=o.e.retro?L(`${x.k} turns backward ℞`,`${x.k} يبدأ التراجع ℞`):L(`${x.k} turns forward`,`${x.k} يعود للأمام`);
-      body=`<p>📍 <b>${L("Now:","الآن:")}</b> ${SG[sN]} ${SIGNS[sN]} ${fmtDeg(lonN).split(" ")[0]} · ${L(`your ${ord(h)} house`,yh(h))} (${HEV[h-1].a})</p>`;
+      body=`<p class="small">${L(`${x.k} rules ${L(STN_EN,STN_AR)[x.k].e}.`,`${x.k} يحكم ${L(STN_EN,STN_AR)[x.k].e}.`)}</p><p>📍 <b>${L("Now:","الآن:")}</b> ${SG[sN]} ${SIGNS[sN]} ${fmtDeg(lonN).split(" ")[0]} · ${L(`your ${ord(h)} house`,yh(h))} (${HEV[h-1].a})</p>`;
       if(!o.e.retro){
-        body+=`<div class="bvn"><div><b>🔙 ${L("Before","قبل")}</b>${ps?` <small>${L("backward since","متراجع منذ")} ${fdl(ps)}</small>`:""}<br>${L(`Review and redo in your ${HEV[h-1].a}: delays, second thoughts, old matters came back.`,`مراجعة وإعادة عمل في ${HEV[h-1].a}: تأخيرات وتردد وعودة أمور قديمة.`)}</div>
-          <div><b>⏩ ${L("Now","الآن")}</b><br>${L(`Forward again in the same house: ${HEV[h-1].x} starts moving and you can act on what you reviewed.`,`للأمام من جديد في البيت نفسه: ${HEV[h-1].x} تبدأ بالتحرك، ويمكنك التصرف بناءً على ما راجعته.`)}</div></div>`;
-        if(nc){ const nh=house(nc.sign*30+1); body+=`<p>➡️ <b>${L("Next stop:","المحطة التالية:")}</b> ${SG[nc.sign]} ${SIGNS[nc.sign]} · ${L(`your ${ord(nh)} house`,yh(nh))} (${HEV[nh-1].a}) ${L("on","في")} ${fdl(nc.jd)} (${L("in ","بعد ")+durTxt(nc.jd-jd)}). ${L("Then expect","بعدها توقّع")} ${HEV[nh-1].x}.</p>`; }
+        const ST=L(STN_EN,STN_AR)[x.k];
+        body+=`<div class="bvn"><div><b>🔙 ${L("Before","قبل")}</b>${ps?` <small>${L("backward since","متراجع منذ")} ${fdl(ps)}</small>`:""}<br>${ST.r}, ${L(`in your ${HEV[h-1].a}.`,`في ${HEV[h-1].a}.`)}</div>
+          <div><b>⏩ ${L("Now","الآن")}</b><br>${ST.d}. ${L(`In your ${HEV[h-1].a}: ${HEV[h-1].x}, through ${ST.e}.`,`في ${HEV[h-1].a}: ${HEV[h-1].x}، عبر ${ST.e}.`)}</div></div>`;
+        if(nc){ const nh=house(nc.sign*30+1); body+=`<p>➡️ <b>${L("Next stop:","المحطة التالية:")}</b> ${SG[nc.sign]} ${SIGNS[nc.sign]} · ${L(`your ${ord(nh)} house`,yh(nh))} (${HEV[nh-1].a}) ${L("on","في")} ${fdl(nc.jd)} (${L("in ","بعد ")+durTxt(nc.jd-jd)}). ${L("There:","هناك:")} ${PEF[x.k].f} ${HEV[nh-1].a}. ${L("Expect","توقّع")} ${HEV[nh-1].x}.</p>`; }
         if(ns) body+=`<p class="small">⏳ ${L(`Forward until its next backward turn on ${fdl(ns)}.`,`للأمام حتى تراجعه القادم في ${fdl(ns)}.`)}</p>`;
       } else {
-        body+=`<div class="bvn"><div><b>⏩ ${L("Before","قبل")}</b>${ps?` <small>${L("forward since","للأمام منذ")} ${fdl(ps)}</small>`:""}<br>${L(`Progress in your ${HEV[h-1].a}: things were moving ahead.`,`تقدّم في ${HEV[h-1].a}: الأمور كانت تسير للأمام.`)}</div>
-          <div><b>🔙 ${L("Now","الآن")}</b><br>${L(`Backward in the same house: ${HEV[h-1].x} may need a second look. Review, fix and redo.`,`للخلف في البيت نفسه: قد يحتاج ${HEV[h-1].x} إلى نظرة ثانية. راجع وأصلح وأعد.`)}</div></div>`;
+        const ST=L(STN_EN,STN_AR)[x.k];
+        body+=`<div class="bvn"><div><b>⏩ ${L("Before","قبل")}</b>${ps?` <small>${L("forward since","للأمام منذ")} ${fdl(ps)}</small>`:""}<br>${ST.d}, ${L(`in your ${HEV[h-1].a}.`,`في ${HEV[h-1].a}.`)}</div>
+          <div><b>🔙 ${L("Now","الآن")}</b><br>${ST.r}. ${L(`In your ${HEV[h-1].a}: ${HEV[h-1].x} may need a second look.`,`في ${HEV[h-1].a}: قد يحتاج ${HEV[h-1].x} إلى نظرة ثانية.`)}</div></div>`;
         if(nc&&(!ns||nc.jd<ns)){ const nh=house(nc.sign*30+1); body+=`<p>⬅️ <b>${L("Slips back:","يعود للخلف:")}</b> ${L(`into ${SIGNS[nc.sign]} · your ${ord(nh)} house (${HEV[nh-1].a}) on ${fdl(nc.jd)}: old ${HEV[nh-1].a} matters come back for a redo.`,`إلى ${SIGNS[nc.sign]} · ${yh(nh)} (${HEV[nh-1].a}) في ${fdl(nc.jd)}: أمور قديمة في ${HEV[nh-1].a} تعود للمراجعة.`)}</p>`; }
         else body+=`<p>📌 ${L(`It stays in your ${ord(h)} house for the whole backward phase.`,`يبقى في ${yh(h)} طوال فترة التراجع.`)}</p>`;
         if(ns) body+=`<p class="small">⏳ ${L(`Backward until ${fdl(ns)} (${durTxt(ns-jd)}).`,`متراجع حتى ${fdl(ns)} (${durTxt(ns-jd)}).`)}</p>`;
